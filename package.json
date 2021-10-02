@@ -1,0 +1,21 @@
+{
+  "name": "messenger",
+  "version": "1.0.0",
+  "description": "yandex praktikum messenger project",
+  "main": "index.js",
+  "source": "static/index.html",
+  "targets": {
+    "default": {
+      "distDir": "./build"
+    }
+  },
+  "scripts": {
+    "dev": "parcel --dist-dir build",
+    "build": "parcel build --dist-dir build"
+  },
+  "author": "Ivan Proksuriakov",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.0.0-rc.0"
+  }
+}
