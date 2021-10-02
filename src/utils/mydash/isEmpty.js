@@ -8,12 +8,6 @@
 //      примитивы.
 // Значения 0 и другие Number, null, true, false, "", undefined, [], {} должны возвращать true.
 
-// function isEmpty(value) {
-//     const result = value === null || typeof value === 'undefined' || typeof value === 'number' || Object.keys(value).length === 0 || value.length === 0 ;
-//     console.log(`Value ${JSON.stringify(value)}, result is ${result}`);
-//     return result;
-// }
-
 function isEmpty(value) {
     let result = false;
     // console.log(value);
@@ -58,16 +52,3 @@ function isEmpty(value) {
 
     return result;
 }
-
-
-console.log(isEmpty(null)); // => true
-console.log(isEmpty(true)); // => true
-console.log(isEmpty(1)); // => true
-console.log( isEmpty([1,2,3])); // => false
-console.log(isEmpty({'a':1})); // => false
-console.log(isEmpty('123')); // => false
-console.log(isEmpty(123)); // => true
-console.log(isEmpty('')); // => true
-console.log(isEmpty(0)); // => true
-console.log(isEmpty(new Map())); // => true
-/**/

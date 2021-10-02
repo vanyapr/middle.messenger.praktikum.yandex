@@ -5,9 +5,3 @@ function first (arrayVariable) {
         return false;
     }
 }
-
-// export default first;
-
-//
-// console.log(first([1, 2, 3]));
-// console.log(first([]));

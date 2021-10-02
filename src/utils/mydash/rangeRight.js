@@ -79,12 +79,3 @@ function range(startPosition, endPosition, step = 1, isRight = false) {
     }
 }
 
-
-console.log(rangeRight(4)); // => [3, 2, 1, 0]
-console.log(rangeRight(-4)); // => [-3, -2, -1, 0]
-console.log(rangeRight(1, 5)); // => [4, 3, 2, 1]
-console.log(rangeRight(0, 20, 5)); // => [15, 10, 5, 0]
-console.log(rangeRight(0, -4, -1)); // => [-3, -2, -1, 0]
-console.log(rangeRight(1, 4, 0)); // => [1, 1, 1]
-console.log(rangeRight(0)); // => []
-

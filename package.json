@@ -10,12 +10,17 @@
     }
   },
   "scripts": {
+    "start": "node index.js",
     "dev": "parcel --dist-dir build",
     "build": "parcel build --dist-dir build"
   },
   "author": "Ivan Proksuriakov",
   "license": "ISC",
   "devDependencies": {
-    "parcel": "^2.0.0-rc.0"
+    "parcel": "^2.0.0-rc.0",
+    "sass": "^1.42.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
