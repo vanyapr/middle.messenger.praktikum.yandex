@@ -2,7 +2,7 @@
   "name": "messenger",
   "version": "1.0.0",
   "description": "yandex praktikum messenger project",
-  "main": "index.js",
+  "main": "build/index.html",
   "source": "static/index.html",
   "targets": {
     "default": {
