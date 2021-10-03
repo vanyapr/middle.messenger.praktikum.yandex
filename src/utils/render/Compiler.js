@@ -10,6 +10,7 @@ class Compiler {
   // Очищает строку от брекетов и пробелов
   _cleanString = (stringWithBrackets) => {
     const result = stringWithBrackets.replace(/[\{\}\s]*/g, '');
+    console.log(result);
     return result;
   }
 
@@ -33,7 +34,6 @@ class Compiler {
     }, templateData);
 
     // Для удобства чтения кода вернем значение отдельной строкой
-    console.log(value);
     return value;
   }
 
@@ -70,7 +70,7 @@ class Compiler {
           continue;
         }
 
-        // Для обычной строки
+        // Только с регулярным выражением заменяет всю строку
         template = template.replaceAll(new RegExp(templateMatch[0], 'gi'), variableValue);
       }
     }
@@ -79,7 +79,7 @@ class Compiler {
     return template;
   }
 
-  // TODO: Проверка типа данных (объект
+  // TODO: Проверка типа данных (точно ли объект?)
 
   // Компилирует темплейт с использованием встроенных методов
   compile() {

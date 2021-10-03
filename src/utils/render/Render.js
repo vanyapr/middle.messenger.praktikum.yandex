@@ -10,8 +10,6 @@ class Renderer {
 
   // Заполняет контейнер содержимым
   render(HTML) {
-    console.log('Рендерим данные');
-
     // Рендер (пока что просто добавляем хтмл на страницу)
     this._renderContainer.insertAdjacentHTML('beforeend', HTML);
   }
