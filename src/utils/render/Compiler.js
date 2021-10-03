@@ -64,13 +64,14 @@ class Compiler {
           // Записываем функцию в объект window
           // eslint-disable-next-line no-undef
           window[variableKey] = variableValue;
-          template = template.replaceAll(`${templateMatch[0]}`, `${variableKey}()`);
+          // Только с регулярным выражением заменяет всю строку
+          template = template.replaceAll(new RegExp(templateMatch[0], 'gi'), `${variableKey}()`);
           // Выходим из цикла
           continue;
         }
 
         // Для обычной строки
-        template = template.replaceAll(`${templateMatch[0]}`, variableValue);
+        template = template.replaceAll(new RegExp(templateMatch[0], 'gi'), variableValue);
       }
     }
 
