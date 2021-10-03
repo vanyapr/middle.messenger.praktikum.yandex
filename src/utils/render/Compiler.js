@@ -4,18 +4,19 @@ class Compiler {
     this._template = template;
     this._templateData = templateData;
     // Регулярное выражение, которое будет искать вхождения строки с переменными в темплейте
-    this._regExp = /\{\{*\s[a-zA-Z\.]*\s\}\}/gim;
+    this._regExp = /\{\{\s*[\.a-z0-9]+\s*\}\}/gim;
   }
 
   // Очищает строку от брекетов и пробелов
-  _cleanString = (stringWithBrackets) => stringWithBrackets.replace(/\{*\}*/g, '').trim()
+  _cleanString = (stringWithBrackets) => {
+    const result = stringWithBrackets.replace(/[\{\}\s]*/g, '');
+    return result;
+  }
 
   // Получение данных для темплейта по ключу объекта (key.subkey.morekeys)
   _getValue = (keyString) => {
-    const cleanedString = this._cleanString(keyString);
-
     // Разделяем переменную темплейта на отдельные ключи по символу точки
-    const keysArray = cleanedString.split('.');
+    const keysArray = keyString.split('.');
 
     // Вопрос ревьюеру: А нужно ли это присвоение? Зачем плодить переменные?
     const templateData = this._templateData;
@@ -32,6 +33,7 @@ class Compiler {
     }, templateData);
 
     // Для удобства чтения кода вернем значение отдельной строкой
+    console.log(value);
     return value;
   }
 
@@ -46,26 +48,37 @@ class Compiler {
     // Проходим по темплейту
     // Вопрос к ревьюеру: как избежать в данном случае мутации переменной?
     // eslint-disable-next-line no-cond-assign
-    while (templateMatch = regularExpression.exec(template)) {
-      // Все вхождения регулярных выражений мы заменяем на переменные
-      // Для найденной переменной мы получаем значение, после чего в темплейте выполняем замену
-      const variableValue = getValue(templateMatch[0]);
+    while ((templateMatch = regularExpression.exec(template))) {
+      if (templateMatch[0]) {
+        // Все вхождения регулярных выражений мы заменяем на переменные
+        // Очищаем совпадение от кавычек
+        const variableKey = this._cleanString(templateMatch[0]);
 
-      // Для функции
-      if (typeof variableValue === 'function') {
-        // Записываем функцию в объект window
-        // eslint-disable-next-line no-undef
-        window[variableValue] = variableValue;
-        template.replace(templateMatch[0], `${variableValue}()`);
+        // console.log(variableKey);
+
+        // Для найденной переменной мы получаем значение, после чего в темплейте выполняем замену
+        const variableValue = getValue(variableKey);
+
+        // Для функции
+        if (typeof variableValue === 'function') {
+          // Записываем функцию в объект window
+          // eslint-disable-next-line no-undef
+          window[variableKey] = variableValue;
+          template = template.replaceAll(`${templateMatch[0]}`, `${variableKey}()`);
+          // Выходим из цикла
+          continue;
+        }
+
+        // Для обычной строки
+        template = template.replaceAll(`${templateMatch[0]}`, variableValue);
       }
-
-      // Для обычной строки
-      template = template.replace(templateMatch[0], variableValue);
     }
 
     // Если вхождений не будет, мы вернем изначальную строку
     return template;
   }
+
+  // TODO: Проверка типа данных (объект
 
   // Компилирует темплейт с использованием встроенных методов
   compile() {

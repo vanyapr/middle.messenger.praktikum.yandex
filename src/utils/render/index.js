@@ -4,7 +4,7 @@ import Compiler from './Compiler';
 
 // Функция - рендерер
 const ez = (template, data, containerSelector) => {
-  //
+  // Решил сделать в виде функции, потому что надо вызывать новые экземпляры классов
   const compiler = new Compiler(template, data);
   const compiledTemplate = compiler.compile();
   // Контейнер для рендера

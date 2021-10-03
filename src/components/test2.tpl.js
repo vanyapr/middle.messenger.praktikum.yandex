@@ -1,7 +1,8 @@
 // Сам темплейт
 const template = `
     <header>
-        <p>{{ description }}</p>
+        <p onclick='{{ lol2 }}'>{{ lol2 }}</p>
+        <p>{{ desc }}</p>
     </header>
 `;
 

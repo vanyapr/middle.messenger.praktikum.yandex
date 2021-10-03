@@ -11,7 +11,11 @@ const data = {
 };
 
 const data2 = {
-  title: 'Заголовок страницы 2',
+  desc: 'Дескрипшен ',
+  lol: 'test value 1',
+  lol2() {
+    console.log('Нажал на дескрипшен');
+  },
 };
 
 ez(template, data, '#root');
