@@ -1,0 +1,46 @@
+$color1: #1E1E1E;
+
+.error {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  &__status {
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: $color1;
+    margin: 0;
+    order: 1;
+  }
+
+  &__title {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+    color: $color1;
+    margin: 20px 0 0;
+    order: 2;
+  }
+
+  &__back {
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 11px;
+    text-align: center;
+    color: #6380CB;
+    margin: 70px 0 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: inline;
+    order: 3;
+  }
+}

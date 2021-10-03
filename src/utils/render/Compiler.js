@@ -10,7 +10,7 @@ class Compiler {
   // Очищает строку от брекетов и пробелов
   _cleanString = (stringWithBrackets) => {
     const result = stringWithBrackets.replace(/[\{\}\s]*/g, '');
-    console.log(result);
+    // console.log(result);
     return result;
   }
 
@@ -65,13 +65,13 @@ class Compiler {
           // eslint-disable-next-line no-undef
           window[variableKey] = variableValue;
           // Только с регулярным выражением заменяет всю строку
-          template = template.replaceAll(new RegExp(templateMatch[0], 'gi'), `${variableKey}()`);
+          template = template.replace(new RegExp(templateMatch[0], 'gi'), `${variableKey}()`);
           // Выходим из цикла
           continue;
         }
 
         // Только с регулярным выражением заменяет всю строку
-        template = template.replaceAll(new RegExp(templateMatch[0], 'gi'), variableValue);
+        template = template.replace(new RegExp(templateMatch[0], 'gi'), variableValue);
       }
     }
 
