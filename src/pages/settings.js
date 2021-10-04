@@ -11,6 +11,7 @@ import show from '../utils/render/index';
 import { backButton } from '../templates/components/backButton';
 import { settings } from '../templates/components/settings';
 
+// Импорт картинок
 import image from '../templates/components/settings/avatar.jpg';
 
 show(
