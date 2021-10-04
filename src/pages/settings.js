@@ -1,4 +1,4 @@
-// Стили
+// Стили по умолчанию
 import '../styles/vendor/normalize.css';
 import '../styles/vendor/fonts/Inter/inter.css';
 import '../styles/components/root/root.scss';
@@ -8,16 +8,19 @@ import '../styles/components/container/container.scss';
 import show from '../utils/render/index';
 
 // Темплейт
-import { error } from '../templates/components/error/index.js';
+import { backButton } from '../templates/components/backButton';
+import { loginForm } from '../templates/components/loginForm';
 
 show(
-  error,
-  { status: 500,
-    title: 'Мы уже фиксим',
-    buttonText: 'Назад к чатам',
-    action() {
+  backButton,
+  {
+    buttonText: 'Вернуться назад',
+    back() {
       window.history.back();
     },
+    avatar: './no-avatar.svg',
+    children: loginForm,
   },
+
   '#container',
 );

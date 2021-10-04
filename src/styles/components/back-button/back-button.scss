@@ -1,0 +1,23 @@
+.back-button {
+  width: 65px;
+  height: 100%;
+  box-sizing: border-box;
+
+  &__button {
+    background: #fff;
+    text-indent: -9000px;
+    border: none;
+    border-right: 1px solid #FBF4E9;
+    width: 100%;
+    height: 100%;
+    background-image: url('./back.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: all ease-in-out .3s;
+
+    &:hover {
+      background-color: #FBFBFB;
+    }
+  }
+}
