@@ -4,7 +4,7 @@ class Compiler {
     this._template = template;
     this._templateData = templateData;
     // Регулярное выражение, которое будет искать вхождения строки с переменными в темплейте
-    this._regExp = /\{\{\s*[\.a-z0-9]+\s*\}\}/gim;
+    this._regExp = /{{\s*[\.a-zA-Z0-9]+\s*}}/gi;
   }
 
   // Очищает строку от брекетов и пробелов
@@ -49,30 +49,31 @@ class Compiler {
     // Вопрос к ревьюеру: как избежать в данном случае мутации переменной?
     // eslint-disable-next-line no-cond-assign
     while ((templateMatch = regularExpression.exec(template))) {
-      if (templateMatch[0]) {
-        // Все вхождения регулярных выражений мы заменяем на переменные
-        // Очищаем совпадение от кавычек
-        const variableKey = this._cleanString(templateMatch[0]);
+      // Все вхождения регулярных выражений мы заменяем на переменные
+      // Очищаем совпадение от кавычек
+      const variableKey = this._cleanString(templateMatch[0]);
 
-        // console.log(variableKey);
+      console.log(templateMatch[0]);
+      console.log(variableKey);
 
-        // Для найденной переменной мы получаем значение, после чего в темплейте выполняем замену
-        const variableValue = getValue(variableKey);
+      // Для найденной переменной мы получаем значение, после чего в темплейте выполняем замену
+      const variableValue = getValue(variableKey);
 
-        // Для функции
-        if (typeof variableValue === 'function') {
-          // Записываем функцию в объект window
-          // eslint-disable-next-line no-undef
-          window[variableKey] = variableValue;
-          // Только с регулярным выражением заменяет всю строку
-          template = template.replace(new RegExp(templateMatch[0], 'gi'), `${variableKey}()`);
-          // Выходим из цикла
-          continue;
-        }
-
+      // Для функции
+      if (typeof variableValue === 'function') {
+        // Записываем функцию в объект window
+        // eslint-disable-next-line no-undef
+        window[variableKey] = variableValue;
         // Только с регулярным выражением заменяет всю строку
-        template = template.replace(new RegExp(templateMatch[0], 'gi'), variableValue);
+        template = template.replace(new RegExp(templateMatch[0], 'gi'), `${variableKey}()`);
+        // Выходим из цикла
+        continue;
       }
+
+      // Только с регулярным выражением заменяет всю строку
+      template = template.replace(new RegExp(templateMatch[0], 'gi'), variableValue);
+
+      console.log(template);
     }
 
     // Если вхождений не будет, мы вернем изначальную строку

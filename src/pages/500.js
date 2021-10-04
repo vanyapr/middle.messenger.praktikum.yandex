@@ -1,13 +1,13 @@
+// Стили
+import '../styles/vendor/normalize.css';
+import '../styles/vendor/fonts/Inter/inter.css';
+import '../styles/components/root/root.scss';
+
 // Движок рендера
 import show from '../utils/render/index';
 
-// Стили
-import '../vendor/normalize.css';
-import '../vendor/fonts/Inter/inter.css';
-import '../components/root/root.scss';
-
 // Темплейт
-import { error } from '../components/error/index.js';
+import { error } from '../templates/components/error/index.js';
 
 show(
   error,

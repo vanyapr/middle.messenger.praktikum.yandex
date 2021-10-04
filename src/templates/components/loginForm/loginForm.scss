@@ -1,0 +1,129 @@
+.form {
+  padding: 48px 30px 30px;
+  background: #FFFFFF;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.14);
+  border-radius: 12px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 340px;
+  min-height: 450px;
+  box-sizing: border-box;
+
+  padding-bottom: 155px;
+
+  &__title {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 20px;
+    margin: 0;
+    text-align: center;
+    color: #1E1E1E;
+  }
+
+  &__fields {
+    margin-top: 42px;
+  }
+
+  &__group {
+    position: relative;
+
+    &:not(:last-of-type) {
+      margin-bottom: 16px;
+    }
+  }
+
+  &__label {
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 13px;
+    display: block;
+    margin: 0;
+    color: #999999;
+    position: absolute;
+    top: 50%;
+    left: 0;
+
+    transition: all ease-in-out .3s;
+  }
+
+  &__input {
+    display: block;
+    width: 100%;
+    font-weight: 500;
+    font-size: 13px;
+    color: #1E1E1E;
+    line-height: 27px;
+    border: none;
+    border-bottom: 1px solid #999;
+    // Отступ для перемещения лейбла
+    padding: 9px 0 0;
+
+    &:focus {
+      border-bottom: 1px solid #444;
+      outline: none;
+
+      &+.form__label {
+        font-size: 9px;
+        line-height: 9px;
+        top: 0;
+      }
+    }
+
+    &:not(:placeholder-shown) {
+      &+.form__label {
+        font-size: 9px;
+        line-height: 9px;
+        top: 0;
+      }
+    }
+
+    &:valid {
+      border-bottom: 1px solid #B1E693;
+    }
+  }
+
+  &__controls {
+    position: absolute;
+    bottom: 27px;
+    left: 30px;
+    right: 30px;
+  }
+
+  &__button {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background-color: #999;
+    font-size: 13px;
+    line-height: 13px;
+    text-align: center;
+    color: #FFFFFF;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+
+    &_state {
+      &_success {
+        background-color: #6ECB63;
+      }
+
+      &_error {
+        background-color: #CB6363;
+      }
+    }
+  }
+
+  &__link {
+    text-align: center;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 11px;
+    color: #6380CB;
+    display: block;
+    margin-top: 13px;
+  }
+}

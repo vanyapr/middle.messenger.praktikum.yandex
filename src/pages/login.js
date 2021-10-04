@@ -7,16 +7,14 @@ import '../styles/components/root/root.scss';
 import show from '../utils/render/index';
 
 // Темплейт
-import { error } from '../templates/components/error';
+import { loginForm } from '../templates/components/loginForm';
 
 show(
-  error,
+  loginForm,
   { status: 404,
-    title: 'Не туда попали',
-    buttonText: 'Назад к чатам',
-    action() {
-      window.history.back();
-    },
+    title: 'Авторизация',
+    buttonText: 'Войти',
+    linkText: 'Зарегистрироваться',
   },
 
   '#container',
