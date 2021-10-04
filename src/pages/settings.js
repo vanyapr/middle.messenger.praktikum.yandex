@@ -9,7 +9,9 @@ import show from '../utils/render/index';
 
 // Темплейт
 import { backButton } from '../templates/components/backButton';
-import { loginForm } from '../templates/components/loginForm';
+import { settings } from '../templates/components/settings';
+
+import image from '../templates/components/settings/avatar.jpg';
 
 show(
   backButton,
@@ -18,9 +20,16 @@ show(
     back() {
       window.history.back();
     },
-    avatar: './no-avatar.svg',
-    children: loginForm,
   },
 
+  '#container',
+);
+
+show(
+  settings,
+  {
+    name: 'Иван',
+    avatar: image,
+  },
   '#container',
 );
