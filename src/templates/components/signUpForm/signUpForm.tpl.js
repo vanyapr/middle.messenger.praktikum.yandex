@@ -12,12 +12,12 @@ const template = `
           <label for="email" class="label">Адрес электронной почты</label>
       </div>
       <div class="form__group">
-          <input class="input" name="name" id="name" type="text"  placeholder=" " required>
-          <label for="name" class="label">Ваше имя</label>
+          <input class="input" name="first_name" id="first_name" type="text"  placeholder=" " required>
+          <label for="first_name" class="label">Ваше имя</label>
       </div>
       <div class="form__group">
-          <input class="input" name="lastname" id="lastname" type="text"  placeholder=" " required>
-          <label for="lastname" class="label">Ваша фамилия</label>
+          <input class="input" name="last_name" id="last_name" type="text"  placeholder=" " required>
+          <label for="last_name" class="label">Ваша фамилия</label>
       </div>
       <div class="form__group">
           <input class="input" name="phone" id="phone" type="text"  placeholder=" " required>

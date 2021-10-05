@@ -3,16 +3,17 @@ import '../styles/vendor/normalize.css';
 import '../styles/vendor/fonts/Inter/inter.css';
 import '../styles/components/root/root.scss';
 import '../styles/components/container/container.scss';
+import '../styles/components/button/button.scss';
 
 // Движок рендера
 import show from '../utils/render/index';
 
 // Темплейт
 import { backButton } from '../templates/components/backButton';
-import { settings } from '../templates/components/settings';
+import { editSettings } from '../templates/components/editSettings';
 
 // Импорт картинок
-import image from '../templates/components/settings/avatar.jpg';
+import image from '../templates/components/editSettings/avatar.jpg';
 
 show(
   backButton,
@@ -27,18 +28,12 @@ show(
 );
 
 show(
-  settings,
+  editSettings,
   {
     name: 'Иван',
     avatar: image,
     back() {
       window.history.back();
-    },
-    editSettings() {
-      window.location.pathname = '/settings-edit.html';
-    },
-    editPassword() {
-      window.location.pathname = '/settings-password.html';
     },
   },
   '#container',

@@ -67,13 +67,84 @@
     color: #1E1E1E;
   }
 
-  &__group {
+  &__form {
+    margin-top: 60px;
+  }
 
+  &__group {
+    position: relative;
+
+    &:last-of-type {
+      .settings__button, .settings__value {
+        border-bottom: none;
+      }
+    }
   }
 
   &__label {
-
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 13px;
+    color: #1E1E1E;
   }
 
+  // Пропишу стиль отдельно потому что по БЭМ эти элементы не будут использованы вне блока
+  &__value {
+    display: block;
+    width: 100%;
+    font-weight: 500;
+    font-size: 13px;
+    box-sizing: border-box;
+    line-height: 13px;
+    border: none;
+    border-bottom: 1px solid #FBF4E9;
+    text-align: right;
+    padding: 10px 0;
+    color: #999;
 
+    &:focus {
+      outline: none;
+      border-bottom: 1px solid #444;
+      color: #1E1E1E;
+    }
+  }
+
+  &__controls {
+    margin-top: 50px;
+
+    &_type_button {
+      margin: 50px auto 0;
+      max-width: 280px;
+    }
+  }
+
+  &__button {
+    display: block;
+    width: 100%;
+    font-weight: 500;
+    font-size: 13px;
+    box-sizing: border-box;
+    line-height: 13px;
+    border: none;
+    border-bottom: 1px solid #FBF4E9;
+    text-align: left;
+    padding: 10px 0;
+    background: transparent;
+    color: #6380CB;
+    cursor: pointer;
+
+    &:hover {
+      opacity: .85;
+    }
+
+    &_color {
+      &_red {
+        color: #CB6363;
+      }
+    }
+  }
 }

@@ -10,41 +10,33 @@ const template = `
       <h1 class="settings__title">{{ name }}</h1>
       <div class="settings__form">
         <div class="settings__group">
-          <div class="settings__value">testuser</div>
+          <input class="settings__value" name="login" id="login" type="text" placeholder=" " value="testuser" required>
           <label for="login" class="settings__label">Имя пользователя</label>
         </div>
         <div class="settings__group">
-          <div class="settings__value">noreply@example.com</div>
+          <input class="settings__value" name="email" id="email" type="text" placeholder=" " value="noreply@example.com" required>
           <label for="email" class="settings__label">Адрес электронной почты</label>
         </div>
         <div class="settings__group">
-          <div class="settings__value">Иван</div>
+          <input class="settings__value" name="display_name" id="display_name" type="text" placeholder=" " value="Иван" required>
           <label for="display_name" class="settings__label">Имя в чате (никнейм)</label>
         </div>
         <div class="settings__group">
-          <div class="settings__value">Иван</div>
+          <input class="settings__value" name="first_name" id="first_name" type="text" placeholder=" " value="Иван" required>
           <label for="first_name" class="settings__label">Ваше имя</label>
         </div>
         <div class="settings__group">
-          <div class="settings__value">Иванов</div>
+          <input class="settings__value" name="last_name" id="last_name" type="text" placeholder=" " value="Иванов" required>
           <label for="last_name" class="settings__label">Ваша фамилия</label>
         </div>
         <div class="settings__group">
-          <div class="settings__value">8 (213) 123-45-67</div>
+          <input class="settings__value" name="phone" id="phone" type="text" placeholder=" " value="8 (213) 123-45-67" required>
           <label for="phone" class="settings__label">Номер телефона</label>
         </div>
       </div>
 
-      <div class="settings__controls">
-        <div class="settings__group">
-          <button class="settings__button" onclick="{{ editSettings }}">Изменить данные</button>
-        </div>
-        <div class="settings__group">
-          <button class="settings__button" onclick="{{ editPassword }}">Изменить пароль</button>
-        </div>
-        <div class="settings__group">
-          <button class="settings__button settings__button_color_red"  onclick="{{ back }}">Выйти</button>
-        </div>
+      <div class="settings__controls settings__controls_type_button">
+        <button class="button button_state_success" onclick="{{ back }}">Сохранить</button>
       </div>
     </div>
   </section>
