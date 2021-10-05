@@ -5,52 +5,23 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Мессенджер</title>
-    <style>
-        .outer {
-            width: 666px;
-            padding: 10px 0px;
-            background-color: #1A1B22;
-            color: #fff;
-        }
-
-        .inner {
-            margin-left: 100px;
-            margin-right: 300px;
-            width: 300px;
-            background-color: #1162FB;
-        }
-    </style>
 </head>
 <body id="root">
-<div class="outer">
-    outer
-    <div class="inner">
-        inner
-    </div>
-</div>
-<script>
-    const list = ['11111', '2222', '3333'];
+<main id="container">
+  <h1>Список экранов приложения</h1>
+  <nav>
+    <ul>
+      <li><a href="/">Главный экран</a></li>
+      <li><a href="./login.html">Авторизация</a></li>
+      <li><a href="./sign-up.html">Регистрация</a></li>
+      <li><a href="./settings.html">Настройки</a></li>
+      <li><a href="./settings-edit.html">Редактирование информации</a></li>
+      <li><a href="./settings-password.html">Редактирование пароля</a></li>
+      <li><a href="./500.html">500</a></li>
+      <li><a href="./404.html">404</a></li>
+    </ul>
+  </nav>
+</main>
 
-    const renderList = (itemsContent) => {
-        const ul = document.createElement('ul');
-
-        itemsContent.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            li.className ='test-li';
-            ul.appendChild(li);
-        });
-
-        return ul;
-    }
-
-    document.body.appendChild(renderList(list));
-</script>
-
-<script type="module">
-    // import {sum} from '../src/modules/sum.js';
-    // const root = document.querySelector('#root');
-    // root.textContent = sum(3, 5, 9).toString();
-</script>
 </body>
 </html>

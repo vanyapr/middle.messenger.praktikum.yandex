@@ -5,6 +5,7 @@
   "main": "build/index.html",
   "source": "static/index.html",
   "targets": {
+    "main": false,
     "default": {
       "distDir": "./build"
     }
@@ -12,13 +13,20 @@
   "scripts": {
     "start": "nodemon index.js",
     "dev": "parcel --dist-dir build",
-    "build": "parcel build --dist-dir build"
+    "build": "rm -rf ./build && parcel build --dist-dir build"
   },
   "author": "Ivan Proksuriakov",
   "license": "ISC",
   "devDependencies": {
+    "@parcel/transformer-image": "^2.0.0-rc.0",
+    "@parcel/transformer-sass": "^2.0.0-rc.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "fibers": "^5.0.0",
     "parcel": "^2.0.0-rc.0",
-    "sass": "^1.42.1"
+    "sass": "^1.42.1",
+    "sass-loader": "^12.1.0"
   },
   "dependencies": {
     "express": "^4.17.1",
