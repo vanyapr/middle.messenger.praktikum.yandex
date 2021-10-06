@@ -6,16 +6,16 @@ import '../styles/components/container/container.scss';
 import '../styles/components/button/button.scss';
 
 // Движок рендера
-import show from '../utils/render/index';
+import render from '../utils/render';
 
 // Темплейт
 import { backButton } from '../templates/components/backButton';
 import { editPassword } from '../templates/components/editPassword';
 
 // Импорт картинок
-import image from '../templates/components/editSettings/avatar.jpg';
+import image from '../../static/avatar.jpg';
 
-show(
+render(
   backButton,
   {
     buttonText: 'Вернуться назад',
@@ -27,7 +27,7 @@ show(
   '#container',
 );
 
-show(
+render(
   editPassword,
   {
     name: 'Иван',

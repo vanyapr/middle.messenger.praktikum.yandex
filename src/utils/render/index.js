@@ -10,11 +10,16 @@ const buildTemplate = (template, data, containerSelector) => {
   // Контейнер для рендера
   const renderContainer = document.querySelector(containerSelector);
 
-  // Создали экземпляр рендерера
-  const renderer = new Render(renderContainer);
+  // Если контейнер не найден, мы выведем в консоль ошибку
+  if (renderContainer) {
+    // Создали экземпляр рендерера
+    const renderer = new Render(renderContainer);
 
-  // Отобразили данные на станице
-  renderer.render(compiledTemplate);
+    // Отобразили данные на станице
+    renderer.render(compiledTemplate);
+  } else {
+    console.log('Контейнер для рендера не найден');
+  }
 };
 
 export default buildTemplate;

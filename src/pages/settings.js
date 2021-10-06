@@ -5,16 +5,16 @@ import '../styles/components/root/root.scss';
 import '../styles/components/container/container.scss';
 
 // Движок рендера
-import show from '../utils/render/index';
+import render from '../utils/render';
 
 // Темплейт
 import { backButton } from '../templates/components/backButton';
 import { settings } from '../templates/components/settings';
 
 // Импорт картинок
-import image from '../templates/components/settings/avatar.jpg';
+import image from '../../static/avatar.jpg';
 
-show(
+render(
   backButton,
   {
     buttonText: 'Вернуться назад',
@@ -26,7 +26,7 @@ show(
   '#container',
 );
 
-show(
+render(
   settings,
   {
     name: 'Иван',

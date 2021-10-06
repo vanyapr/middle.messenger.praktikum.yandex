@@ -5,12 +5,12 @@ import '../styles/components/root/root.scss';
 import '../styles/components/container/container.scss';
 
 // Движок рендера
-import show from '../utils/render/index';
+import render from '../utils/render';
 
 // Темплейт
 import { loginForm } from '../templates/components/signUpForm';
 
-show(
+render(
   loginForm,
   {
     title: 'Регистрация',

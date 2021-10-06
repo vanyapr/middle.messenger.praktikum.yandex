@@ -63,8 +63,6 @@ class Compiler {
         template = template.replaceAll(templateMatch, `${variableKey}()`);
       }
 
-      console.log(variableValue);
-
       // Заменяем все вхождения в темплейте
       template = template.replaceAll(templateMatch, variableValue);
     });

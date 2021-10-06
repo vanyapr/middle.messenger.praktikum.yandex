@@ -5,12 +5,12 @@ import '../styles/components/root/root.scss';
 import '../styles/components/container/container.scss';
 
 // Движок рендера
-import show from '../utils/render/index';
+import render from '../utils/render';
 
 // Темплейт
 import { error } from '../templates/components/error';
 
-show(
+render(
   error,
   { status: 404,
     title: 'Не туда попали',
