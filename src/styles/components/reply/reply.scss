@@ -1,0 +1,66 @@
+.reply {
+  padding: 20px 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+
+  &__author {
+    border-radius: 50%;
+    grid-area: author;
+  }
+
+  &__box {
+    grid-area: messages;
+    padding: 15px;
+    background: #e6ffd8;
+    margin: 0 47px 0 0;
+    max-width: 60%;
+    position: relative;
+    border-radius: 6px;
+    width: fit-content;
+
+    &:first-of-type {
+      border-radius: 6px 0 6px 6px;
+      margin: -30px 47px 0 0;
+
+      &::before {
+        position: absolute;
+        right: -9px;
+        top: 0;
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 9px 9px 0 0;
+        border-color: #e6ffd8 transparent transparent transparent;
+      }
+    }
+
+    img {
+      max-width: 30vw;
+      height: auto;
+      display: block;
+    }
+  }
+
+  &__image {
+    margin: 0;
+  }
+
+  &__date {
+    margin: 6px 47px 6px 0;
+    font-size: 9px;
+    line-height: 9px;
+    color: #999;
+
+    &_state {
+
+      &_viewed {
+        padding-left: 10px;
+        background-image: url('./check.svg');
+        background-repeat: no-repeat;
+        background-position: left center;
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+.search {
+  height: 53px;
+  border-bottom: 1px solid #fbf4e9;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+
+  &__input {
+    line-height: 33px;
+    padding: 0 15px 0 27px;
+    display: block;
+    width: 100%;
+    margin: 0;
+    height: 33px;
+    box-sizing: border-box;
+    background: #efefef;
+    border-radius: 8px;
+    border: none;
+    color: #444;
+    background-image: url('./search.svg');
+    background-repeat: no-repeat;
+    background-position: 8px center;
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+}

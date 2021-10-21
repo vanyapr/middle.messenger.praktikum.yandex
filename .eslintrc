@@ -1,6 +1,9 @@
 {
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "extends": "airbnb-base",
-  //  "parser": "babel-eslint", // Для JS
   "parser": "@typescript-eslint/parser", // Для TS
   "plugins": ["@typescript-eslint"],  // Для TS
   "rules": {
@@ -9,10 +12,7 @@
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off",
     "import/extensions": "off",
-    "import/no-unresolved": [
-      2,
-      { "caseSensitive": false }
-    ],
+    "import/no-unresolved": "off",
     "import/newline-after-import": "off",
     "no-console": "off",
     "no-useless-escape": "off"

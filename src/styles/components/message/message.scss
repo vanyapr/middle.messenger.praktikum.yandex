@@ -1,0 +1,52 @@
+.message {
+  padding: 20px 20px 0;
+
+  &__author {
+    border-radius: 50%;
+  }
+
+  &__box {
+    padding: 15px;
+    background: #fff;
+    margin: 0 0 0 47px;
+    max-width: 60%;
+    position: relative;
+    border-radius: 6px;
+    width: fit-content;
+
+    &:first-of-type {
+      border-radius: 0 6px 6px 6px;
+      margin: -30px 0 0 47px;
+
+      &::before {
+        position: absolute;
+        left: -9px;
+        top: 0;
+        content: '';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 9px 9px 0;
+        border-color: transparent #fff transparent transparent;
+      }
+    }
+
+    img {
+      max-width: 30vw;
+      height: auto;
+      display: block;
+    }
+  }
+
+  &__image {
+    margin: 0;
+  }
+
+  &__date {
+    margin: 6px 0 6px 47px;
+    font-size: 9px;
+    line-height: 9px;
+    color: #999;
+  }
+}
+
