@@ -1,7 +1,8 @@
 // Где-то нужно описать стили для body
+
 #root {
   font-size: 12px;
-  color: #1E1E1E;
+  color: #1e1e1e;
   line-height: 150%;
   // Не буду везде прописывать шрифт, потому что он отлично наследуется
   font-family: 'Inter', sans-serif;
@@ -19,7 +20,7 @@
   min-width: 320px;
   margin: 0;
   padding: 0;
-  background-color: #FBF4E9;
+  background-color: #fbf4e9;
   //background-image: url(./img.png);
   //background-size: 25%;
   background-repeat: repeat;

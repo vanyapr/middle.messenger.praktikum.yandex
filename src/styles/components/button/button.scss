@@ -7,22 +7,23 @@
   font-size: 13px;
   line-height: 13px;
   text-align: center;
-  color: #FFFFFF;
+  color: #fff;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
 
   &:hover {
-    opacity: .85;
+    opacity: 0.85;
   }
 
   &_state {
+
     &_success {
-      background-color: #6ECB63;
+      background-color: #6ecb63;
     }
 
     &_error {
-      background-color: #CB6363;
+      background-color: #cb6363;
     }
   }
 }

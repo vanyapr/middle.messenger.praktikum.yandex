@@ -7,17 +7,17 @@
     background: #fff;
     text-indent: -9000px;
     border: none;
-    border-right: 1px solid #FBF4E9;
+    border-right: 1px solid #fbf4e9;
     width: 100%;
     height: 100%;
     background-image: url('./back.svg');
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
-    transition: all ease-in-out .3s;
+    transition: all ease-in-out 0.3s;
 
     &:hover {
-      background-color: #FBFBFB;
+      background-color: #fbfbfb;
     }
   }
 }
