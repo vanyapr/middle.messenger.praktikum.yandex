@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "dist",
@@ -13,6 +16,7 @@
       "es6",
       "es2015.promise",
       "es2016.array.include",
+      "es2021",
       "dom"
     ]
   }

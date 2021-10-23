@@ -15,6 +15,8 @@
     "import/no-unresolved": "off",
     "import/newline-after-import": "off",
     "no-console": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "no-unused-vars": "off",
+    "max-classes-per-file": "off"
   }
 }

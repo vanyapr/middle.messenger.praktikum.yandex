@@ -1,33 +1,51 @@
-import app from '../templates/components/app';
+import App from '../components/app';
 
 // Стили
 import '../styles/vendor/normalize.css';
 import '../styles/vendor/fonts/Inter/inter.css';
 import '../styles/components/root/root.scss';
 import '../styles/components/container/container.scss';
+
 import '../styles/components/sidebar/sidebar.scss';
-import '../styles/components/search/search.scss';
-import '../styles/components/controls/controls.scss';
 import '../styles/components/main/main.scss';
-import '../styles/components/header/header.scss';
-import '../styles/components/inputs/inputs.scss';
 import '../styles/components/button/button.scss';
-import '../styles/components/messages/messages.scss';
-import '../styles/components/message/message.scss';
-import '../styles/components/reply/reply.scss';
-import '../styles/components/chats/chats.scss';
-import '../styles/components/chat/chat.scss';
 
 // @ts-ignore
 import avatar from '../../static/avatar.jpg';
+import Chats from '../components/chats/chats';
+import Search from '../components/search/search';
+import Header from '../components/header/header';
+import Controls from '../components/controls/controls';
+import Inputs from '../components/inputs/inputs';
+import Messages from '../components/messages/messages';
 
-// Движок рендера
-import render from '../utils/render';
+const chats = new Chats({
+  avatar,
+});
 
-render(
-  app,
-  {
-    avatar,
-  },
-  '#container',
-);
+const search = new Search();
+
+const header = new Header({
+  title: 'Заголовок чата будет здесь!',
+});
+
+const controls = new Controls();
+
+const inputs = new Inputs();
+
+const messages = new Messages({
+  avatar,
+});
+
+// Экстендим базовый класс
+// @ts-ignore
+const app = new App({
+  avatar,
+  search,
+  chats,
+  controls,
+  header,
+  messages,
+  inputs,
+},
+'#container');
