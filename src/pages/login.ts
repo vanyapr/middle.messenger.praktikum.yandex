@@ -14,11 +14,12 @@ const loginForm = new LoginForm({
   buttonText: 'Войти',
   linkText: 'Зарегистрироваться',
   handleSubmit() {
-    console.log('clicked');
+    console.log('Form hovered');
     console.log(this);
   },
   handleHover() {
     console.log('hovered');
+    console.log(this);
   },
 },
 

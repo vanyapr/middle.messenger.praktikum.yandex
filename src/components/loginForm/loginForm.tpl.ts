@@ -1,5 +1,5 @@
 const template = `
-  <form class="form" onfocus="{{ handleSubmit }}" novalidate>
+  <form class="form" onmouseover="{{ handleSubmit }}" novalidate>
     <h1 class="form__title">{{ title }}</h1>
 
     <div class="form__fields">

@@ -3,9 +3,16 @@ import { v4 as makeUUID } from 'uuid';
 import Block from '../Block/Block';
 import EventBus from '../EventBus/EventBus';
 
+type TListeners = {
+  [key: string]: {
+    type: string,
+    method: any
+  }
+}
+
 // Возвратит строку темплейта и объект листенеров
 interface ICompiler {
-  compile(): { compiledTemplate: string; listeners: Record<string, Function> }
+  compile(): { compiledTemplate: string; listeners: TListeners }
 }
 
 type TEvents = {
@@ -13,9 +20,9 @@ type TEvents = {
 };
 
 // TODO:
-// 1) Итерируется по темплейту
-// 2) При нахождении тега добавляется соответсвтующий элемент
-// 3) Функции заменить на листенеры
+// 1) +Итерируется по темплейту
+// 2) +При нахождении тега добавляется соответсвтующий элемент
+// 3) +Функции заменить на листенеры
 // 4) +Учитывает вложенность дочерних компонентов
 
 // Принимает темплейт и данные, возвращает темплейт, заполненный данными
@@ -34,7 +41,7 @@ class Compiler implements ICompiler {
   private _templateData: any;
 
   // Массив с функциями, которые мы будем вызывать
-  private _events: Record<string, Function>;
+  private _events: TListeners;
 
   // Регулярное выражение
   _regExp: RegExp;
@@ -205,7 +212,15 @@ class Compiler implements ICompiler {
         // Саму функцию запишем в объект под идентификатором {УНИКАЛЬНЫЙ ID: функция}
         // После рендера для всего объекта идентификаторов выполним добавление событий
         if (!this._events[uuid]) {
-          this._events[uuid] = this._getValue(variableKey);
+          const type = eventType[0].replace('=', '');
+
+          const method = this._getValue(variableKey);
+
+          // Добавили событие по ключу
+          this._events[uuid] = {
+            method,
+            type,
+          };
         }
       } else {
         throw new Error('Не удалось вычислить переменную в шаблоне');
