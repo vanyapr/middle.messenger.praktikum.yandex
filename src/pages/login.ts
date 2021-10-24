@@ -6,11 +6,20 @@ import '../styles/components/container/container.scss';
 
 import LoginForm from '../components/loginForm';
 
+// Передадим в пропс функцию обработчик сабмита формы
+
 // @ts-ignore
 const loginForm = new LoginForm({
   title: 'Авторизация',
   buttonText: 'Войти',
   linkText: 'Зарегистрироваться',
+  handleSubmit() {
+    console.log('clicked');
+    console.log(this);
+  },
+  handleHover() {
+    console.log('hovered');
+  },
 },
 
 '#container');

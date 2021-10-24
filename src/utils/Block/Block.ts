@@ -1,4 +1,4 @@
-import EventBus from './EventBus';
+import EventBus from '../EventBus/EventBus';
 
 // Тип для событий
 type TEvents = {
@@ -17,22 +17,8 @@ interface IBlock {
   setProps(newProps: TProps): void,
 }
 
-// Класс должен принимать в конструктор темплейт, и пропсы, рендер
-// 1) Создается разметка +
-// 2) Вешаются листенеры изменения пропсов
-// 3) Возвращается разметка с листенерами
+// Класс рендерит элемент с эвентбасом и методами
 export default class Block implements IBlock {
-  private static instance: Block;
-
-  // Делаем синглтон, чтобы рендер срабатывал даже при вызове вложенных классов
-  public static getInstance(): Block {
-    if (!Block.instance) {
-      Block.instance = new Block();
-    }
-
-    return Block.instance;
-  }
-
   // Статическое поле общее для всех экземпляров класса
   static EVENTS: TEvents = {
     INIT: 'init',
@@ -40,9 +26,6 @@ export default class Block implements IBlock {
     COMPONENT_DID_UPDATE: 'component-did-update',
     RENDER: 'render',
   };
-
-  // Поле для элемента
-  _element: string | null = null;
 
   // Поле для пропсов
   props: object;
@@ -54,7 +37,7 @@ export default class Block implements IBlock {
   container: string | null;
 
   // Кеш пропсов компонента
-  _meta: {};
+  private _meta: {};
 
   constructor(props: TProps = {}, container: string | null = null) {
     // Объявили экземпляр эвент баса
@@ -76,7 +59,7 @@ export default class Block implements IBlock {
     this.eventBus.emit(Block.EVENTS.INIT);
   }
 
-  _registerEvents(): void {
+  private _registerEvents(): void {
     // Bind this делается потому что функция не стрелочная
     // Здесь объявляются триггеры для вызова события
     this.eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
@@ -94,7 +77,7 @@ export default class Block implements IBlock {
   }
 
   // 3
-  _componentDidMount() {
+  private _componentDidMount() {
     console.log('component Did Mount');
     // Вызвали монтирование компонента
     this.componentDidMount();
@@ -107,7 +90,7 @@ export default class Block implements IBlock {
   componentDidMount() {}
 
   // Эмитится когда обновляются пропсы
-  _componentDidUpdate(oldProps: TProps, newProps: TProps) {
+  private _componentDidUpdate(oldProps: TProps, newProps: TProps) {
     console.log('component Did Update');
     // Как сюда передать прошлые состояния пропсов?
     const response = this.componentDidUpdate(oldProps, newProps);
@@ -153,7 +136,7 @@ export default class Block implements IBlock {
   };
 
   // Вызываем рендер элемента
-  _render() {
+  private _render() {
     console.log('Вызвали рендер');
     console.log(this.container);
     // Создаст блок
@@ -163,7 +146,7 @@ export default class Block implements IBlock {
   // Может переопределять пользователь, необязательно трогать
   render(): void {}
 
-  _makePropsProxy(props: TProps) {
+  private _makePropsProxy(props: TProps) {
     // Можно и так передать this
     // Такой способ больше не применяется с приходом ES6+
     const self = this;

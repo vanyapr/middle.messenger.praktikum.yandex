@@ -8,7 +8,6 @@ import '../styles/components/container/container.scss';
 
 import '../styles/components/sidebar/sidebar.scss';
 import '../styles/components/main/main.scss';
-import '../styles/components/button/button.scss';
 
 // @ts-ignore
 import avatar from '../../static/avatar.jpg';

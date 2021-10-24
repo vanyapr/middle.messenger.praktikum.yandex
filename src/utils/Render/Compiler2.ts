@@ -1,16 +1,11 @@
 // @ts-ignore
 import { v4 as makeUUID } from 'uuid';
 import Block from '../Block/Block';
-import EventBus from '../EventBus/EventBus';
 
 // Возвратит строку темплейта и объект листенеров
 interface ICompiler {
   compile(): { compiledTemplate: string; listeners: Record<string, Function> }
 }
-
-type TEvents = {
-  [key: string]: string
-};
 
 // TODO:
 // 1) Итерируется по темплейту
@@ -18,15 +13,10 @@ type TEvents = {
 // 3) Функции заменить на листенеры
 // 4) +Учитывает вложенность дочерних компонентов
 
+// type TEvents = {key?: string, value?: Function}
+
 // Принимает темплейт и данные, возвращает темплейт, заполненный данными
 class Compiler implements ICompiler {
-  static EVENTS: TEvents = {
-    INIT: 'init',
-    COLLECT_EVENTS: 'collectEvents',
-    RENDER: 'render',
-    COMPILE: 'compile',
-  };
-
   // Строка темплейта
   private _template: string;
 
@@ -42,9 +32,6 @@ class Compiler implements ICompiler {
   // Регулярное выражение для поиска функций
   _funcRegExp: RegExp;
 
-  // Экземпляр эвентбаса
-  eventBus: any;
-
   constructor(template: string, templateData: {}) {
     this._events = {};
     this._template = template;
@@ -53,31 +40,6 @@ class Compiler implements ICompiler {
     this._regExp = /{{\s*[\.a-zA-Z0-9]+\s*}}/gi;
     // Регулярное выражение которое будет искать объявление событий на элементах
     this._funcRegExp = /on[a-zA-Z]+=("|')\s*{{\s*[a-zA-Z]+\s*}}("|')/gi;
-
-    // Объявили экземпляр эвент баса
-    this.eventBus = new EventBus();
-
-    // Передали эвент бас в метод класса (зачем?)
-    this._registerEvents();
-
-    // Выполнили эвент инициализации
-    this.eventBus.emit(Compiler.EVENTS.INIT);
-  }
-
-  private _registerEvents(): void {
-    // Bind this делается потому что функция не стрелочная
-    // Здесь объявляются триггеры для вызова события
-    this.eventBus.on(Compiler.EVENTS.INIT, this.init.bind(this));
-    this.eventBus.on(Compiler.EVENTS.COLLECT_EVENTS, this._collectListeners.bind(this));
-    this.eventBus.on(Compiler.EVENTS.RENDER, this._fillTemplate.bind(this));
-    this.eventBus.on(Compiler.EVENTS.COMPILE, this.compile.bind(this));
-  }
-
-  // 1
-  init() {
-    console.log('Init');
-    // Заэмитили событие в эвент басе (монтирование компонента)
-    this.eventBus.emit(Compiler.EVENTS.COLLECT_EVENTS);
   }
 
   // Заменяем тэги <script> на <!script>
@@ -131,6 +93,7 @@ class Compiler implements ICompiler {
       // Для найденной переменной мы получаем значение, после чего в темплейте выполняем замену
       const variableValue = getValue(variableKey);
 
+      // FIXME: Код выполняется синхронно и эта функция конкурирует
       if (typeof variableValue === 'function') {
         // Записываем функцию в объект window
 
@@ -156,25 +119,28 @@ class Compiler implements ICompiler {
     });
 
     // Если вхождений не будет, мы вернем изначальную строку
-    this._template = template;
-
-    this.eventBus.emit(Compiler.EVENTS.COMPILE);
+    return template;
   }
 
   // Собираем вызовы событий
   private _collectListeners() {
-    // Создаем регулярное выражение, которое будет находить вхождения
-    // образец: ... onclick="{{a}}" onSubmit=' {{ b }}'
+    // TODO: Для функции
+    // +Создаем регулярное выражение, которое будет находить вхождения
+    // образец: ... onclick="{{asds}}" onSubmit=' {{ bsda }}'
 
-    const template = this._template;
+    let template = this._template;
     const regularExpression = this._funcRegExp;
 
     // Получили список переменных из итератора возвращенного методом matchAll
     // Чтобы не итерироваться повтороно, преобразуем массив в Set с уникальными значениями
-    const variablesToReplace = [...template.matchAll(regularExpression)].map((array) => array[0]);
+    const variablesToReplace = [...template.matchAll(regularExpression)];
 
-    const processedTemplate = variablesToReplace.reduce((templateString, uniqueVariable) => {
-      let result = '';
+    const vars = variablesToReplace.map((array) => array[0]);
+
+    console.log(vars);
+
+    vars.forEach((uniqueVariable) => {
+      template.replace(uniqueVariable, 'test');
 
       // Мы запишем на место вызова идентификатор блока
       // как data-{УНИКАЛЬНЫЙ ID}
@@ -183,13 +149,21 @@ class Compiler implements ICompiler {
 
       // Получим из строки подстроку с типом события для data-event
       const eventTypeRegexp = /[^on][a-zA-Z]+=/gim;
-      // Вернет строку вида 'onclick='
+      // Вернет строку вида onclick=
       const eventType = uniqueVariable.match(eventTypeRegexp);
 
+      // console.log(uniqueVariable);
+      // console.log(eventType);
+
+      // console.log(regularExpression.test(uniqueVariable));
+
       if (eventType) {
-        // Заменим вхождения в темплейт на тэг data
         const replace = `data-${eventType[0]}'${uuid}'`;
-        result = templateString.replaceAll(uniqueVariable, replace);
+        console.log(uniqueVariable);
+        console.log('=>');
+        console.log(replace);
+        template = template.replaceAll(uniqueVariable, replace);
+        // console.log(template);
       } else {
         throw new Error('Не удалось вычислить тип события');
       }
@@ -211,20 +185,17 @@ class Compiler implements ICompiler {
         throw new Error('Не удалось вычислить переменную в шаблоне');
       }
 
-      return result;
-    }, this._template);
+      template = this._template.replaceAll(uniqueVariable, `data-${eventType[0]}'${uuid}'`);
+    });
 
-    // console.log(processedTemplate);
-    this._template = processedTemplate;
-
-    // Вызвали заполнение темплейта
-    this.eventBus.emit(Compiler.EVENTS.RENDER);
+    this._template = template;
   }
 
   // Компилирует темплейт с использованием встроенных методов
   compile() {
     // Отсеиваем вызовы функций в темплейте
-    const compiledTemplate = this._template;
+    // this._collectListeners();
+    const compiledTemplate = this._fillTemplate();
     const listeners = this._events;
 
     // Заполняем темплейт данными и возвращаем его
