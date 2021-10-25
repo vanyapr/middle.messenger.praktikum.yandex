@@ -33,12 +33,20 @@
   &_state {
 
     &_valid {
-      border-bottom: 1px solid #b1e693;
+      border-bottom: 1px solid #b1e693 !important;
+
+      & + label + .form__error {
+        display: none;
+      }
     }
 
     &_invalid {
-      border-bottom: 1px solid #cb6363;
+      border-bottom: 1px solid #cb6363 !important;
       color: #cb6363;
+
+      & + label + .form__error {
+        display: block;
+      }
     }
   }
 }

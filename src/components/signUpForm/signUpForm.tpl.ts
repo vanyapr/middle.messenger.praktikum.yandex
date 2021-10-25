@@ -1,36 +1,42 @@
 const template = `
-  <form class="form">
+  <form class="form" onsubmit="{{ handleSubmit }}" novalidate>
     <h1 class="form__title">{{ title }}</h1>
 
     <div class="form__fields">
       <div class="form__group">
-          <input class="input input_state_valid" name="login" id="login" type="text" placeholder=" " value="testuser" required>
+          <input class="input" name="login" id="login" type="text" placeholder=" " onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ loginValidator }}" required>
           <label for="login" class="label">Имя пользователя</label>
+          <div class="form__error">Минимум 4 буквы, цифры или символа '-' и '_', </div>
       </div>
       <div class="form__group">
-          <input class="input" name="email" id="email" type="text"  placeholder=" " required>
+          <input class="input" name="email" id="email" type="text"  placeholder=" " onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ emailValidator }}" required>
           <label for="email" class="label">Адрес электронной почты</label>
+          <div class="form__error">Введите корректный адрес электронной почты</div>
       </div>
       <div class="form__group">
-          <input class="input" name="first_name" id="first_name" type="text"  placeholder=" " required>
+          <input class="input" name="first_name" id="first_name" type="text"  placeholder=" "  onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ nameValidator }}" required>
           <label for="first_name" class="label">Ваше имя</label>
+          <div class="form__error">Введите имя с Заглавной буквы</div>
       </div>
       <div class="form__group">
-          <input class="input" name="last_name" id="last_name" type="text"  placeholder=" " required>
+          <input class="input" name="last_name" id="last_name" type="text"  placeholder=" "  onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ nameValidator }}" required>
           <label for="last_name" class="label">Ваша фамилия</label>
+          <div class="form__error">Введите фамилию с Заглавной буквы</div>
       </div>
       <div class="form__group">
-          <input class="input" name="phone" id="phone" type="text"  placeholder=" " required>
+          <input class="input" name="phone" id="phone" type="text"  placeholder=" " onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ phoneValidator }}" required>
           <label for="phone" class="label">Номер телефона</label>
+          <div class="form__error">Минимум десять цифр</div>
       </div>
       <div class="form__group">
-          <input class="input" name="password" id="password" type="password"  placeholder=" " required>
+          <input class="input" name="password" id="password" type="password"  placeholder=" " onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
           <label for="password" class="label">Пароль</label>
+          <div class="form__error">Минимум 8 символов. Пароль должен содержать ЗАГЛАВНУЮ букву и цифру</div>
       </div>
       <div class="form__group">
-          <input class="input input_state_invalid" name="password2" id="password2" type="password"  placeholder=" " value="123" required>
+          <input class="input" name="password2" id="password2" type="password"  placeholder=" " onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
           <label for="password2" class="label">Пароль ещё раз</label>
-          <div class="form__error">Такой пароль уже использует пользователь <strong>Rickastley</strong></div>
+          <div class="form__error">Минимум 8 символов. Пароль должен содержать ЗАГЛАВНУЮ букву и цифру</div>
       </div>
     </div>
 

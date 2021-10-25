@@ -74,6 +74,7 @@
 
   &__group {
     position: relative;
+    padding-bottom: 18px;
 
     &:last-of-type {
 
@@ -86,7 +87,7 @@
 
   &__label {
     position: absolute;
-    bottom: 10px;
+    top: 10px;
     left: 0;
     font-style: normal;
     font-weight: 500;
@@ -97,7 +98,8 @@
 
   // Пропишу стиль отдельно потому что по БЭМ эти элементы не будут использованы вне блока
 
-  &__value {
+  &__value,
+  &__input {
     display: block;
     width: 100%;
     font-weight: 500;
@@ -115,6 +117,36 @@
       border-bottom: 1px solid #444;
       color: #1e1e1e;
     }
+
+    &_state {
+
+      &_valid {
+        border-bottom: 1px solid #b1e693 !important;
+
+        & + label + .settings__error {
+          display: none;
+        }
+      }
+
+      &_invalid {
+        border-bottom: 1px solid #cb6363 !important;
+        color: #cb6363;
+
+        & + label + .settings__error {
+          display: block;
+          color: #cb6363;
+          font-size: 10px;
+        }
+      }
+    }
+  }
+
+  &__error {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    text-align: right;
+    display: none;
   }
 
   &__controls {

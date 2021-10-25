@@ -26,16 +26,17 @@
 
   &__group {
     position: relative;
-    padding-bottom: 16px;
+    padding-bottom: 20px;
   }
 
   &__error {
+    display: none;
     position: absolute;
     color: #cb6363;
     font-size: 10px;
     line-height: 12px;
     left: 0;
-    top: 42px;
+    top: 40px;
   }
 
   &__controls {

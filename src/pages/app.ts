@@ -17,6 +17,8 @@ import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
 import Inputs from '../components/inputs/inputs';
 import Messages from '../components/messages/messages';
+import collectFormData from '../utils/collectFormData/collectFormData';
+import { notEmptyValidator } from '../settings/validators';
 
 const chats = new Chats({
   avatar,
@@ -46,5 +48,11 @@ const app = new App({
   header,
   messages,
   inputs,
+  notEmptyValidator,
+  handleSubmit(event: Event) {
+    event.preventDefault();
+    // Передали форму для сбора данных
+    collectFormData(this, 'inputs__input_state_valid', 'inputs__input_state_invalid');
+  },
 },
 '#container');

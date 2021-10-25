@@ -13,6 +13,11 @@ import EditPassword from '../components/editPassword';
 // @ts-ignore
 import image from '../../static/avatar.jpg';
 
+// Передадим в пропс функцию обработчик сабмита формы
+import collectFormData from '../utils/collectFormData/collectFormData';
+import { passwordValidator } from '../settings/validators';
+import validateInput from '../utils/validateInput/validateInput';
+
 // @ts-ignore
 const backButton = new BackButton({
   buttonText: 'Вернуться назад',
@@ -29,6 +34,15 @@ const editPassword = new EditPassword({
   avatar: image,
   back() {
     window.history.back();
+  },
+  handleSubmit(event: Event) {
+    event.preventDefault();
+    // Передали форму в обработчик
+    collectFormData(this, 'settings__value_state_valid', 'settings__value_state_invalid');
+  },
+  passwordValidator,
+  validate() {
+    validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid');
   },
 },
 '#container');

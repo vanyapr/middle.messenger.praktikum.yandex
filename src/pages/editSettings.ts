@@ -12,6 +12,14 @@ import EditSettings from '../components/editSettings';
 // Импорт картинок
 // @ts-ignore
 import image from '../../static/avatar.jpg';
+import collectFormData from '../utils/collectFormData/collectFormData';
+import validateInput from '../utils/validateInput/validateInput';
+import {
+  emailValidator,
+  loginValidator,
+  nameValidator,
+  passwordValidator, phoneValidator,
+} from '../settings/validators';
 
 // @ts-ignore
 const aside = new BackButton({
@@ -27,6 +35,19 @@ const aside = new BackButton({
 const main = new EditSettings({
   name: 'Иван',
   avatar: image,
+  loginValidator,
+  passwordValidator,
+  nameValidator,
+  emailValidator,
+  phoneValidator,
+  handleSubmit(event: Event) {
+    event.preventDefault();
+    // Передали форму для сбора данных
+    collectFormData(this, 'settings__value_state_valid', 'settings__value_state_invalid');
+  },
+  validate() {
+    validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid');
+  },
   back() {
     window.history.back();
   },
