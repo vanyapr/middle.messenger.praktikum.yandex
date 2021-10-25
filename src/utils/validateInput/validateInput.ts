@@ -14,8 +14,8 @@ function validateInput(input: HTMLFormElement, validClass: string, invalidClass:
     // Если инпут валиден, вернем true
     // Если невалиден - false
 
-    console.log(result);
-    console.log(validator);
+    // console.log(result);
+    // console.log(validator);
 
     if (result) {
       // Если значения валидны, будем добавлять класс (valid)
