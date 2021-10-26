@@ -71,14 +71,12 @@ export default class Block implements IBlock {
 
   // 1
   init() {
-    console.log('Init');
     // Заэмитили событие в эвент басе (монтирование компонента)
     this.eventBus.emit(Block.EVENTS.COMPONENT_DID_MOUNT);
   }
 
   // 3
   private _componentDidMount() {
-    console.log('component Did Mount');
     // Вызвали монтирование компонента
     this.componentDidMount();
 
@@ -91,26 +89,21 @@ export default class Block implements IBlock {
 
   // Эмитится когда обновляются пропсы
   private _componentDidUpdate(oldProps: TProps, newProps: TProps) {
-    console.log('component Did Update');
     // Как сюда передать прошлые состояния пропсов?
     const response = this.componentDidUpdate(oldProps, newProps);
 
     // Если значения в объекте изменились
-    console.log(response);
     if (response) {
-      console.log('Апдейт пропсов');
       // 1) Запишем "текущие значения" в кеш this._meta
       this._meta = Object.assign(this._meta, this.props);
       // 2) Вызовем перерендер
       this._render();
     } else {
-      console.log('Нечего обновлять');
     }
   }
 
   // Может переопределять пользователь
   componentDidUpdate(oldProps: {}, newProps: {}) {
-    console.log(oldProps, newProps);
     // Функция сравнения компонентов
     function isUpdateRequired(object1: TProps, object2: TProps) {
       // Если разное число лючей, вернет true
@@ -137,8 +130,6 @@ export default class Block implements IBlock {
 
   // Вызываем рендер элемента
   private _render() {
-    console.log('Вызвали рендер');
-    console.log(this.container);
     // Создаст блок
     this.render();
   }
@@ -150,8 +141,6 @@ export default class Block implements IBlock {
     // Можно и так передать this
     // Такой способ больше не применяется с приходом ES6+
     const self = this;
-
-    console.log('Срабатывание прокси');
 
     // Создаем прокси и записываем в this.props
     return new Proxy(props, {

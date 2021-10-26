@@ -28,9 +28,6 @@ const render = (template: string, data: {}, containerSelector: TSelector): void 
       // Получим элемент
       const elements = document.querySelectorAll(query);
 
-      // console.log(query);
-      // console.log(element);
-
       if (elements.length > 0) {
         elements.forEach((element) => {
           // Если элемент найден, повесим на него листенеры

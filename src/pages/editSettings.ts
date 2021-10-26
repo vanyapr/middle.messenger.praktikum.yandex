@@ -25,7 +25,6 @@ import {
 const aside = new BackButton({
   buttonText: 'Вернуться назад',
   back() {
-    console.log('test');
     window.history.back();
   },
 },

@@ -5,17 +5,12 @@ function validateInput(input: HTMLFormElement, validClass: string, invalidClass:
   // Будем собирать регулярки с элементов и проверять значения
   const validator = input.getAttribute('pattern');
 
-  console.log(input);
-
   if (validator) {
     const regExp: RegExp = new RegExp(validator);
     // Вернём результат проверки регулярного выражения
     const result = regExp.test(input.value);
     // Если инпут валиден, вернем true
     // Если невалиден - false
-
-    // console.log(result);
-    // console.log(validator);
 
     if (result) {
       // Если значения валидны, будем добавлять класс (valid)

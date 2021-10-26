@@ -30,7 +30,6 @@ const settings = new Settings({
     window.history.back();
   },
   editSettings() {
-    console.log('test');
     window.location.pathname = '/settings-edit.html';
   },
   editPassword() {

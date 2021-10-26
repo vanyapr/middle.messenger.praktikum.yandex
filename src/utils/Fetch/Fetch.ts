@@ -28,10 +28,6 @@ function queryStringify(data: string): string | void {
     // Можно делать трансформацию GET-параметров в отдельной функции
     const flatObject = Object.keys(data).map((key) => `${key}=${data[key]}`);
 
-    console.log(flatObject);
-
-    // console.log(concatObject);
-
     const queryString = flatObject.reduce((concatenation, pair, index) => {
       let prefix = '';
       if (index > 0) {
@@ -69,12 +65,15 @@ class HTTPTransport {
   };
 
   // PUT, POST, DELETE
+  // eslint-disable-next-line max-len
   delete = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.DELETE }, options.timeout)
 
   // PUT, POST, DELETE
+  // eslint-disable-next-line max-len
   post = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.POST }, options.timeout)
 
   // PUT, POST, DELETE
+  // eslint-disable-next-line max-len
   put = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.PUT }, options.timeout)
 
   // options:

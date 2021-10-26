@@ -82,7 +82,6 @@ class Compiler implements ICompiler {
 
   // 1
   init() {
-    console.log('Init');
     // Заэмитили событие в эвент басе (монтирование компонента)
     this.eventBus.emit(Compiler.EVENTS.COLLECT_EVENTS);
   }
@@ -97,7 +96,6 @@ class Compiler implements ICompiler {
   // Очищает строку от брекетов и пробелов
   private _cleanString = (stringWithBrackets: string): string => {
     const result = stringWithBrackets.replace(/[\{\}\s]*/g, '');
-    // console.log(result);
     return this._escapeScripts(result);
   }
 
@@ -204,8 +202,6 @@ class Compiler implements ICompiler {
       // Получили ключ, по которому получим функцию
       const variableBrackets = uniqueVariable.match(this._regExp);
 
-      // console.log(variableBrackets);
-
       if (variableBrackets) {
         const variableKey = this._cleanString(variableBrackets[0]);
 
@@ -229,7 +225,6 @@ class Compiler implements ICompiler {
       return result;
     }, this._template);
 
-    // console.log(processedTemplate);
     this._template = processedTemplate;
 
     // Вызвали заполнение темплейта
