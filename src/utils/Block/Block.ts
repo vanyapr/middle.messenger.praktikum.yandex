@@ -98,7 +98,6 @@ export default class Block implements IBlock {
       this._meta = Object.assign(this._meta, this.props);
       // 2) Вызовем перерендер
       this._render();
-    } else {
     }
   }
 
