@@ -6,11 +6,15 @@ type TSelector = string | null | undefined;
 // Функция - рендерер
 const render = (template: string, data: {}, containerSelector: TSelector): void | string => {
   // Заполняем темплейт данными
-  const compiler = new Compiler(template, data);
+  const templateInstance = new Compiler(template, data).compile();
 
   // Тут мы получаем теперь объект из двух частей: {темплейт, листенеры}
-  const { compiledTemplate, listeners } = compiler.compile();
+  // const { compiledTemplate, listeners } = compiler.compile();
 
+  const listeners = templateInstance.getListeners();
+  const compiledTemplate = templateInstance.get();
+
+  // TODO: Вынести в отдельный файл
   // Если не передан аргумент с контейнером, то элемент будет просто возвращён
   if (containerSelector) {
     // Контейнер для рендера
@@ -28,7 +32,7 @@ const render = (template: string, data: {}, containerSelector: TSelector): void 
       // Получим элемент
       const elements = document.querySelectorAll(query);
 
-      if (elements.length > 0) {
+      if (elements.length) {
         elements.forEach((element) => {
           // Если элемент найден, повесим на него листенеры
           element.addEventListener(listeners[key].type, listeners[key].method);
