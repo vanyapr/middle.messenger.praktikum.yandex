@@ -16,9 +16,8 @@ export default class Renderer {
       throw new Error('Контейнер рендера с указанным селектором не найден');
     }
 
-    // Удаляем содержимое контейнера перед рендером
-    // FIXME: При изменении пропсов надо заменять содержимое контейнера
-    // this._renderContainer.innerHTML = '';
+    // Удаляем содержимое контейнера перед новым рендером
+    this._renderContainer.innerHTML = '';
 
     // Рендер (пока что просто добавляем хтмл на страницу)
     this._renderContainer.insertAdjacentHTML('beforeend', HTML);
