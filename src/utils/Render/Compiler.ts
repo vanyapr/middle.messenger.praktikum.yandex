@@ -34,8 +34,8 @@ class Compiler implements ICompiler {
   // Экземпляр эвентбаса
   eventBus: any;
 
-  constructor(template: string, templateData: {}) {
-    this._template = new Template(template, templateData);
+  constructor(template: string, templateData: {}, containerSelector?: string | null | undefined) {
+    this._template = new Template(template, templateData, containerSelector);
 
     // Объявили экземпляр эвент баса
     this.eventBus = new EventBus();

@@ -1,6 +1,7 @@
 import EventBus from '../EventBus/EventBus';
 import Template from '../Render/Template';
-import isEqual from '../isEqual'; // Сравнивает объекты
+import isEqual from '../isEqual';
+import Render from '../Render/Render'; // Сравнивает объекты
 
 // Тип для событий
 type TEvents = {
@@ -27,6 +28,8 @@ export default class Block implements IBlock {
     COMPONENT_DID_MOUNT: 'component-did-mount',
     COMPONENT_DID_UPDATE: 'component-did-update',
     RENDER: 'render',
+    DISPLAY_HTML: 'display-html',
+    ADD_LISTENERS: 'add-listeners',
   };
 
   // Поле для пропсов
@@ -72,6 +75,8 @@ export default class Block implements IBlock {
     this.eventBus.on(Block.EVENTS.RENDER, this._render.bind(this));
     // Апдейт компонента
     this.eventBus.on(Block.EVENTS.COMPONENT_DID_UPDATE, this._componentDidUpdate.bind(this));
+    this.eventBus.on(Block.EVENTS.DISPLAY_HTML, this._addHtml.bind(this));
+    this.eventBus.on(Block.EVENTS.ADD_LISTENERS, this._setListeners.bind(this));
   }
 
   // 1
@@ -134,8 +139,7 @@ export default class Block implements IBlock {
         // eslint-disable-next-line no-param-reassign
         target[property] = value;
 
-        // Заэмитили событие, которое не сработает???
-        // eslint-disable-next-line max-len
+        // Заэмитили событие
         self.eventBus.emit(Block.EVENTS.COMPONENT_DID_UPDATE, self._meta, reciever);
 
         // Возвратим true как того требует метод
@@ -148,19 +152,50 @@ export default class Block implements IBlock {
     });
   }
 
-  // Устанавливает листенеры в отрендеренный темплейт
+  // Устанавливает слушатели в отрендеренный темплейт
   private _setListeners() {
+    const listenersList = Object.entries(this._template.getListeners());
 
+    listenersList.forEach(([key, value]) => {
+      // Вычислим селектор элемента на основании объекта
+      const query = `[data-${value.type}="${key}"]`;
+
+      // Получим элемент
+      const elements = document.querySelectorAll(query);
+
+      if (elements.length) {
+        elements.forEach((element) => {
+          // Если элемент найден, повесим на него слушатель
+          element.addEventListener(value.type, value.method);
+          // Удалим аттрибут потому что можем (эта работа с дом нереально медленная)
+          element.removeAttribute(`data-${value.type}`);
+        });
+      }
+    });
   }
 
+  // Отображает элемент на странице
   private _addHtml() {
+    console.log('Событие рендера в блоке');
+    const compiledTemplate = this._template.get();
+    // Вызываем рендер
+    new Render(this._template.containerSelector).render(compiledTemplate);
 
+    // Вызовем добавление слушателей
+    this.eventBus.emit(Block.EVENTS.ADD_LISTENERS);
   }
 
   // Вызываем рендер элемента
   private _render() {
     // Создаст блок
     this._template = this.render();
+
+    console.log(this._template);
+
+    // Если элемент передан с селектором контейнера то вызовем рендер
+    if (this._template.containerSelector) {
+      this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
+    }
   }
 
   // Может переопределять пользователь, необязательно трогать

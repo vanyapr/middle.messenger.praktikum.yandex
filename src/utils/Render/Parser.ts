@@ -7,6 +7,7 @@ interface IParser {
   run(): void;
 }
 
+// Заполняет темплейт данными
 class Parser implements IParser {
   private _template: Template;
 
@@ -51,7 +52,6 @@ class Parser implements IParser {
         // Если это экземпляр блока, то выполним рендер
         if (variableValue instanceof Block) {
           const childrenTemplate: any = variableValue.render();
-          // TODO: Получать листенеры из отрендеренного темплейта и дополнять листенеры
           // 1) Получаем листенеры из темплейта
           const templateListeners = childrenTemplate.getListeners();
           // 2) Передаем листенеры в текущий объект (наследуем)

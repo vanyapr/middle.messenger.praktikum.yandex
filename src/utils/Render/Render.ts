@@ -2,15 +2,18 @@
 export default class Renderer {
   _renderContainer: HTMLElement | null;
 
-  constructor(container: string) {
-    // Класс контейнера, в котором будет осуществлять рендер
-    this._renderContainer = document.querySelector(container);
+  constructor(containerSelector: string | null | undefined) {
+    if (containerSelector) {
+      // Класс контейнера, в котором будет осуществлять рендер
+      this._renderContainer = document.querySelector(containerSelector);
+    }
   }
 
   // Заполняет контейнер содержимым
   render(HTML: string) {
+    console.log('Вызов рендера');
     if (this._renderContainer === null) {
-      throw new Error('Элемент с таким селектором не найден');
+      throw new Error('Контейнер рендера с указанным селектором не найден');
     }
 
     // Удаляем содержимое контейнера перед рендером

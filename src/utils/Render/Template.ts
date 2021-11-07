@@ -20,13 +20,16 @@ class Template implements ITemplate {
 
   private _listeners: TListeners
 
+  containerSelector: string | null | undefined
+
   // Данные темплейта
   private readonly _templateData: any;
 
-  constructor(template: string, templateData: {}) {
+  constructor(template: string, templateData: {}, containerSelector?: string | null | undefined) {
     this._template = template;
     this._templateData = templateData;
     this._listeners = {};
+    this.containerSelector = containerSelector;
   }
 
   // Получение данных для темплейта по ключу объекта (key.subkey.morekeys)
