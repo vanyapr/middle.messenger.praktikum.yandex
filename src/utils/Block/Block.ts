@@ -1,4 +1,6 @@
 import EventBus from '../EventBus/EventBus';
+import Template from '../Render/Template';
+import isEqual from '../isEqual'; // Сравнивает объекты
 
 // Тип для событий
 type TEvents = {
@@ -35,6 +37,9 @@ export default class Block implements IBlock {
 
   // Компилятор темплейта
   container: string | null;
+
+  // Темплейт который мы получим при рендере
+  _template: Template;
 
   // Кеш пропсов компонента
   private _meta: {};
@@ -103,18 +108,7 @@ export default class Block implements IBlock {
 
   // Может переопределять пользователь
   componentDidUpdate(oldProps: {}, newProps: {}) {
-    // Функция сравнения компонентов
-    function isUpdateRequired(object1: TProps, object2: TProps) {
-      // Если разное число лючей, вернет true
-      if (Object.keys(object1).length !== Object.keys(object2).length) {
-        return true;
-      }
-      const result = Object.keys(object1).every((key:string) => object1[key] === object2[key]);
-      return !result;
-    }
-
-    // Определим сравнение пропсов, чтобы не запускать перерендер зря
-    return isUpdateRequired(oldProps, newProps);
+    return isEqual(oldProps, newProps);
   }
 
   // Устанавливаем новые пропсы
@@ -126,15 +120,6 @@ export default class Block implements IBlock {
     // Этот метод вызывает перезапись первого объекта свойствами второго
     Object.assign(this.props, nextProps);
   };
-
-  // Вызываем рендер элемента
-  private _render() {
-    // Создаст блок
-    this.render();
-  }
-
-  // Может переопределять пользователь, необязательно трогать
-  render(): void {}
 
   private _makePropsProxy(props: TProps) {
     // Можно и так передать this
@@ -161,5 +146,25 @@ export default class Block implements IBlock {
         throw new Error('Отказано в доступе');
       },
     });
+  }
+
+  // Устанавливает листенеры в отрендеренный темплейт
+  private _setListeners() {
+
+  }
+
+  private _addHtml() {
+
+  }
+
+  // Вызываем рендер элемента
+  private _render() {
+    // Создаст блок
+    this._template = this.render();
+  }
+
+  // Может переопределять пользователь, необязательно трогать
+  render(): Template {
+    return this._template;
   }
 }

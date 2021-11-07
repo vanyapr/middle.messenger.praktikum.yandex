@@ -1,6 +1,6 @@
 const template = `
   <footer class="controls">
-      <button class="button button_state_success">Добавить контакт</button>
+      <button class="button button_state_success" onclick="{{handleClick}}">Добавить контакт</button>
   </footer>
 `;
 

@@ -70,27 +70,32 @@ class EventsCollector implements IEventsCollector {
       const variableBrackets = uniqueVariable.match(this._regExp);
 
       if (variableBrackets) {
-        const variableKey = new StringsCleaner(variableBrackets[0]).clean();
-
         // Саму функцию запишем в объект под идентификатором {УНИКАЛЬНЫЙ ID: { метод, тип}}
         if (!this._listeners[uuid]) {
           // Получим тип события
           const type = eventType[0].replace('=', '');
 
-          const method = this._template.getProp(variableKey);
+          // Вхождения строк с переменными
+          const methodRegexp = /{{\s*[\.a-zA-Z0-9]+\s*}}/gi;
+          const matchedProps = variableBrackets[0].match(methodRegexp);
 
-          // Добавили событие по ключу
-          this._listeners[uuid] = {
-            method,
-            type,
-          };
+          if (matchedProps) {
+            const propToParse = matchedProps[0];
+            const variableKey = new StringsCleaner(propToParse).clean();
+            const method = this._template.getProp(variableKey);
+            // Добавили событие по ключу
+            this._listeners[uuid] = {
+              method,
+              type,
+            };
+          }
         }
       } else {
         throw new Error('Не удалось вычислить переменную в шаблоне');
       }
 
       return result;
-    }, '');
+    }, this._template.get());
 
     // Перезаписали состояние темплейта
     this._template.set(processedTemplate);

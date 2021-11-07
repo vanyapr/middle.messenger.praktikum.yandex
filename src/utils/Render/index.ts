@@ -1,26 +1,22 @@
 import Compiler from './Compiler'; // Заполняет темплейт данными
-import Render from './Render'; // Добавляет на страницу
+import Render from './Render';
+import Template from './Template'; // Добавляет на страницу
 
 type TSelector = string | null | undefined;
 
 // Функция - рендерер
-const render = (template: string, data: {}, containerSelector: TSelector): void | string => {
+const render = (templateString: string, data: {}, containerSelector: TSelector): Template => {
   // Заполняем темплейт данными
-  const templateInstance = new Compiler(template, data).compile();
+  const template = new Compiler(templateString, data).compile();
 
-  // Тут мы получаем теперь объект из двух частей: {темплейт, листенеры}
-  // const { compiledTemplate, listeners } = compiler.compile();
-
-  const listeners = templateInstance.getListeners();
-  const compiledTemplate = templateInstance.get();
+  const listeners = template.getListeners();
+  const compiledTemplate = template.get();
 
   // TODO: Вынести в отдельный файл
   // Если не передан аргумент с контейнером, то элемент будет просто возвращён
   if (containerSelector) {
-    // Контейнер для рендера
-    const renderer = new Render(containerSelector);
-
-    renderer.render(compiledTemplate);
+    // Вызываем рендер
+    new Render(containerSelector).render(compiledTemplate);
 
     // Добавим листенеры
     const keys = Object.keys(listeners);
@@ -45,7 +41,7 @@ const render = (template: string, data: {}, containerSelector: TSelector): void 
 
   // FIXME: Если у нас компилируется вложенный темплейт,
   //  мы не можем передать в него листенеры?
-  return compiledTemplate;
+  return template;
 };
 
 export default render;

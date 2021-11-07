@@ -19,7 +19,7 @@ class Parser implements IParser {
   }
 
   // Записываем значения в темплейт
-  private _fillTemplate() {
+  private _fillTemplate(): void {
     let template = this._template.get();
 
     // Получили список переменных из итератора возвращенного методом matchAll
@@ -50,9 +50,16 @@ class Parser implements IParser {
       if (typeof variableValue === 'object') {
         // Если это экземпляр блока, то выполним рендер
         if (variableValue instanceof Block) {
-          const renderedTemplate: any = variableValue.render();
+          const childrenTemplate: any = variableValue.render();
           // TODO: Получать листенеры из отрендеренного темплейта и дополнять листенеры
-          template = template.replaceAll(templateMatch, renderedTemplate);
+          // 1) Получаем листенеры из темплейта
+          const templateListeners = childrenTemplate.getListeners();
+          // 2) Передаем листенеры в текущий объект (наследуем)
+          this._template.setListeners({ ...this._template.getListeners(), ...templateListeners });
+          // 3) Получаем рендер из темплейта
+          const templateRenderedMarkdown = childrenTemplate.get();
+          // 4) Производим замены
+          template = template.replaceAll(templateMatch, templateRenderedMarkdown);
         } else {
           throw new Error('Неверный аргумент: дочерний элемент не является экземпляром блока');
         }

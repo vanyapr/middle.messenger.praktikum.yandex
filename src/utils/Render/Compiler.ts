@@ -26,7 +26,6 @@ class Compiler implements ICompiler {
     INIT: 'init',
     COLLECT_EVENTS: 'collectEvents',
     RENDER: 'render',
-    COMPILE: 'compile',
   };
 
   // Строка темплейта
@@ -54,7 +53,6 @@ class Compiler implements ICompiler {
     this.eventBus.on(Compiler.EVENTS.INIT, this.init.bind(this));
     this.eventBus.on(Compiler.EVENTS.COLLECT_EVENTS, this._collectListeners.bind(this));
     this.eventBus.on(Compiler.EVENTS.RENDER, this._fillTemplate.bind(this));
-    this.eventBus.on(Compiler.EVENTS.COMPILE, this.compile.bind(this));
   }
 
   // 1
@@ -74,7 +72,6 @@ class Compiler implements ICompiler {
   private _fillTemplate() {
     // Запускаем сбор событий в темплейте
     new Parser(this._template).run();
-    this.eventBus.emit(Compiler.EVENTS.COMPILE);
   }
 
   // Компилирует темплейт с использованием встроенных методов

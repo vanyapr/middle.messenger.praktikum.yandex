@@ -30,7 +30,11 @@ const header = new Header({
   title: 'Заголовок чата будет здесь!',
 });
 
-const controls = new Controls();
+const controls = new Controls({
+  handleClick() {
+    console.log('Нажато');
+  },
+});
 
 const inputs = new Inputs();
 
