@@ -17,8 +17,8 @@ class Route {
 
   // Вызывает рендер компонента
   private _render() {
+    // Если передан блок
     if (this._block) {
-      console.log(this._block);
       this._block.show();
     }
   }

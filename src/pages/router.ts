@@ -40,9 +40,8 @@ const loginForm = new LoginForm({
   validate() {
     validateInput(this, 'input_state_valid', 'input_state_invalid');
   },
-  goRoute(event) {
+  goRoute() {
     console.log('Переход по роуту');
-    event.preventDefault();
     router.go('/signup');
   },
 },
@@ -68,9 +67,8 @@ const registerForm = new SignUpForm({
   validate() {
     validateInput(this, 'input_state_valid', 'input_state_invalid');
   },
-  goRoute(event) {
+  goRoute() {
     console.log('Переход по роуту');
-    event.preventDefault();
     router.go('/login');
   },
 },

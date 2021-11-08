@@ -1,9 +1,6 @@
 import Block from '../Block/Block';
 import Route from './Route';
 
-// TODO: Типизировать роуты
-// type TRoute =
-
 interface IRotuer {
   // Будет связывать роут с блоком
   use(path: string, block: Block): void
@@ -63,7 +60,7 @@ class Router implements IRotuer {
     if (route) {
       route.navigate(path);
     } else {
-      console.log('Нет такого роута');
+      throw new Error('Такого роута не существует');
     }
   }
 
@@ -81,8 +78,15 @@ class Router implements IRotuer {
   // Стартует роутер на прослушивание событий
   run(): void {
     // Запускает слушатель в window.onpopstate
-    window.onpopstate = (event:PopStateEvent) => {
+    window.onpopstate = (event) => {
       console.log(event);
+      // Срабатывает при нажатии на кнопки "вперед - назад"
+      const { currentTarget } = event as PopStateEvent;
+
+      if (currentTarget) {
+        // Фиксим ошибку тайпскрипта
+        this._onRouteChange((currentTarget as Document).location.pathname);
+      }
     };
 
     this._onRouteChange(window.location.pathname);
@@ -90,9 +94,9 @@ class Router implements IRotuer {
 
   // Выполняет переход по роуту
   go(path: string): void {
-    console.log(path);
     // Записываем в history новый урл
     this._history.pushState({}, '', path);
+
     // Вызываем сам переход
     this._onRouteChange(path);
   }

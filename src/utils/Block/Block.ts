@@ -188,8 +188,6 @@ export default abstract class Block implements IBlock {
     // Создаст блок
     this._template = this.render();
 
-    console.log(this);
-
     // Если элемент передан с селектором контейнера то вызовем рендер
     // if (this._template.containerSelector) {
     //   this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
@@ -203,7 +201,7 @@ export default abstract class Block implements IBlock {
 
   // Отображает блок
   show(): void {
-    console.log('Показываем блок?');
+    // FIXME: Как теперь будут обновляться пропсы у компонента?
     this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
   }
 }
