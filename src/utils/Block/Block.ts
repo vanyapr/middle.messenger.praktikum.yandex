@@ -176,7 +176,6 @@ export default class Block implements IBlock {
 
   // Отображает элемент на странице
   private _addHtml() {
-    console.log('Событие рендера в блоке');
     const compiledTemplate = this._template.get();
     // Вызываем рендер
     new Render(this._template.containerSelector).render(compiledTemplate);
@@ -189,8 +188,6 @@ export default class Block implements IBlock {
   private _render() {
     // Создаст блок
     this._template = this.render();
-
-    console.log(this._template);
 
     // Если элемент передан с селектором контейнера то вызовем рендер
     if (this._template.containerSelector) {

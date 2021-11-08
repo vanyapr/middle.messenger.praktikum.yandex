@@ -11,7 +11,6 @@ export default class Renderer {
 
   // Заполняет контейнер содержимым
   render(HTML: string) {
-    console.log('Вызов рендера');
     if (this._renderContainer === null) {
       throw new Error('Контейнер рендера с указанным селектором не найден');
     }
