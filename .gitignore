@@ -268,3 +268,6 @@ fabric.properties
 
 # Build folder
 /build
+
+# Package.lock (почти 5к строк, больше чем во всём проекте)
+package-lock.json
