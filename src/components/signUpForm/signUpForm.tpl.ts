@@ -42,7 +42,7 @@ const template = `
 
     <div class="form__controls">
         <button class="button button_state_success" type="submit">{{ buttonText }}</button>
-        <a href="/login.html" class="form__link" type="submit">{{ linkText }}</a>
+        <a class="form__link" type="submit" onclick="{{ goRoute }}">{{ linkText }}</a>
   </div>
 
 

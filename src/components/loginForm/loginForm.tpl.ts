@@ -17,7 +17,7 @@ const template = `
 
     <div class="form__controls">
         <button class="button" type="submit">{{ buttonText }}</button>
-        <a href="/sign-up.html" class="form__link" type="submit">{{ linkText }}</a>
+        <a class="form__link" type="submit" onclick="{{ goRoute }}">{{ linkText }}</a>
     </div>
   </form>
 `;

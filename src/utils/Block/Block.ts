@@ -16,12 +16,11 @@ interface IBlock {
   init(): void,
   componentDidMount(oldProps?: TProps): void,
   componentDidUpdate(oldProps: TProps, newProps: TProps):void
-  // render(): string | void,
   setProps(newProps: TProps): void,
 }
 
-// Класс рендерит элемент с эвентбасом и методами
-export default class Block implements IBlock {
+// Обеспечивает рендер элемента, не может быть объявлен напрямую
+export default abstract class Block implements IBlock {
   // Статическое поле общее для всех экземпляров класса
   static EVENTS: TEvents = {
     INIT: 'init',
@@ -189,14 +188,22 @@ export default class Block implements IBlock {
     // Создаст блок
     this._template = this.render();
 
+    console.log(this);
+
     // Если элемент передан с селектором контейнера то вызовем рендер
-    if (this._template.containerSelector) {
-      this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
-    }
+    // if (this._template.containerSelector) {
+    //   this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
+    // }
   }
 
   // Может переопределять пользователь, необязательно трогать
   render(): Template {
     return this._template;
+  }
+
+  // Отображает блок
+  show(): void {
+    console.log('Показываем блок?');
+    this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
   }
 }
