@@ -1,9 +1,3 @@
-// Стили по умолчанию
-import '../styles/vendor/normalize.css';
-import '../styles/vendor/fonts/Inter/inter.css';
-import '../styles/components/root/root.scss';
-import '../styles/components/container/container.scss';
-
 // Темплейт
 import BackButton from '../components/backButton';
 import Settings from '../components/settings';
@@ -11,29 +5,32 @@ import Settings from '../components/settings';
 // Импорт картинок
 // @ts-ignore
 import image from '../../static/avatar.jpg';
+import Container from '../components/container/container';
+import Router from '../utils/Router/Router';
+const router = new Router();
 
-// @ts-ignore
 const backButton = new BackButton({
   buttonText: 'Вернуться назад',
   back() {
-    window.history.back();
+    router.back();
   },
-},
+});
 
-'#container');
-
-// @ts-ignore
-export default new Settings({
+const settings = new Settings({
   name: 'Иван',
   avatar: image,
   back() {
-    window.history.back();
+    router.back();
   },
   editSettings() {
-    window.location.pathname = '/settings-edit.html';
+    router.go('/settings-edit');
   },
   editPassword() {
-    window.location.pathname = '/settings-password.html';
+    router.go('/settings-edit-password');
   },
-},
-'#container');
+});
+
+export default new Container({
+  aside: backButton,
+  main: settings,
+}, '#container');

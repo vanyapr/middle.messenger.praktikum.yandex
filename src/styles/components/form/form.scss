@@ -11,6 +11,13 @@
   box-sizing: border-box;
   padding: 48px 30px 155px;
 
+  &_type {
+    &_popup {
+      padding: 48px 30px 100px;
+      min-height: auto;
+    }
+  }
+
   &__title {
     font-weight: 500;
     font-size: 20px;

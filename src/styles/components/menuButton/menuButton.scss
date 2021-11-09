@@ -1,0 +1,40 @@
+.menu-button {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+
+  // На данном этапе декомпозировать до иконок проект не вижу смысла
+  &__icon {
+    width: 20px;
+    height: 20px;
+    background-size: 100%;
+    background-position: center;
+    display: block;
+    text-indent: -9000px;
+
+
+    &_delete {
+      background-image: url('./delete.svg');
+    }
+
+    &_settings {
+      background-image: url('./settings.svg');
+    }
+
+    &_attachments {
+      background-image: url('./attach.svg');
+    }
+  }
+
+  &__text {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    color: #000;
+    align-self: center;
+  }
+}

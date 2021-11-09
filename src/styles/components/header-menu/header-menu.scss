@@ -1,0 +1,9 @@
+.header-menu {
+  position: absolute;
+  top: 45px;
+  right: 30px;
+
+  &_state_hidden {
+    display: none;
+  }
+}

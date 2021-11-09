@@ -15,6 +15,7 @@ const template = `
           <button class="inputs__button">Отправить сообщение</button>
       </form>
     </section>
+    {{popup}}
 `;
 
 export default template;

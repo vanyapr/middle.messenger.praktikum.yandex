@@ -1,8 +1,3 @@
-// Стили по умолчанию
-import '../styles/vendor/normalize.css';
-import '../styles/vendor/fonts/Inter/inter.css';
-import '../styles/components/root/root.scss';
-import '../styles/components/container/container.scss';
 import '../styles/components/button/button.scss';
 
 // Темплейт
@@ -21,19 +16,17 @@ import {
   nameValidator,
   passwordValidator, phoneValidator,
 } from '../settings/validators';
+import Container from '../components/container/container';
 const router = new Router();
 
-// @ts-ignore
-const aside = new BackButton({
+const backButton = new BackButton({
   buttonText: 'Вернуться назад',
   back() {
     router.back();
   },
-},
-'#container');
+});
 
-// @ts-ignore
-export default new EditSettings({
+const editSettings = new EditSettings({
   name: 'Иван',
   avatar: image,
   loginValidator,
@@ -52,4 +45,9 @@ export default new EditSettings({
   back() {
     router.back();
   },
+});
+
+export default new Container({
+  aside: backButton,
+  main: editSettings,
 }, '#container');

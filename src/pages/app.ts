@@ -1,11 +1,5 @@
 import App from '../components/app';
 
-// Стили
-import '../styles/vendor/normalize.css';
-import '../styles/vendor/fonts/Inter/inter.css';
-import '../styles/components/root/root.scss';
-import '../styles/components/container/container.scss';
-
 import '../styles/components/sidebar/sidebar.scss';
 import '../styles/components/main/main.scss';
 
@@ -18,7 +12,14 @@ import Controls from '../components/controls/controls';
 import Inputs from '../components/inputs/inputs';
 import Messages from '../components/messages/messages';
 import collectFormData from '../utils/collectFormData/collectFormData';
-import { notEmptyValidator } from '../settings/validators';
+import { notEmptyValidator, loginValidator } from '../settings/validators';
+import MenuButton from '../components/menuButton';
+import HeaderMenu from '../components/headerMenu/headerMenu';
+import Router from '../utils/Router/Router';
+import PopUp from '../components/popUp';
+import AddUserForm from '../components/addUserForm';
+import validateInput from '../utils/validateInput/validateInput';
+const router = new Router();
 
 const chats = new Chats({
   avatar,
@@ -26,13 +27,69 @@ const chats = new Chats({
 
 const search = new Search();
 
+// Кнопка настроек
+const headerMenuSettingsButton = new MenuButton({
+  iconType: 'settings',
+  buttonText: 'Настройки',
+  clickAction: () => {
+    console.log('Настройки');
+    router.go('/settings');
+  },
+});
+
+// Кнопка "показать вложения"
+const headerMenuFilesButton = new MenuButton({
+  iconType: 'attachments',
+  buttonText: 'Вложения',
+  clickAction: () => {
+    console.log('Вложения');
+  },
+});
+
+// Меню в шапке сайта
+const headerMenu = new HeaderMenu({
+  headerMenuSettingsButton,
+  headerMenuFilesButton,
+});
+
 const header = new Header({
   title: 'Заголовок чата будет здесь!',
+  menu: headerMenu,
+  buttonClick() {
+    headerMenu.toggle();
+  },
+});
+
+const addUserForm = new AddUserForm({
+  title: 'Добавить контакт',
+  buttonText: 'Добавить в контакты',
+  loginValidator,
+  handleSubmit(event: Event) {
+    event.preventDefault();
+    // Передали форму для сбора данных
+    collectFormData(this, 'input_state_valid', 'input_state_invalid');
+  },
+  validate() {
+    validateInput(this, 'input_state_valid', 'input_state_invalid');
+  },
+});
+
+const popup = new PopUp({
+  children: addUserForm,
+  closePopup(event: Event) {
+    event.stopPropagation();
+
+    // @ts-ignore
+    if (event.target && event.target.classList.contains('close')) {
+      popup.toggle();
+    }
+  },
 });
 
 const controls = new Controls({
   handleClick() {
-    console.log('Нажато');
+    console.log('Нажата кнопка закрытия');
+    popup.toggle();
   },
 });
 
@@ -50,6 +107,7 @@ export default new App({
   header,
   messages,
   inputs,
+  popup,
   notEmptyValidator,
   handleSubmit(event: Event) {
     event.preventDefault();
