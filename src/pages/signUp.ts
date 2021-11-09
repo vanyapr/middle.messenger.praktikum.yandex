@@ -5,8 +5,10 @@ import '../styles/components/root/root.scss';
 import '../styles/components/container/container.scss';
 
 // Темплейт
-import LoginForm from '../components/signUpForm';
+import SignUpForm from '../components/signUpForm';
 import collectFormData from '../utils/collectFormData/collectFormData';
+import Router from '../utils/Router/Router';
+
 // Валидаторы
 import {
   emailValidator,
@@ -16,8 +18,10 @@ import {
 } from '../settings/validators';
 import validateInput from '../utils/validateInput/validateInput';
 
-// @ts-ignore
-const loginForm = new LoginForm({
+// Объявили роутер
+const router = new Router();
+
+export default new SignUpForm({
   title: 'Регистрация',
   buttonText: 'Зарегистрироваться',
   linkText: 'Войти',
@@ -34,6 +38,10 @@ const loginForm = new LoginForm({
 
   validate() {
     validateInput(this, 'input_state_valid', 'input_state_invalid');
+  },
+
+  goRoute() {
+    router.go('/');
   },
 },
 

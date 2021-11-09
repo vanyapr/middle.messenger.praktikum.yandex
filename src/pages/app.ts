@@ -42,9 +42,7 @@ const messages = new Messages({
   avatar,
 });
 
-// Экстендим базовый класс
-// @ts-ignore
-const app = new App({
+export default new App({
   avatar,
   search,
   chats,

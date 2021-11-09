@@ -6,14 +6,15 @@ import '../styles/components/container/container.scss';
 
 // Компонент
 import Error from '../components/error';
+import Router from '../utils/Router/Router';
+const router = new Router();
 
-// @ts-ignore
-const error404 = new Error({
+export default new Error({
   status: 404,
   title: 'Не туда попали',
   buttonText: 'Назад к чатам',
   action() {
-    window.history.back();
+    router.back();
   },
 },
 '#container');

@@ -13,27 +13,28 @@ import EditPassword from '../components/editPassword';
 // @ts-ignore
 import image from '../../static/avatar.jpg';
 
-// Передадим в пропс функцию обработчик сабмита формы
 import collectFormData from '../utils/collectFormData/collectFormData';
 import { passwordValidator } from '../settings/validators';
 import validateInput from '../utils/validateInput/validateInput';
+import Router from '../utils/Router/Router';
+const router = new Router();
 
 // @ts-ignore
 const backButton = new BackButton({
   buttonText: 'Вернуться назад',
   back() {
-    window.history.back();
+    router.back();
   },
 },
 
 '#container');
 
 // @ts-ignore
-const editPassword = new EditPassword({
+export default new EditPassword({
   name: 'Иван',
   avatar: image,
   back() {
-    window.history.back();
+    router.back();
   },
   handleSubmit(event: Event) {
     event.preventDefault();

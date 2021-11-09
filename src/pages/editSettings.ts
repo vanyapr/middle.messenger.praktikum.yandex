@@ -14,24 +14,26 @@ import EditSettings from '../components/editSettings';
 import image from '../../static/avatar.jpg';
 import collectFormData from '../utils/collectFormData/collectFormData';
 import validateInput from '../utils/validateInput/validateInput';
+import Router from '../utils/Router/Router';
 import {
   emailValidator,
   loginValidator,
   nameValidator,
   passwordValidator, phoneValidator,
 } from '../settings/validators';
+const router = new Router();
 
 // @ts-ignore
 const aside = new BackButton({
   buttonText: 'Вернуться назад',
   back() {
-    window.history.back();
+    router.back();
   },
 },
 '#container');
 
 // @ts-ignore
-const main = new EditSettings({
+export default new EditSettings({
   name: 'Иван',
   avatar: image,
   loginValidator,
@@ -48,6 +50,6 @@ const main = new EditSettings({
     validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid');
   },
   back() {
-    window.history.back();
+    router.back();
   },
 }, '#container');

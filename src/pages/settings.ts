@@ -23,7 +23,7 @@ const backButton = new BackButton({
 '#container');
 
 // @ts-ignore
-const settings = new Settings({
+export default new Settings({
   name: 'Иван',
   avatar: image,
   back() {

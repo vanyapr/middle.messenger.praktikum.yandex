@@ -60,7 +60,10 @@ class Router implements IRotuer {
     if (route) {
       route.navigate(path);
     } else {
-      throw new Error('Такого роута не существует');
+      // Удалить несуществующий роут из истории
+      this._history.replaceState({}, '', '/404');
+      // Перейти на роут 404
+      this._onRouteChange('/404');
     }
   }
 
@@ -104,13 +107,13 @@ class Router implements IRotuer {
   // Назад по истории
   back(): void {
     // Перейти на 1 шаг назад
-    this._history.go(-1);
+    this._history.back();
   }
 
   // Вперед по истории
   forward(): void {
     // Перейти на 1 шаг вперёд
-    this._history.go(1);
+    this._history.forward();
   }
 }
 
