@@ -8,11 +8,11 @@ import EditPassword from '../components/editPassword';
 // @ts-ignore
 import image from '../../static/avatar.jpg';
 
-import collectFormData from '../utils/collectFormData/collectFormData';
 import { passwordValidator } from '../settings/validators';
 import validateInput from '../utils/validateInput/validateInput';
 import Container from '../components/container/container';
 import Router from '../utils/Router/Router';
+import Form from '../utils/Form/Form';
 const router = new Router();
 
 const backButton = new BackButton({
@@ -30,12 +30,26 @@ const editPassword = new EditPassword({
   },
   handleSubmit(event: Event) {
     event.preventDefault();
-    // Передали форму в обработчик
-    collectFormData(this, 'settings__value_state_valid', 'settings__value_state_invalid');
+
+    // Собираем данные формы
+    const form = new Form(
+      this,
+      'settings__value_state_valid',
+      'settings__value_state_invalid',
+      '.button',
+    );
+
+    const formData = form.collectData();
+
+    if (formData) {
+      console.log(formData);
+    } else {
+      console.log('Форма невалидна и данных нет');
+    }
   },
   passwordValidator,
   validate() {
-    validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid');
+    validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid', '.button');
   },
 });
 

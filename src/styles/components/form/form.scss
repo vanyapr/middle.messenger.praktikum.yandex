@@ -6,12 +6,13 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 340px;
+  width: 370px;
   min-height: 450px;
   box-sizing: border-box;
   padding: 48px 30px 155px;
 
   &_type {
+
     &_popup {
       padding: 48px 30px 100px;
       min-height: auto;
@@ -33,7 +34,8 @@
 
   &__group {
     position: relative;
-    padding-bottom: 20px;
+    //padding-bottom: 20px;
+    padding-bottom: 30px;
   }
 
   &__error {
@@ -51,6 +53,14 @@
     bottom: 27px;
     left: 30px;
     right: 30px;
+
+    &-error {
+      color: #cb6363;
+      font-size: 10px;
+      line-height: 12px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
   }
 
   &__link {

@@ -11,7 +11,7 @@ import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
 import Inputs from '../components/inputs/inputs';
 import Messages from '../components/messages/messages';
-import collectFormData from '../utils/collectFormData/collectFormData';
+// import collectFormData from '../utils/collectFormData/collectFormData';
 import { notEmptyValidator, loginValidator } from '../settings/validators';
 import MenuButton from '../components/menuButton';
 import HeaderMenu from '../components/headerMenu/headerMenu';
@@ -19,6 +19,7 @@ import Router from '../utils/Router/Router';
 import PopUp from '../components/popUp';
 import AddUserForm from '../components/addUserForm';
 import validateInput from '../utils/validateInput/validateInput';
+import Form from '../utils/Form/Form';
 const router = new Router();
 
 const chats = new Chats({
@@ -66,11 +67,25 @@ const addUserForm = new AddUserForm({
   loginValidator,
   handleSubmit(event: Event) {
     event.preventDefault();
-    // Передали форму для сбора данных
-    collectFormData(this, 'input_state_valid', 'input_state_invalid');
+
+    // Собираем данные формы
+    const form = new Form(
+      this,
+      'input_state_valid',
+      'input_state_invalid',
+      'button',
+    );
+
+    const formData = form.collectData();
+
+    if (formData) {
+      console.log(formData);
+    } else {
+      console.log('Форма невалидна и данных нет');
+    }
   },
   validate() {
-    validateInput(this, 'input_state_valid', 'input_state_invalid');
+    validateInput(this, 'input_state_valid', 'input_state_invalid', '.button');
   },
 });
 
@@ -112,7 +127,7 @@ export default new App({
   handleSubmit(event: Event) {
     event.preventDefault();
     // Передали форму для сбора данных
-    collectFormData(this, 'inputs__input_state_valid', 'inputs__input_state_invalid');
+    console.log('Отправка сообщения');
   },
 },
 '#container');

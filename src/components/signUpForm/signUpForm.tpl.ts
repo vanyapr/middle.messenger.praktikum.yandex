@@ -4,23 +4,23 @@ const template = `
 
     <div class="form__fields">
       <div class="form__group">
-          <input class="input" name="login" id="login" type="text" placeholder=" " onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ loginValidator }}" required>
+          <input class="input" name="login" id="login" type="text" placeholder=" " onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ loginValidator }}" required>
           <label for="login" class="label">Имя пользователя</label>
           <div class="form__error">Минимум 4 буквы, цифры или символа '-' и '_', </div>
       </div>
       <div class="form__group">
-          <input class="input" name="email" id="email" type="text"  placeholder=" " onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ emailValidator }}" required>
+          <input class="input" name="email" id="email" type="text"  placeholder=" " onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ emailValidator }}" required>
           <label for="email" class="label">Адрес электронной почты</label>
           <div class="form__error">Введите корректный адрес электронной почты</div>
       </div>
       <div class="form__group">
-          <input class="input" name="first_name" id="first_name" type="text"  placeholder=" "  onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ nameValidator }}" required>
+          <input class="input" name="first_name" id="first_name" type="text"  placeholder=" " onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ nameValidator }}" required>
           <label for="first_name" class="label">Ваше имя</label>
           <div class="form__error">Введите имя с Заглавной буквы</div>
       </div>
       <div class="form__group">
-          <input class="input" name="last_name" id="last_name" type="text"  placeholder=" "  onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ nameValidator }}" required>
-          <label for="last_name" class="label">Ваша фамилия</label>
+          <input class="input" name="second_name" id="second_name" type="text"  placeholder=" " onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ nameValidator }}" required>
+          <label for="second_name" class="label">Ваша фамилия</label>
           <div class="form__error">Введите фамилию с Заглавной буквы</div>
       </div>
       <div class="form__group">
@@ -41,6 +41,7 @@ const template = `
     </div>
 
     <div class="form__controls">
+        <div class="form__controls-error"></div>
         <button class="button button_state_success" type="submit">{{ buttonText }}</button>
         <a class="form__link" type="submit" onclick="{{ goRoute }}">{{ linkText }}</a>
   </div>

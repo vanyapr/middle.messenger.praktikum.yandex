@@ -25,5 +25,10 @@
     &_error {
       background-color: #cb6363;
     }
+
+    &_disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
   }
 }

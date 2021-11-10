@@ -1,8 +1,8 @@
 import LoginForm from '../components/loginForm';
 
 // Передадим в пропс функцию обработчик сабмита формы
-import collectFormData from '../utils/collectFormData/collectFormData';
 import validateInput from '../utils/validateInput/validateInput';
+import Form from '../utils/Form/Form';
 import Router from '../utils/Router/Router';
 
 // Валидаторы
@@ -20,8 +20,21 @@ export default new LoginForm({
   linkText: 'Зарегистрироваться',
   handleSubmit(event: Event) {
     event.preventDefault();
-    // Передали форму для сбора данных
-    collectFormData(this, 'input_state_valid', 'input_state_invalid');
+    // Собираем данные формы
+    const form = new Form(
+      this,
+      'input_state_valid',
+      'input_state_invalid',
+      'button',
+    );
+
+    const formData = form.collectData();
+
+    if (formData) {
+      console.log(formData);
+    } else {
+      console.log('Форма невалидна и данных нет');
+    }
   },
   loginValidator,
   passwordValidator,
