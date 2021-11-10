@@ -10,6 +10,7 @@ import {
   loginValidator,
   passwordValidator,
 } from '../settings/validators';
+import Auth from '../connectors/Auth';
 
 // Объявили роутер
 const router = new Router();
@@ -32,6 +33,20 @@ export default new LoginForm({
 
     if (formData) {
       console.log(formData);
+
+      // const { login, password } = formData;
+
+      const auth = new Auth();
+      // const data = JSON.stringify()
+
+      auth.signIn(formData).then((responce:XMLHttpRequest) => {
+        console.log(responce.response);
+        return JSON.parse(responce.response);
+      }).then((parsedResponce) => {
+        console.log(parsedResponce);
+      }).catch((error) => {
+        console.log(error);
+      });
     } else {
       console.log('Форма невалидна и данных нет');
     }
@@ -39,7 +54,7 @@ export default new LoginForm({
   loginValidator,
   passwordValidator,
   validate() {
-    validateInput(this, 'input_state_valid', 'input_state_invalid');
+    validateInput(this, 'input_state_valid', 'input_state_invalid', '.button');
   },
   goRoute() {
     router.go('/signup');

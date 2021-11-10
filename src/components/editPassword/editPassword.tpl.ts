@@ -10,17 +10,17 @@ const template = `
       <h1 class="settings__title">{{ name }}</h1>
       <form class="settings__form" onsubmit="{{ handleSubmit }}" novalidate>
         <div class="settings__group">
-          <input class="settings__value" name="password" id="password" type="password" onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
+          <input class="settings__value" name="password" id="password" type="password" onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
           <label for="password" class="settings__label">Старый пароль</label>
           <div class="settings__error">Минимум 4 буквы, цифры или символы '-' и '_', </div>
         </div>
         <div class="settings__group">
-          <input class="settings__value" name="newPassword" id="newPassword" type="password" onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
+          <input class="settings__value" name="newPassword" id="newPassword" type="password" onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
           <label for="newPassword" class="settings__label">Новый пароль</label>
           <div class="settings__error">Минимум 4 буквы, цифры или символы '-' и '_', </div>
         </div>
         <div class="settings__group">
-          <input class="settings__value" name="newPassword2" id="newPassword2" type="password" onfocus="{{ validate }}" onblur="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
+          <input class="settings__value" name="newPassword2" id="newPassword2" type="password" onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
           <label for="newPassword2" class="settings__label">Повторите новый пароль</label>
           <div class="settings__error">Минимум 4 буквы, цифры или символы '-' и '_', </div>
         </div>

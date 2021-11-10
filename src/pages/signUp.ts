@@ -35,6 +35,10 @@ export default new SignUpForm({
 
     if (formData) {
       console.log(formData);
+
+      // 1) Отправляем данные
+      // 2) Авторизуемся
+      // 3) Редиректимся
     } else {
       console.log('Форма невалидна и данных нет');
     }
