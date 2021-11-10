@@ -9,7 +9,7 @@ const template = `
           <div class="form__error">Минимум 4 буквы, цифры или символа '-' и '_', </div>
       </div>
       <div class="form__group">
-          <input class="input" name="password" id="password" type="password"  placeholder=" " onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required value="test12AAA">
+          <input class="input" name="password" id="password" type="password"  placeholder=" " onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required value="adrf43gdsA">
           <label for="password" class="label">Пароль</label>
           <div class="form__error">Минимум 8 символов. Пароль должен содержать ЗАГЛАВНУЮ букву и цифру</div>
       </div>

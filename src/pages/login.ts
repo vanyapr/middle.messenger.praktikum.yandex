@@ -34,14 +34,15 @@ export default new LoginForm({
     if (formData) {
       console.log(formData);
 
-      // const { login, password } = formData;
-
       const auth = new Auth();
-      // const data = JSON.stringify()
 
+      // eslint-disable-next-line max-len
       auth.signIn(formData).then((responce:XMLHttpRequest) => {
-        console.log(responce.response);
-        return JSON.parse(responce.response);
+        console.log(responce);
+        if (responce.status === 200) {
+          return responce.responseText;
+        }
+        return JSON.parse(responce.responseText);
       }).then((parsedResponce) => {
         console.log(parsedResponce);
       }).catch((error) => {

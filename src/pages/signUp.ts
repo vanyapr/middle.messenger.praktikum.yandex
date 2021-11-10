@@ -11,6 +11,7 @@ import {
 } from '../settings/validators';
 import validateInput from '../utils/validateInput/validateInput';
 import Form from '../utils/Form/Form';
+import Auth from '../connectors/Auth';
 
 // Объявили роутер
 const router = new Router();
@@ -36,9 +37,20 @@ export default new SignUpForm({
     if (formData) {
       console.log(formData);
 
-      // 1) Отправляем данные
-      // 2) Авторизуемся
-      // 3) Редиректимся
+      const auth = new Auth();
+
+      // eslint-disable-next-line max-len
+      auth.signUp(formData).then((responce:XMLHttpRequest) => {
+        console.log(responce);
+        if (responce.status === 200) {
+          return responce;
+        }
+        return JSON.parse(responce.response);
+      }).then((parsedResponce) => {
+        console.log(parsedResponce);
+      }).catch((error) => {
+        console.log(error);
+      });
     } else {
       console.log('Форма невалидна и данных нет');
     }
