@@ -1,7 +1,7 @@
 import EventBus from '../EventBus/EventBus';
 import Template from '../Render/Template';
 import isEqual from '../isEqual';
-import Render from '../Render/Render'; // Сравнивает объекты
+import Render from '../Render/Render';
 
 // Тип для событий
 type TEvents = {
@@ -9,13 +9,16 @@ type TEvents = {
 };
 
 // Тип пропсов, ключ текст, значения могут быть функцией, строкой, числом, или другим классом
-type TProps = {[key: string]: string | Function | number | InstanceType<any> };
+type TProps = { [key: string]: string | Function | number | InstanceType<any> };
 
 // Публичные методы
 interface IBlock {
   init(): void,
+
   componentDidMount(oldProps?: TProps): void,
-  componentDidUpdate(oldProps: TProps, newProps: TProps):void
+
+  componentDidUpdate(oldProps: TProps, newProps: TProps): void
+
   setProps(newProps: TProps): void,
 }
 
@@ -29,22 +32,22 @@ export default abstract class Block implements IBlock {
     RENDER: 'render',
     DISPLAY_HTML: 'display-html',
     ADD_LISTENERS: 'add-listeners',
-  };
+  }
 
   // Поле для пропсов
-  props: object;
+  props: object
 
   // Экземпляр эвентбаса
-  eventBus: any;
+  eventBus: any
 
   // Компилятор темплейта
-  container: string | null;
+  container: string | null
 
   // Темплейт который мы получим при рендере
-  _template: Template;
+  _template: Template
 
   // Кеш пропсов компонента
-  private _meta: {};
+  private _meta: {}
 
   constructor(props: TProps = {}, container: string | null = null) {
     // Объявили экземпляр эвент баса
@@ -66,48 +69,14 @@ export default abstract class Block implements IBlock {
     this.eventBus.emit(Block.EVENTS.INIT);
   }
 
-  private _registerEvents(): void {
-    // Bind this делается потому что функция не стрелочная
-    // Здесь объявляются триггеры для вызова события
-    this.eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
-    this.eventBus.on(Block.EVENTS.COMPONENT_DID_MOUNT, this._componentDidMount.bind(this));
-    this.eventBus.on(Block.EVENTS.RENDER, this._render.bind(this));
-    // Апдейт компонента
-    this.eventBus.on(Block.EVENTS.COMPONENT_DID_UPDATE, this._componentDidUpdate.bind(this));
-    this.eventBus.on(Block.EVENTS.DISPLAY_HTML, this._addHtml.bind(this));
-    this.eventBus.on(Block.EVENTS.ADD_LISTENERS, this._setListeners.bind(this));
-  }
-
   // 1
   init() {
     // Заэмитили событие в эвент басе (монтирование компонента)
     this.eventBus.emit(Block.EVENTS.COMPONENT_DID_MOUNT);
   }
 
-  // 3
-  private _componentDidMount() {
-    // Вызвали монтирование компонента
-    this.componentDidMount();
-
-    // Заэмитили рендер компонента
-    this.eventBus.emit(Block.EVENTS.RENDER);
-  }
-
   // Может переопределять пользователь, необязательно трогать
-  componentDidMount() {}
-
-  // Эмитится когда обновляются пропсы
-  private _componentDidUpdate(oldProps: TProps, newProps: TProps) {
-    // Как сюда передать прошлые состояния пропсов?
-    const response = this.componentDidUpdate(oldProps, newProps);
-
-    // Если значения в объекте изменились
-    if (response) {
-      // 1) Запишем "текущие значения" в кеш this._meta
-      this._meta = Object.assign(this._meta, this.props);
-      // 2) Вызовем перерендер
-      this._render();
-    }
+  componentDidMount() {
   }
 
   // Может переопределять пользователь
@@ -122,8 +91,57 @@ export default abstract class Block implements IBlock {
     }
 
     // Этот метод вызывает перезапись первого объекта свойствами второго
+    // Также он вызывает сайд эффект
     Object.assign(this.props, nextProps);
-  };
+  }
+
+  // Может переопределять пользователь, необязательно трогать
+  render(): Template {
+    return this._template;
+  }
+
+  // Отображает блок
+  show(): void {
+    // FIXME: Как теперь будут обновляться пропсы у компонента?
+    this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
+  }
+
+  private _registerEvents(): void {
+    // Bind this делается потому что функция не стрелочная
+    // Здесь объявляются триггеры для вызова события
+    this.eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
+    this.eventBus.on(Block.EVENTS.COMPONENT_DID_MOUNT, this._componentDidMount.bind(this));
+    this.eventBus.on(Block.EVENTS.RENDER, this._render.bind(this));
+    // Апдейт компонента
+    this.eventBus.on(Block.EVENTS.COMPONENT_DID_UPDATE, this._componentDidUpdate.bind(this));
+    this.eventBus.on(Block.EVENTS.DISPLAY_HTML, this._addHtml.bind(this));
+    this.eventBus.on(Block.EVENTS.ADD_LISTENERS, this._setListeners.bind(this));
+  }
+
+  // 3
+  private _componentDidMount() {
+    // Вызвали монтирование компонента
+    this.componentDidMount();
+
+    // Заэмитили рендер компонента
+    this.eventBus.emit(Block.EVENTS.RENDER);
+  }
+
+  // Эмитится когда обновляются пропсы
+  private _componentDidUpdate(oldProps: TProps, newProps: TProps) {
+    // Как сюда передать прошлые состояния пропсов?
+    const response = this.componentDidUpdate(oldProps, newProps);
+
+    // Если значения в объекте изменились
+    if (!response) {
+      // 1) Запишем "текущие значения" в кеш this._meta
+      this._meta = Object.assign(this._meta, this.props);
+      // 2) Вызовем перерендер
+      this._render();
+      console.log('Повторный рендер компонента');
+      this.show();
+    }
+  }
 
   private _makePropsProxy(props: TProps) {
     // Можно и так передать this
@@ -134,6 +152,7 @@ export default abstract class Block implements IBlock {
     return new Proxy(props, {
       // Перехватываем сеттер
       set(target: TProps, property: string, value, reciever) {
+        console.log('Сработал сайд эффект');
         // Перезаписали пропсы в целевом объекте
         // eslint-disable-next-line no-param-reassign
         target[property] = value;
@@ -187,21 +206,5 @@ export default abstract class Block implements IBlock {
   private _render() {
     // Создаст блок
     this._template = this.render();
-
-    // Если элемент передан с селектором контейнера то вызовем рендер
-    // if (this._template.containerSelector) {
-    //   this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
-    // }
-  }
-
-  // Может переопределять пользователь, необязательно трогать
-  render(): Template {
-    return this._template;
-  }
-
-  // Отображает блок
-  show(): void {
-    // FIXME: Как теперь будут обновляться пропсы у компонента?
-    this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
   }
 }

@@ -11,7 +11,6 @@ import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
 import Inputs from '../components/inputs/inputs';
 import Messages from '../components/messages/messages';
-// import collectFormData from '../utils/collectFormData/collectFormData';
 import { notEmptyValidator, loginValidator } from '../settings/validators';
 import MenuButton from '../components/menuButton';
 import HeaderMenu from '../components/headerMenu/headerMenu';
