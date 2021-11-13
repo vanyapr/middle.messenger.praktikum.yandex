@@ -1,22 +1,21 @@
-import '../styles/components/button/button.scss';
-
-// Темплейт
 import BackButton from '../components/backButton';
 import EditSettings from '../components/editSettings';
-
-// Импорт картинок
-// @ts-ignore
-import image from '../../static/avatar.jpg';
+import User from '../connectors/User';
 import validateInput from '../utils/validateInput/validateInput';
 import Router from '../utils/Router/Router';
 import {
   emailValidator,
   loginValidator,
   nameValidator,
-  passwordValidator, phoneValidator,
+  passwordValidator,
+  phoneValidator,
 } from '../settings/validators';
 import Container from '../components/container/container';
 import Form from '../utils/Form/Form';
+import State from '../utils/State/State';
+// @ts-ignore
+import image from '../../static/avatar.jpg';
+
 const router = new Router();
 
 const backButton = new BackButton({
@@ -26,9 +25,12 @@ const backButton = new BackButton({
   },
 });
 
+const state = new State();
+const settings = state.get('settings');
+
 const editSettings = new EditSettings({
-  name: 'Иван',
-  avatar: image,
+  ...settings,
+  error: '',
   loginValidator,
   passwordValidator,
   nameValidator,
@@ -48,10 +50,30 @@ const editSettings = new EditSettings({
     const formData = form.collectData();
 
     if (formData) {
-      console.log(formData);
-    } else {
-      console.log('Форма невалидна и данных нет');
+      form.disableButton();
+      const user = new User();
+      return user.saveProfile(formData).then((response: XMLHttpRequest) => {
+        console.log(response);
+        if (response.status === 200) {
+          console.log();
+          const newSettings = JSON.parse(response.responseText);
+
+          if (!newSettings.avatar) {
+            newSettings.avatar = image;
+          }
+          state.set('settings', newSettings);
+          form.enableButton();
+        } else {
+          state.set('settings', { error: 'Ошибка сохранения данных' });
+        }
+      }).catch((error: any) => {
+        console.log(error);
+        form.enableButton();
+        router.go('/500');
+      });
     }
+    form.enableButton();
+    console.log('Форма невалидна и данных нет');
   },
   validate() {
     validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid', '.button');

@@ -9,25 +9,25 @@ import Router from '../utils/Router/Router';
 import { loginValidator, passwordValidator } from '../settings/validators';
 import Auth from '../connectors/Auth';
 import State from '../utils/State/State';
+// @ts-ignore
+import image from '../../static/avatar.jpg';
 
 // Объявили роутер
 const router = new Router();
 
-// 1) задаём компоненту каким селектором выбирать данные и класть в пропсы,
-// 2) запускаем componentDidMount,
-// 3) выполняем render.
-
+// Стейт приложения
 const state = new State();
-// const {
-//   title,
-//   buttonText,
-//   linkText,
-// } = state.get('loginForm');
+
+// Если юзера авторизован, будем редиректить его в чат
+// if (state.get('user').authorised === true) {
+//   router.go('/chats');
+// }
 
 export default new LoginForm({
   title: 'Авторизация',
   buttonText: 'Войти',
   linkText: 'Зарегистрироваться',
+  error: '',
   handleSubmit(event: Event) {
     event.preventDefault();
     // Собираем данные формы
@@ -41,25 +41,46 @@ export default new LoginForm({
     const formData = form.collectData();
 
     if (formData) {
-      state.set('loginForm', { title: 'NT' });
-      console.log(formData);
+      // Отключим кнопку
+      form.disableButton();
 
       const auth = new Auth();
 
-      // eslint-disable-next-line max-len
       auth.signIn(formData)
-        .then((responce: XMLHttpRequest) => {
-          console.log(responce);
-          if (responce.status === 200) {
-            return responce.responseText;
+        .then((response: XMLHttpRequest) => {
+          console.log(response);
+          if (response.status === 200) {
+            state.set('user', { authorised: true });
+            // Вернем свойства юзера
+            return auth.getUserData();
           }
-          return JSON.parse(responce.responseText);
-        })
-        .then((parsedResponce) => {
-          console.log(parsedResponce);
+          state.set('loginForm', { error: 'Неверные имя пользователя или пароль' });
+          return false;
+        }).then((userDataRequest: XMLHttpRequest) => {
+          console.log(userDataRequest);
+          // Если данные пришли, мы переходим на роут чата записав данные в стейт
+          if (userDataRequest.status === 200) {
+            const userSettings: Record<string, any> = JSON.parse(userDataRequest.responseText);
+            console.log(userSettings);
+            if (!userSettings.avatar) {
+              userSettings.avatar = image;
+            }
+            state.set('settings', userSettings);
+            router.go('/chat');
+          } else {
+            form.enableButton();
+            state.set('loginForm', { error: 'Ошибка получения данных пользователя' });
+          }
+          // Иначе данные не пришли, и мы запишем ошибку
         })
         .catch((error) => {
           console.log(error);
+          state.set('user', { authorised: false });
+          form.enableButton();
+          state.set('loginForm', {
+            error: 'При отправке данных возникла ошибка',
+          });
+          router.go('/500');
         });
     } else {
       console.log('Форма невалидна и данных нет');

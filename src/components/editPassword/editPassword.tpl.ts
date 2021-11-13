@@ -7,11 +7,11 @@ const template = `
           <p class="settings__avatar-caption-text">Поменять аватар</p>
         </figcaption>
       </figure>
-      <h1 class="settings__title">{{ name }}</h1>
+      <h1 class="settings__title">{{ display_name }}</h1>
       <form class="settings__form" onsubmit="{{ handleSubmit }}" novalidate>
         <div class="settings__group">
-          <input class="settings__value" name="password" id="password" type="password" onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
-          <label for="password" class="settings__label">Старый пароль</label>
+          <input class="settings__value" name="oldPassword" id="oldPassword" type="password" onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required>
+          <label for="oldPassword" class="settings__label">Старый пароль</label>
           <div class="settings__error">Минимум 4 буквы, цифры или символы '-' и '_', </div>
         </div>
         <div class="settings__group">
@@ -26,6 +26,7 @@ const template = `
         </div>
 
         <div class="settings__controls settings__controls_type_button">
+          <span class="settings__controls-error">{{ error }}</span>
           <button class="button button_state_success">Сохранить</button>
         </div>
       </form>

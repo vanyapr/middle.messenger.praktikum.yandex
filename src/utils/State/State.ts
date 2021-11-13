@@ -1,5 +1,4 @@
 // Управляет хранилищем приложения
-import EventBus from '../EventBus/EventBus';
 // Тип для событий
 type TEvents = {
   [key: string]: string
@@ -11,45 +10,47 @@ type TProps = { [key: string]: string | Function | number | InstanceType<any> };
 class State {
   static EVENTS: TEvents = {
     INIT: 'init',
+    ADD: 'add',
+    SET: 'set',
   }
 
   private static __instance: State
 
   private _state: any
 
-  private _eventBus: EventBus
-
   constructor() {
     // 1) Синглтон, сущесвует лишь 1 на приложение
     if (State.__instance) {
       return State.__instance;
     }
-    // 2) Для избегания рейс кондишенов работает по эвент басу
-    this._eventBus = new EventBus();
 
     // 3) Записываем в локал сторадж свое состояние
     // и если состояния нет читает локал сторадж
+    // 4) Компонент перед рендером получает данные из хранилища
     if (localStorage.getItem('state')) {
-      this._state = JSON.parse(localStorage.getItem('state'));
+      this._state = JSON.parse(<string>localStorage.getItem('state'));
     } else {
       this._state = {};
     }
 
-    // 4) Компонент перед рендером получает данные из хранилища
-
-    // 5) При обновлении пропсов в хранилище компонент запускает рендер
     State.__instance = this;
   }
 
-  doTheStuff(props: TProps, path: string) {
-    console.log('Делаем нужные штуки');
+  addState(path: string, props: TProps) {
+    console.log('Добавляем пропсы формы в глобальный стейт');
 
+    // 5) При обновлении пропсов в хранилище компонент запускает рендер
     this._state[path] = props;
     console.log(this._state);
   }
 
   // Записывает значения
-  set(path: string, value: any) {
+  set(path: string, value: TProps) {
+    // Если такого ключа нет, создадим его
+    if (!this._state[path]) {
+      this._state[path] = {};
+    }
+
     Object.assign(this._state[path], value);
     console.log(this._state);
     this._backUp();
@@ -60,19 +61,14 @@ class State {
     return this._state[path];
   }
 
+  // Удаляет значение по пути
+  delete(path: string) {
+    this._state[path] = undefined;
+  }
+
   // Записывает данные в локал сторадж
   private _backUp() {
     localStorage.setItem('state', JSON.stringify(this._state));
-  }
-
-  // Объявляет события эвентбас
-  private _init() {
-    this._eventBus.on(State.EVENTS.INIT, this.doTheStuff.bind(this));
-  }
-
-  // Запускает жизненный цикл стейта
-  private _emit() {
-
   }
 }
 

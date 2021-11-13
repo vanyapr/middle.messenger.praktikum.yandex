@@ -16,7 +16,12 @@ class Parser implements IParser {
   constructor(template: Template) {
     this._template = template;
     // Вхождения строк с переменными
-    this._regExp = /{{\s*[\.a-zA-Z0-9]+\s*}}/gi;
+    this._regExp = /{{\s*[\.a-zA-Z0-9_]+\s*}}/gi;
+  }
+
+  // Запускает рендер темплейта
+  run(): void {
+    this._fillTemplate();
   }
 
   // Записываем значения в темплейт
@@ -60,6 +65,8 @@ class Parser implements IParser {
           const templateRenderedMarkdown = childrenTemplate.get();
           // 4) Производим замены
           template = template.replaceAll(templateMatch, templateRenderedMarkdown);
+        } else if (variableValue === null) {
+          template = template.replaceAll(templateMatch, '');
         } else {
           throw new Error('Неверный аргумент: дочерний элемент не является экземпляром блока');
         }
@@ -71,11 +78,6 @@ class Parser implements IParser {
 
     // Если вхождений не будет, мы вернем изначальную строку
     this._template.set(template);
-  }
-
-  // Запускает рендер темплейта
-  run(): void {
-    this._fillTemplate();
   }
 }
 

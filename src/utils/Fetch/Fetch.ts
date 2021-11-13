@@ -48,15 +48,15 @@ class HTTPTransport {
     return this.request(requestUrl, { ...options, method: METHODS.GET }, options.timeout);
   };
 
-  // PUT, POST, DELETE
+  // DELETE
   // eslint-disable-next-line max-len
   delete = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.DELETE }, options.timeout)
 
-  // PUT, POST, DELETE
+  // POST
   // eslint-disable-next-line max-len
   post = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.POST }, options.timeout)
 
-  // PUT, POST, DELETE
+  // PUT
   // eslint-disable-next-line max-len
   put = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.PUT }, options.timeout)
 
@@ -70,6 +70,8 @@ class HTTPTransport {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(method, url);
+      // Передаем в запросе куки
+      xhr.withCredentials = true;
 
       if (headers) {
         // Установим заголовики пройдя по ключам объекта
@@ -82,7 +84,7 @@ class HTTPTransport {
       xhr.timeout = timeout;
 
       const onReject = () => {
-        reject();
+        reject(new Error('Ошибка соединения'));
       };
 
       // Обработка ошибок

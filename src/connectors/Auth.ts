@@ -1,5 +1,4 @@
-import { json } from 'express';
-import { signUp, signIn, getUser, logOut } from '../settings/api';
+import { getUser, logOut, signIn, signUp } from '../settings/api';
 import BaseApi from './BaseApi';
 
 // Регистрация пользователя
@@ -42,8 +41,15 @@ class Auth extends BaseApi {
     return this.http.post(this._signInURL, options);
   }
 
-  getUser() {
-    return this.http.get(this._getUserURL, {});
+  getUserData(): Record<string, any> {
+    const options = {
+      headers: {
+        'content-type': 'application/json',
+
+      },
+    };
+
+    return this.http.get(this._getUserURL, options);
   }
 
   logOut() {

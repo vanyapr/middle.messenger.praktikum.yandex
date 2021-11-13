@@ -81,6 +81,13 @@ export default abstract class Block implements IBlock {
 
   // Может переопределять пользователь
   componentDidUpdate(oldProps: {}, newProps: {}) {
+    // return false;
+    console.log(oldProps, newProps);
+    console.log(Object.prototype.toString.call(newProps));
+    console.log(Object.prototype.toString.call(oldProps));
+    console.log(oldProps.constructor, newProps.constructor);
+    console.log(typeof oldProps);
+    console.log(typeof newProps);
     return isEqual(oldProps, newProps);
   }
 
@@ -137,7 +144,7 @@ export default abstract class Block implements IBlock {
       // 1) Запишем "текущие значения" в кеш this._meta
       this._meta = Object.assign(this._meta, this.props);
       // 2) Вызовем перерендер
-      this._render();
+
       console.log('Повторный рендер компонента');
       this.show();
     }
@@ -194,9 +201,12 @@ export default abstract class Block implements IBlock {
 
   // Отображает элемент на странице
   private _addHtml() {
+    this._template = this.render();
     const compiledTemplate = this._template.get();
     // Вызываем рендер
-    new Render(this._template.containerSelector).render(compiledTemplate);
+    if (this.container) {
+      new Render(this._template.containerSelector).render(compiledTemplate);
+    }
 
     // Вызовем добавление слушателей
     this.eventBus.emit(Block.EVENTS.ADD_LISTENERS);

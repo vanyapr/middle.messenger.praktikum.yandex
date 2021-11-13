@@ -18,6 +18,8 @@ class Form implements IForm {
 
   private readonly _buttonSelector: string
 
+  private _button: HTMLFormElement | null
+
   constructor(
     form: HTMLFormElement,
     inputValidClass: string,
@@ -28,23 +30,28 @@ class Form implements IForm {
     this._inputValidClass = inputValidClass;
     this._inputInvalidClass = inputInvalidClass;
     this._buttonSelector = buttonSelector;
+
+    this._button = document.querySelector(this._buttonSelector);
   }
 
-  // Выполнит валидацию формы и вернет результат
-  private _validate(): boolean {
-    const validator = new FormValidator(
-      this._form,
-      this._inputValidClass,
-      this._inputInvalidClass,
-      this._buttonSelector,
-    );
-
-    return validator.run();
+  // Отключает кнопку в форме
+  disableButton():void {
+    if (this._button) {
+      this._button.classList.add('button_state_disabled');
+      this._button.disabled = true;
+    }
   }
 
-  // Возвратит объект с данными формы если форма валидна,
+  // Включает кнопку в форме
+  enableButton():void {
+    if (this._button) {
+      this._button.classList.remove('button_state_disabled');
+      this._button.disabled = false;
+    }
+  }
+
   // либо отобразит ошибки валидации
-  collectData(): object | null {
+  collectData(): Record<string, any> | null {
     const formIsValid = this._validate();
 
     if (formIsValid) {
@@ -63,6 +70,20 @@ class Form implements IForm {
       return formValues;
     }
     return null;
+  }
+
+  // Возвратит объект с данными формы если форма валидна,
+
+  // Выполнит валидацию формы и вернет результат
+  private _validate(): boolean {
+    const validator = new FormValidator(
+      this._form,
+      this._inputValidClass,
+      this._inputInvalidClass,
+      this._buttonSelector,
+    );
+
+    return validator.run();
   }
 }
 

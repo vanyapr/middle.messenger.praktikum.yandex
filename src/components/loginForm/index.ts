@@ -13,15 +13,9 @@ const state = new State();
 
 export default class LoginForm extends Block {
   componentDidMount() {
-    // TODO: Здесь определить перезапись пропсов при их изменении
-
-    state.doTheStuff(this.props, 'loginForm');
+    state.addState('loginForm', this.props);
     // Компонент может сам подписаться на изменения
     // необходимых для него данных.
-
-    // state.set('loginForm', { title: 'NT' });
-
-    // this.setProps(state.get('loginForm'));
 
     // После их изменения будет вызван emit,
     // и компонент сможет перезапустить componentDidUpdate.
