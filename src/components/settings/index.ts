@@ -13,6 +13,11 @@ export default class Settings extends Block {
     state.addState('settings', this.props);
   }
 
+  componentDidUpdate() {
+    console.log('Повторный рендер компонента из CDU (редактирование настроек');
+    this.init();
+  }
+
   render() {
     return Render(settings, this.props, this.container);
   }

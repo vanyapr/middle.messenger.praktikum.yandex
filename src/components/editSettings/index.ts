@@ -12,6 +12,11 @@ export default class EditSettings extends Block {
     state.addState('settings', this.props);
   }
 
+  componentDidUpdate() {
+    console.log('Повторный рендер компонента из CDU (редактирование настроек');
+    this.init();
+  }
+
   render() {
     return Render(editSettings, this.props, this.container);
   }

@@ -44,16 +44,26 @@ class State {
     console.log(this._state);
   }
 
+  // onUpdate() {
+  //   return func();
+  // }
+
   // Записывает значения
   set(path: string, value: TProps) {
     // Если такого ключа нет, создадим его
     if (!this._state[path]) {
+      console.log('Такого ключа нет');
       this._state[path] = {};
     }
 
     Object.assign(this._state[path], value);
+    console.log('Записано новое значение в стейт');
+    console.log(value);
+    console.log('Состояние стейта');
     console.log(this._state);
-    this._backUp();
+    console.log('Состояние пропсы');
+    console.log(this._state[path]);
+    // this._backUp();
   }
 
   // Возвращает значения по пути

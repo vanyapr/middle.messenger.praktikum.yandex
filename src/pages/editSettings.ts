@@ -30,7 +30,7 @@ const settings = state.get('settings');
 
 const editSettings = new EditSettings({
   ...settings,
-  error: '',
+  // error: '',
   loginValidator,
   passwordValidator,
   nameValidator,

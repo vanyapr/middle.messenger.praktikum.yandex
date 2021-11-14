@@ -32,6 +32,12 @@ export default class LoginForm extends Block {
     //    3) Таким образом получаем сайд эффект и апдейт компонента?
   }
 
+  componentDidUpdate() {
+    console.log('Повторный рендер компонента из CDU');
+    // this.setProps(state.get('loginForm'));
+    this.init();
+  }
+
   render() {
     return Render(loginForm, this.props, this.container);
   }

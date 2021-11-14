@@ -1,6 +1,5 @@
 import EventBus from '../EventBus/EventBus';
 import Template from '../Render/Template';
-import isEqual from '../isEqual';
 import Render from '../Render/Render';
 
 // Тип для событий
@@ -76,19 +75,10 @@ export default abstract class Block implements IBlock {
   }
 
   // Может переопределять пользователь, необязательно трогать
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   // Может переопределять пользователь
-  componentDidUpdate(oldProps: {}, newProps: {}) {
-    // return false;
-    console.log(oldProps, newProps);
-    console.log(Object.prototype.toString.call(newProps));
-    console.log(Object.prototype.toString.call(oldProps));
-    console.log(oldProps.constructor, newProps.constructor);
-    console.log(typeof oldProps);
-    console.log(typeof newProps);
-    return isEqual(oldProps, newProps);
+  componentDidUpdate() {
   }
 
   // Устанавливаем новые пропсы
@@ -108,10 +98,10 @@ export default abstract class Block implements IBlock {
   }
 
   // Отображает блок
-  show(): void {
-    // FIXME: Как теперь будут обновляться пропсы у компонента?
-    this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
-  }
+  // show(): void {
+  //   // FIXME: Как теперь будут обновляться пропсы у компонента?
+  //
+  // }
 
   private _registerEvents(): void {
     // Bind this делается потому что функция не стрелочная
@@ -125,7 +115,7 @@ export default abstract class Block implements IBlock {
     this.eventBus.on(Block.EVENTS.ADD_LISTENERS, this._setListeners.bind(this));
   }
 
-  // 3
+  // 2
   private _componentDidMount() {
     // Вызвали монтирование компонента
     this.componentDidMount();
@@ -135,19 +125,9 @@ export default abstract class Block implements IBlock {
   }
 
   // Эмитится когда обновляются пропсы
-  private _componentDidUpdate(oldProps: TProps, newProps: TProps) {
-    // Как сюда передать прошлые состояния пропсов?
-    const response = this.componentDidUpdate(oldProps, newProps);
-
-    // Если значения в объекте изменились
-    if (!response) {
-      // 1) Запишем "текущие значения" в кеш this._meta
-      this._meta = Object.assign(this._meta, this.props);
-      // 2) Вызовем перерендер
-
-      console.log('Повторный рендер компонента');
-      this.show();
-    }
+  private _componentDidUpdate(newProps: TProps) {
+    this._meta = Object.assign(this._meta, newProps);
+    this.componentDidUpdate();
   }
 
   private _makePropsProxy(props: TProps) {
@@ -165,7 +145,7 @@ export default abstract class Block implements IBlock {
         target[property] = value;
 
         // Заэмитили событие
-        self.eventBus.emit(Block.EVENTS.COMPONENT_DID_UPDATE, self._meta, reciever);
+        self.eventBus.emit(Block.EVENTS.COMPONENT_DID_UPDATE, reciever);
 
         // Возвратим true как того требует метод
         return true;
@@ -201,7 +181,7 @@ export default abstract class Block implements IBlock {
 
   // Отображает элемент на странице
   private _addHtml() {
-    this._template = this.render();
+    // this._template = this.render();
     const compiledTemplate = this._template.get();
     // Вызываем рендер
     if (this.container) {
@@ -216,5 +196,7 @@ export default abstract class Block implements IBlock {
   private _render() {
     // Создаст блок
     this._template = this.render();
+
+    this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
   }
 }

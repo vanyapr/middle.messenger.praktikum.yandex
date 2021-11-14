@@ -33,7 +33,7 @@ class Route {
     // Если передан блок
     if (this._block) {
       console.log(this._block);
-      this._block.show();
+      this._block.init();
     }
   }
 }
