@@ -13,7 +13,11 @@ const state = new State();
 
 export default class LoginForm extends Block {
   componentDidMount() {
-    state.addState('signUpForm', this.props);
+    const updater = () => {
+      this.setProps(state.get('signUpForm'));
+    };
+
+    state.registerComponent('signUpForm', updater);
   }
 
   render() {

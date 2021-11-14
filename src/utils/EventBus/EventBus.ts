@@ -43,7 +43,8 @@ export default class EventBus implements IEventBus {
   emit(eventName: string, ...rest: any): void {
     // Если такого события нет, выкинем ошибку
     if (!this._listeners[eventName]) {
-      throw new Error('Ошибка запуска события: такого события не существует.');
+      console.log(this._listeners);
+      throw new Error(`Ошибка запуска события: ${eventName} такого события не существует.`);
     }
 
     this._listeners[eventName].forEach((event: Function) => {

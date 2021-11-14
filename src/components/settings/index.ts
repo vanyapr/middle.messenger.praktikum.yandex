@@ -10,12 +10,11 @@ const state = new State();
 
 export default class Settings extends Block {
   componentDidMount() {
-    state.addState('settings', this.props);
-  }
+    const updater = () => {
+      this.setProps(state.get('settings'));
+    };
 
-  componentDidUpdate() {
-    console.log('Повторный рендер компонента из CDU (редактирование настроек');
-    this.init();
+    state.registerComponent('settings', updater);
   }
 
   render() {

@@ -50,7 +50,7 @@ export default new LoginForm({
         .then((response: XMLHttpRequest) => {
           console.log(response);
           if (response.status === 200) {
-            state.set('user', { authorised: true });
+            // state.set('user', { authorised: true });
             // Вернем свойства юзера
             return auth.getUserData();
           }

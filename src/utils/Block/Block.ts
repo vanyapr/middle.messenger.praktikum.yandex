@@ -90,18 +90,13 @@ export default abstract class Block implements IBlock {
     // Этот метод вызывает перезапись первого объекта свойствами второго
     // Также он вызывает сайд эффект
     Object.assign(this.props, nextProps);
+    this._render();
   }
 
   // Может переопределять пользователь, необязательно трогать
   render(): Template {
     return this._template;
   }
-
-  // Отображает блок
-  // show(): void {
-  //   // FIXME: Как теперь будут обновляться пропсы у компонента?
-  //
-  // }
 
   private _registerEvents(): void {
     // Bind this делается потому что функция не стрелочная

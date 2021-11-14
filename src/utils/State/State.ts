@@ -1,5 +1,7 @@
 // Управляет хранилищем приложения
 // Тип для событий
+import EventBus from '../EventBus/EventBus';
+
 type TEvents = {
   [key: string]: string
 };
@@ -10,13 +12,16 @@ type TProps = { [key: string]: string | Function | number | InstanceType<any> };
 class State {
   static EVENTS: TEvents = {
     INIT: 'init',
-    ADD: 'add',
-    SET: 'set',
+    // ADD: 'add',
+    // UPDATE: 'update',
+    UPDATED: 'updated', // Запуск апдейта компонента
   }
 
   private static __instance: State
 
   private _state: any
+
+  private eventBus: EventBus
 
   constructor() {
     // 1) Синглтон, сущесвует лишь 1 на приложение
@@ -33,7 +38,16 @@ class State {
       this._state = {};
     }
 
+    this.eventBus = new EventBus();
+
     State.__instance = this;
+
+    this.init();
+  }
+
+  init() {
+    this.eventBus.on(State.EVENTS.INIT, this.init.bind(this));
+    this.eventBus.on(State.EVENTS.UPDATED, this.onUpdate.bind(this));
   }
 
   addState(path: string, props: TProps) {
@@ -41,12 +55,17 @@ class State {
 
     // 5) При обновлении пропсов в хранилище компонент запускает рендер
     this._state[path] = props;
-    console.log(this._state);
+    // console.log(this._state);
   }
 
-  // onUpdate() {
-  //   return func();
-  // }
+  registerComponent(path: string, updateFunction: any) {
+    console.log(path);
+    this.eventBus.on(path, updateFunction);
+  }
+
+  onUpdate(path: string) {
+    this.eventBus.emit(path);
+  }
 
   // Записывает значения
   set(path: string, value: TProps) {
@@ -57,13 +76,9 @@ class State {
     }
 
     Object.assign(this._state[path], value);
-    console.log('Записано новое значение в стейт');
-    console.log(value);
-    console.log('Состояние стейта');
+    this._backUp();
+    this.eventBus.emit(State.EVENTS.UPDATED, path);
     console.log(this._state);
-    console.log('Состояние пропсы');
-    console.log(this._state[path]);
-    // this._backUp();
   }
 
   // Возвращает значения по пути
