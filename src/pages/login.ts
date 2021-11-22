@@ -11,17 +11,13 @@ import Auth from '../connectors/Auth';
 import State from '../utils/State/State';
 // @ts-ignore
 import image from '../../static/avatar.jpg';
+import Chats from '../connectors/Chats';
 
 // Объявили роутер
 const router = new Router();
 
 // Стейт приложения
 const state = new State();
-
-// Если юзера авторизован, будем редиректить его в чат
-// if (state.get('user').authorised === true) {
-//   router.go('/chats');
-// }
 
 export default new LoginForm({
   title: 'Авторизация',
@@ -66,12 +62,24 @@ export default new LoginForm({
               userSettings.avatar = image;
             }
             state.set('settings', userSettings);
-            router.go('/chat');
-          } else {
-            form.enableButton();
-            state.set('loginForm', { error: 'Ошибка получения данных пользователя' });
+
+            // TODO: Получить данные чатов
+            const chats = new Chats();
+            return chats.getChats();
           }
+          form.enableButton();
+          state.set('loginForm', { error: 'Ошибка получения данных пользователя' });
+          throw new Error('Ошибка получения данных пользователя');
+
           // Иначе данные не пришли, и мы запишем ошибку
+        }).then((response: XMLHttpRequest) => {
+          console.log(response);
+          if (response.status === 200) {
+            const chats = JSON.parse(response.responseText);
+            console.log(chats);
+            state.set('chats', chats);
+            router.go('/chat');
+          }
         })
         .catch((error) => {
           console.log(error);

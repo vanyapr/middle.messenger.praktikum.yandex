@@ -14,3 +14,7 @@ export const savePassword = '/user/password';
 export const saveAvatar = '/user/profile/avatar';
 export const getUserById = '/user/';
 export const findUser = '/user/search';
+
+// Чаты
+export const chats = '/chats';
+export const chatsArchive = '/chats/archive';

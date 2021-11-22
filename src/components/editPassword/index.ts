@@ -10,7 +10,11 @@ const state = new State();
 
 export default class EditPassword extends Block {
   componentDidMount() {
-    // state.addState('password', this.props);
+    const updater = () => {
+      this.setProps(state.get('settings'));
+    };
+
+    state.registerComponent('settings', updater);
   }
 
   render() {

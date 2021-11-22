@@ -4,12 +4,12 @@ const template = `
 
     <div class="form__fields">
       <div class="form__group">
-          <input class="input" name="login" id="login" type="text" placeholder=" " onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ loginValidator }}" required value="snowflax">
+          <input class="input" name="login" id="login" type="text" placeholder=" " onkeyup="{{ validate }}" pattern="{{ loginValidator }}" required value="snowflax">
           <label for="login" class="label">Пользователь</label>
           <div class="form__error">Минимум 4 буквы, цифры или символа '-' и '_', </div>
       </div>
       <div class="form__group">
-          <input class="input" name="password" id="password" type="password"  placeholder=" " onfocus="{{ validate }}" onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required value="adrf43gdA">
+          <input class="input" name="password" id="password" type="password"  placeholder=" " onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required value="adrf43gdA">
           <label for="password" class="label">Пароль</label>
           <div class="form__error">Минимум 8 символов. Пароль должен содержать ЗАГЛАВНУЮ букву и цифру</div>
       </div>

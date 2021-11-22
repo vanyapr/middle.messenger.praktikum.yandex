@@ -55,7 +55,6 @@ class State {
 
     // 5) При обновлении пропсов в хранилище компонент запускает рендер
     this._state[path] = props;
-    // console.log(this._state);
   }
 
   registerComponent(path: string, updateFunction: any) {

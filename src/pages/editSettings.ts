@@ -30,7 +30,7 @@ const settings = state.get('settings');
 
 const editSettings = new EditSettings({
   ...settings,
-  // error: '',
+  error: '',
   loginValidator,
   passwordValidator,
   nameValidator,
@@ -61,6 +61,7 @@ const editSettings = new EditSettings({
           if (!newSettings.avatar) {
             newSettings.avatar = image;
           }
+          newSettings.error = '';
           state.set('settings', newSettings);
           form.enableButton();
         } else {

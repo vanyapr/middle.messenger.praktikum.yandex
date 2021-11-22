@@ -74,7 +74,7 @@ export default abstract class Block implements IBlock {
     this.eventBus.emit(Block.EVENTS.COMPONENT_DID_MOUNT);
   }
 
-  // Может переопределять пользователь, необязательно трогать
+  // Может переопределять пользователь
   componentDidMount() {}
 
   // Может переопределять пользователь
@@ -82,7 +82,7 @@ export default abstract class Block implements IBlock {
   }
 
   // Устанавливаем новые пропсы
-  setProps = (nextProps: TProps) => {
+  setProps = (nextProps: TProps): void => {
     if (!nextProps) {
       return;
     }
@@ -111,7 +111,7 @@ export default abstract class Block implements IBlock {
   }
 
   // 2
-  private _componentDidMount() {
+  private _componentDidMount(): void {
     // Вызвали монтирование компонента
     this.componentDidMount();
 
@@ -120,7 +120,7 @@ export default abstract class Block implements IBlock {
   }
 
   // Эмитится когда обновляются пропсы
-  private _componentDidUpdate(newProps: TProps) {
+  private _componentDidUpdate(newProps: TProps): void {
     this._meta = Object.assign(this._meta, newProps);
     this.componentDidUpdate();
   }
@@ -152,8 +152,13 @@ export default abstract class Block implements IBlock {
     });
   }
 
+  // FIXME: Нужна возможность удалять листенеры
+  private _removeListeners(): void {
+
+  }
+
   // Устанавливает слушатели в отрендеренный темплейт
-  private _setListeners() {
+  private _setListeners(): void {
     const listenersList = Object.entries(this._template.getListeners());
 
     listenersList.forEach(([key, value]) => {
@@ -175,8 +180,8 @@ export default abstract class Block implements IBlock {
   }
 
   // Отображает элемент на странице
-  private _addHtml() {
-    // this._template = this.render();
+  private _addHtml(): void {
+    // Получит строку темплейта с проставленными переменными
     const compiledTemplate = this._template.get();
     // Вызываем рендер
     if (this.container) {
@@ -188,8 +193,8 @@ export default abstract class Block implements IBlock {
   }
 
   // Вызываем рендер элемента
-  private _render() {
-    // Создаст блок
+  private _render(): void {
+    // Получит темплейт на основании пропсов
     this._template = this.render();
 
     this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);

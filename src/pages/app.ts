@@ -5,13 +5,13 @@ import '../styles/components/main/main.scss';
 
 // @ts-ignore
 import avatar from '../../static/avatar.jpg';
-import Chats from '../components/chats/chats';
+import Chats from '../components/chats/index';
 import Search from '../components/search/search';
 import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
 import Inputs from '../components/inputs/inputs';
 import Messages from '../components/messages/messages';
-import { notEmptyValidator, loginValidator } from '../settings/validators';
+import { loginValidator, notEmptyValidator } from '../settings/validators';
 import MenuButton from '../components/menuButton';
 import HeaderMenu from '../components/headerMenu/headerMenu';
 import Router from '../utils/Router/Router';
@@ -19,10 +19,71 @@ import PopUp from '../components/popUp';
 import AddUserForm from '../components/addUserForm';
 import validateInput from '../utils/validateInput/validateInput';
 import Form from '../utils/Form/Form';
+import Chat from '../components/chat';
+
+import State from '../utils/State/State';
+
+// Стейт приложения
+const state = new State();
+
 const router = new Router();
 
+const chatsData = [
+  {
+    id: 123,
+    title: 'my-chat',
+    avatar,
+    unread_count: 15,
+    last_message: {
+      user: {
+        first_name: 'Petya',
+        second_name: 'Pupkin',
+        avatar,
+        email: 'my@email.com',
+        login: 'userLogin',
+        phone: '8(911)-222-33-22',
+      },
+      time: '2020-01-02T14:22:22.000Z',
+      content: 'this is message content',
+    },
+  },
+  {
+    id: 123,
+    title: 'my-chat',
+    avatar: '/123/avatar1.jpg',
+    unread_count: 15,
+    last_message: {
+      user: {
+        first_name: 'Vasya',
+        second_name: 'Pupkin',
+        avatar,
+        email: 'my@email2.com',
+        login: 'userLogins',
+        phone: '8(911)-222-33-22',
+      },
+      time: '2020-01-02T14:22:22.000Z',
+      content: 'Another message',
+    },
+  },
+];
+
+// TODO: рендер списка чатов
+// Каждый чат со своими пропсами
+// отображаем в контейнере чатов
+// по смене пропсов выполняем повторный рендер списка чатов
+// добавляя обновленный чат сверху и удаляя предыдущий
+const chatData = chatsData[0];
+const chat = new Chat({
+  ...chatData,
+  handleMouseOver() {
+    console.log('MouseOver');
+    state.set('chat123', { unread_count: 42 });
+  },
+});
+
 const chats = new Chats({
-  avatar,
+  // avatar,
+  children: chat,
 });
 
 const search = new Search();

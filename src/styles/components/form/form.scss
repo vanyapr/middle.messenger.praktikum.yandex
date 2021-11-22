@@ -14,8 +14,14 @@
   &_type {
 
     &_popup {
-      padding: 48px 30px 100px;
+      padding: 0 10px 50px;
       min-height: auto;
+      position: initial;
+      top: auto;
+      left: auto;
+      box-shadow: none;
+      width: auto;
+      transform: none;
     }
   }
 

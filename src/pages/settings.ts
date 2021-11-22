@@ -37,7 +37,6 @@ const settings = new Settings({
   handleLogout() {
     auth.logOut().then((response: XMLHttpRequest) => {
       if (response.status === 200) {
-        state.set('user', { authorised: false });
         state.delete('settings');
         router.go('/');
       } else {

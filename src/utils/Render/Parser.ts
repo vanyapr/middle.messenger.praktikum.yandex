@@ -24,6 +24,11 @@ class Parser implements IParser {
     this._fillTemplate();
   }
 
+  // Выполняет рендер блока
+  private renderBlock() {
+
+  }
+
   // Записываем значения в темплейт
   private _fillTemplate(): void {
     let template = this._template.get();

@@ -12,6 +12,7 @@ import Container from '../components/container/container';
 import Router from '../utils/Router/Router';
 import Form from '../utils/Form/Form';
 import State from '../utils/State/State';
+import User from '../connectors/User';
 
 const router = new Router();
 const state = new State();
@@ -26,7 +27,6 @@ const backButton = new BackButton({
 
 const editPassword = new EditPassword({
   ...settings,
-  // FIXME: Исправить проблему с отображением ошибки
   error: '',
   back() {
     router.back();
@@ -34,7 +34,6 @@ const editPassword = new EditPassword({
   handleSubmit(event: Event) {
     event.preventDefault();
 
-    state.set('password', { error: 'Пароли не совпадают' });
     // Собираем данные формы
     const form = new Form(
       this,
@@ -45,16 +44,32 @@ const editPassword = new EditPassword({
 
     const formData = form.collectData();
 
-    // 123ASDaas
+    // adrf43gdA
     if (formData) {
-      console.log(formData);
+      form.disableButton();
       // Проверим равны ли новые пароли
       if (formData.newPassword === formData.newPassword2) {
+        const { oldPassword, newPassword } = formData;
+        const passwords = { oldPassword, newPassword };
+
         // Делаем запрос
-        console.log('Делаем запрос');
+        const user = new User();
+        user.changePassword(passwords).then((response: XMLHttpRequest) => {
+          if (response.status === 200) {
+            state.set('settings', { error: '' });
+            form.enableButton();
+          } else {
+            throw new Error(`${response.status}: ${response.statusText}`);
+          }
+        }).catch((error) => {
+          form.enableButton();
+          console.log(error);
+          state.set('settings', { error: 'Ошибка изменения пароля' });
+        });
       } else {
         console.log('Пароли не совпали');
-        state.set('password', { error: 'Пароли не совпадают' });
+        state.set('settings', { error: 'Пароли не совпадают' });
+        form.enableButton();
       }
     } else {
       console.log('Форма невалидна и данных нет');
