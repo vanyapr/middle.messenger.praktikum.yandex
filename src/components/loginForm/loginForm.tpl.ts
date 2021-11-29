@@ -1,26 +1,16 @@
 const template = `
-  <form class="form" onsubmit="{{ handleSubmit }}" novalidate>
-    <h1 class="form__title">{{ title }}</h1>
+  <h1 class="form__title">{{ title }}</h1>
 
-    <div class="form__fields">
-      <div class="form__group">
-          <input class="input" name="login" id="login" type="text" placeholder=" " onkeyup="{{ validate }}" pattern="{{ loginValidator }}" required value="snowflax">
-          <label for="login" class="label">Пользователь</label>
-          <div class="form__error">Минимум 4 буквы, цифры или символа '-' и '_', </div>
-      </div>
-      <div class="form__group">
-          <input class="input" name="password" id="password" type="password"  placeholder=" " onkeyup="{{ validate }}" pattern="{{ passwordValidator }}" required value="adrf43gdA">
-          <label for="password" class="label">Пароль</label>
-          <div class="form__error">Минимум 8 символов. Пароль должен содержать ЗАГЛАВНУЮ букву и цифру</div>
-      </div>
-    </div>
+  <div class="form__fields">
+    {{loginInput}}
+    {{passwordInput}}
+  </div>
 
-    <div class="form__controls">
-        <div class="form__controls-error">{{ error }}</div>
-        <button class="button button_state_success" type="submit">{{ buttonText }}</button>
-        <a class="form__link" type="submit" onclick="{{ goRoute }}">{{ linkText }}</a>
-    </div>
-  </form>
+  <div class="form__controls">
+      <div class="form__controls-error">{{ error }}</div>
+      <button class="button button_state_success" type="submit">{{ buttonText }}</button>
+      <a class="form__link" type="submit" onclick="{{ goRoute }}">{{ linkText }}</a>
+  </div>
 `;
 
 export default template;

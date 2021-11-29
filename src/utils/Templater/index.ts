@@ -3,7 +3,7 @@ import Template from './Template'; // Использую в качестве т�
 
 type TSelector = string | null | undefined;
 
-// Функция - рендерер
+// Возвращает строку темплейта
 const render = (templateString: string, data: {}, containerSelector?: TSelector): Template => {
   // Заполняем темплейт данными
   const template = new Compiler(templateString, data, containerSelector).compile();

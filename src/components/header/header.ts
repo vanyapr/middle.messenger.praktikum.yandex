@@ -1,6 +1,6 @@
 import header from './header.tpl';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 
 import '../../styles/components/header/header.scss';
 

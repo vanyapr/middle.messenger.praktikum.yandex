@@ -1,6 +1,6 @@
 import loginForm from './signUpForm.tpl';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 
 import '../../styles/components/form/form.scss';
 import '../../styles/components/button/button.scss';

@@ -7,7 +7,7 @@ type TListeners = {
 
 interface ITemplate {
   getProp(keyString: string): any;
-  get(): string;
+  getString(): string;
   set(value: string): void;
   setListeners(listeners: TListeners): void;
   getListeners(): TListeners;
@@ -50,7 +50,7 @@ class Template implements ITemplate {
   }
 
   // Получить темплейт
-  get(): string {
+  getString(): string {
     return this._template;
   }
 

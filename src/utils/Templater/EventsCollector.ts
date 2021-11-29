@@ -16,8 +16,10 @@ interface IEventsCollector {
 
 // Собирает события по on*, возвращает строку темплейта и список событий в объекте
 class EventsCollector implements IEventsCollector {
+  // Сам темплейт
   private _template: Template
 
+  // Слушатели событий
   private _listeners: TListeners
 
   private readonly _regExp: RegExp
@@ -32,11 +34,11 @@ class EventsCollector implements IEventsCollector {
 
   // Возвращает массив со списком слушателей
   private _collectListenersNames() {
-    const template = this._template.get();
+    // Получим строку темплейта
+    const template = this._template.getString();
     // Получим все имена слушателей из темплейта
     // образец: ... onclick="{{a}}" onSubmit='{{ b }}' => ['onclick="{{a}}"', 'onSubmit="{{ b }}"']
     return [...template.matchAll(this._regExp)].map((array: RegExpMatchArray) => array[0]);
-    // TODO: Чтобы не итерироваться повторно, преобразовать массив в Set с уникальными значениями
   }
 
   // Собираем вызовы событий
@@ -48,9 +50,8 @@ class EventsCollector implements IEventsCollector {
     const processedTemplate = variablesToReplace.reduce((templateString:string, uniqueVariable: string) => {
       let result = '';
 
-      // Мы запишем на место вызова идентификатор блока
-      // как data-{УНИКАЛЬНЫЙ ID}
-      // По идентификатору блока будем вешать листенеры при рендере
+      // Запишем data-{УНИКАЛЬНЫЙ ID} в месте вызова слушателя
+      // По идентификатору будем вешать и снимать листенеры
       const uuid = makeUUID(); // '23a91df9-2a89-4357-b297-ec2924d854e3'
 
       // Получим из строки подстроку с типом события для data-event
@@ -63,16 +64,16 @@ class EventsCollector implements IEventsCollector {
         const replace = `data-${eventType[0]}'${uuid}'`;
         result = templateString.replaceAll(uniqueVariable, replace);
       } else {
-        throw new Error('Не удалось вычислить тип события');
+        throw new Error('Не удалось вычислить тип события при записи слушателя');
       }
 
-      // Получили ключ, по которому получим функцию
+      // Получили ключ, по которому получим слушатель
       const variableBrackets = uniqueVariable.match(this._regExp);
 
       if (variableBrackets) {
-        // Саму функцию запишем в объект под идентификатором {УНИКАЛЬНЫЙ ID: { метод, тип}}
+        // Саму функцию запишем в объект как { УНИКАЛЬНЫЙ ID: { метод, тип } }
         if (!this._listeners[uuid]) {
-          // Получим тип события
+          // Получим тип события (например 'click')
           const type = eventType[0].replace('=', '');
 
           // Вхождения строк с переменными
@@ -83,7 +84,7 @@ class EventsCollector implements IEventsCollector {
             const propToParse = matchedProps[0];
             const variableKey = new StringsCleaner(propToParse).clean();
             const method = this._template.getProp(variableKey);
-            // Добавили событие по ключу
+            // Записали событие в объект слушателей
             this._listeners[uuid] = {
               method,
               type,
@@ -95,13 +96,15 @@ class EventsCollector implements IEventsCollector {
       }
 
       return result;
-    }, this._template.get());
+    }, this._template.getString());
 
-    // Перезаписали состояние темплейта
+    // Перезаписали строку темплейта
     this._template.set(processedTemplate);
+    // Перезаписали слушатели событий в темплейте
     this._template.setListeners(this._listeners);
   }
 
+  // Собирает слушатели и заменяет их в строке на уникальные ID
   run(): void {
     this._collectListeners();
   }

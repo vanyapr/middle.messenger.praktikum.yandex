@@ -1,6 +1,6 @@
 import '../../styles/components/back-button/back-button.scss';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 
 // Темплейт
 import backButton from './backButton.tpl';

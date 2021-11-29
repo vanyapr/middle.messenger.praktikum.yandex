@@ -1,4 +1,4 @@
-import template from './loginForm.tpl';
+import template from './test.tpl';
 import Block from '../../utils/Block/Block';
 
 import '../../styles/components/form/form.scss';
@@ -8,13 +8,9 @@ import '../../styles/components/input/input.scss';
 import compile from '../../utils/Compile/compile';
 import Renderer from '../../utils/Render/Render';
 
-// import State from '../../utils/State/State';
-//
-// const state = new State();
-
-export default class LoginForm extends Block {
-  constructor(props: any) {
-    super(props, 'form', 'form');
+export default class Root extends Block {
+  constructor(props: { text: string; events: { click: () => void } }) {
+    super(props, 'p', 'testing');
   }
 
   // componentDidMount() {

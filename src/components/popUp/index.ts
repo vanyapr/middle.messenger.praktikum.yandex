@@ -1,6 +1,6 @@
 import Block from '../../utils/Block/Block';
-import Template from '../../utils/Render/Template';
-import render from '../../utils/Render';
+import Template from '../../utils/Templater/Template';
+import render from '../../utils/Templater';
 import popUp from './popUp.tpl';
 import '../../styles/components/popup/popup.scss';
 

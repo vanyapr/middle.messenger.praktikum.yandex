@@ -1,0 +1,14 @@
+import '../../styles/components/inputs/inputs.scss';
+import template from './input.tpl';
+import Block from '../../utils/Block/Block';
+import compile from '../../utils/Compile/compile';
+
+export default class Input extends Block {
+  constructor(props: any) {
+    super(props, 'div', 'form__group');
+  }
+
+  render() {
+    return compile(template, { ...this.props });
+  }
+}

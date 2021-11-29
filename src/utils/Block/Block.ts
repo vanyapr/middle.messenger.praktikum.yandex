@@ -1,202 +1,191 @@
+import { nanoid } from 'nanoid';
 import EventBus from '../EventBus/EventBus';
-import Template from '../Render/Template';
-import Render from '../Render/Render';
+import { Nullable, Values } from './types';
 
-// Тип для событий
-type TEvents = {
-  [key: string]: string
-};
-
-// Тип пропсов, ключ текст, значения могут быть функцией, строкой, числом, или другим классом
-type TProps = { [key: string]: string | Function | number | InstanceType<any> };
-
-// Публичные методы
-interface IBlock {
-  init(): void,
-
-  componentDidMount(oldProps?: TProps): void,
-
-  componentDidUpdate(oldProps: TProps, newProps: TProps): void
-
-  setProps(newProps: TProps): void,
+interface BlockMeta<P = any> {
+  tagName: string,
+  className: string,
+  props: P
 }
 
-// Обеспечивает рендер элемента, не может быть объявлен напрямую
-export default abstract class Block implements IBlock {
-  // Статическое поле общее для всех экземпляров класса
-  static EVENTS: TEvents = {
+type Events = Values<typeof Block.EVENTS>;
+
+// TODO: передавать в конструктор класс элемента
+export default class Block<Props = any> {
+  static EVENTS = {
     INIT: 'init',
-    COMPONENT_DID_MOUNT: 'component-did-mount',
-    COMPONENT_DID_UPDATE: 'component-did-update',
-    RENDER: 'render',
-    DISPLAY_HTML: 'display-html',
-    ADD_LISTENERS: 'add-listeners',
+    FLOW_CDM: 'flow:component-did-mount',
+    FLOW_CDU: 'flow:component-did-update',
+    FLOW_RENDER: 'flow:render',
+  } as const;
+
+  eventBus: () => EventBus;
+
+  protected readonly props: Props;
+
+  private readonly _meta: BlockMeta;
+
+  id = nanoid(6);
+
+  /** JSDoc
+   * @param {Object} props
+   * @param {string} tagName
+   * @param {string} className
+   *
+   * @returns {void}
+   */
+  constructor(props?: Props, tagName: string = 'div', className: string = '') {
+    const eventBus = new EventBus<Events>();
+
+    this._meta = {
+      props,
+      tagName,
+      className,
+    };
+
+    this.props = this._makePropsProxy(props!);
+
+    this.eventBus = () => eventBus;
+
+    this._registerEvents(eventBus);
+    eventBus.emit(Block.EVENTS.INIT);
   }
 
-  // Поле для пропсов
-  props: object
+  protected _element: Nullable<HTMLElement> = null;
 
-  // Экземпляр эвентбаса
-  eventBus: any
-
-  // Компилятор темплейта
-  container: string | null
-
-  // Темплейт который мы получим при рендере
-  _template: Template
-
-  // Кеш пропсов компонента
-  private _meta: {}
-
-  constructor(props: TProps = {}, container: string | null = null) {
-    // Объявили экземпляр эвент баса
-    this.eventBus = new EventBus();
-
-    // Кеш пропсов
-    this._meta = {};
-
-    // Селектор контейнера
-    this.container = container;
-
-    // Создали прокси из пропсов, переданных в конструктор
-    this.props = this._makePropsProxy(props);
-
-    // Передали эвент бас в метод класса (зачем?)
-    this._registerEvents();
-
-    // Выполнили эвент инициализации
-    this.eventBus.emit(Block.EVENTS.INIT);
+  get element() {
+    return this._element;
   }
 
-  // 1
+  _registerEvents(eventBus: EventBus<Events>) {
+    eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
+    eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
+    eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
+    eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
+  }
+
+  _createResources() {
+    const { tagName, className } = this._meta;
+    this._element = this._createDocumentElement(tagName);
+
+    // Если передан класс элемента в конструктор, добавим его элементу
+    if (className) {
+      this._element.classList.add(this._meta.className);
+    }
+  }
+
   init() {
-    // Заэмитили событие в эвент басе (монтирование компонента)
-    this.eventBus.emit(Block.EVENTS.COMPONENT_DID_MOUNT);
+    this._createResources();
+    this.eventBus().emit(Block.EVENTS.FLOW_CDM, this.props);
   }
 
-  // Может переопределять пользователь
-  componentDidMount() {}
-
-  // Может переопределять пользователь
-  componentDidUpdate() {
+  _componentDidMount(props: Props) {
+    this.componentDidMount(props);
+    this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
   }
 
-  // Устанавливаем новые пропсы
-  setProps = (nextProps: TProps): void => {
+  componentDidMount(props: Props) {}
+
+  _componentDidUpdate(oldProps: Props, newProps: Props) {
+    const response = this.componentDidUpdate(oldProps, newProps);
+    if (!response) {
+      return;
+    }
+    this._render();
+  }
+
+  componentDidUpdate(oldProps: Props, newProps: Props): boolean {}
+
+  setProps = (nextProps: Props) => {
     if (!nextProps) {
       return;
     }
 
-    // Этот метод вызывает перезапись первого объекта свойствами второго
-    // Также он вызывает сайд эффект
     Object.assign(this.props, nextProps);
-    this._render();
+  };
+
+  _render() {
+    const fragment = this.render();
+
+    this._removeEvents();
+    this.element!.innerHTML = '';
+
+    this.element!.appendChild(fragment);
+    this._addEvents();
   }
 
-  // Может переопределять пользователь, необязательно трогать
-  render(): Template {
-    return this._template;
+  getContent() {
+    return this.element!;
   }
 
-  private _registerEvents(): void {
-    // Bind this делается потому что функция не стрелочная
-    // Здесь объявляются триггеры для вызова события
-    this.eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
-    this.eventBus.on(Block.EVENTS.COMPONENT_DID_MOUNT, this._componentDidMount.bind(this));
-    this.eventBus.on(Block.EVENTS.RENDER, this._render.bind(this));
-    // Апдейт компонента
-    this.eventBus.on(Block.EVENTS.COMPONENT_DID_UPDATE, this._componentDidUpdate.bind(this));
-    this.eventBus.on(Block.EVENTS.DISPLAY_HTML, this._addHtml.bind(this));
-    this.eventBus.on(Block.EVENTS.ADD_LISTENERS, this._setListeners.bind(this));
-  }
-
-  // 2
-  private _componentDidMount(): void {
-    // Вызвали монтирование компонента
-    this.componentDidMount();
-
-    // Заэмитили рендер компонента
-    this.eventBus.emit(Block.EVENTS.RENDER);
-  }
-
-  // Эмитится когда обновляются пропсы
-  private _componentDidUpdate(newProps: TProps): void {
-    this._meta = Object.assign(this._meta, newProps);
-    this.componentDidUpdate();
-  }
-
-  private _makePropsProxy(props: TProps) {
+  _makePropsProxy(props: Props): Props {
     // Можно и так передать this
     // Такой способ больше не применяется с приходом ES6+
     const self = this;
 
-    // Создаем прокси и записываем в this.props
-    return new Proxy(props, {
-      // Перехватываем сеттер
-      set(target: TProps, property: string, value, reciever) {
-        console.log('Сработал сайд эффект');
-        // Перезаписали пропсы в целевом объекте
+    return new Proxy(props as unknown as object, {
+      get(target: Record<string, unknown>, prop: string) {
+        const value = target[prop];
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+      set(target: Record<string, unknown>, prop: string, value: unknown) {
         // eslint-disable-next-line no-param-reassign
-        target[property] = value;
+        target[prop] = value;
 
-        // Заэмитили событие
-        self.eventBus.emit(Block.EVENTS.COMPONENT_DID_UPDATE, reciever);
-
-        // Возвратим true как того требует метод
+        // Запускаем обновление компоненты
+        // Плохой cloneDeep, в след итерации нужно заставлять добавлять cloneDeep им самим
+        self.eventBus().emit(Block.EVENTS.FLOW_CDU, { ...target }, target);
         return true;
       },
-
       deleteProperty() {
-        throw new Error('Отказано в доступе');
+        throw new Error('Нет доступа');
       },
-    });
+    }) as unknown as Props;
   }
 
-  // FIXME: Нужна возможность удалять листенеры
-  private _removeListeners(): void {
-
+  _createDocumentElement(tagName: string) {
+    // Можно сделать метод, который через фрагменты в цикле создает сразу несколько блоков
+    return document.createElement(tagName);
   }
 
-  // Устанавливает слушатели в отрендеренный темплейт
-  private _setListeners(): void {
-    const listenersList = Object.entries(this._template.getListeners());
+  _addEvents() {
+    // this.props.events
+    const events: Record<string, () => void> = (this.props as any).events;
 
-    listenersList.forEach(([key, value]) => {
-      // Вычислим селектор элемента на основании объекта
-      const query = `[data-${value.type}="${key}"]`;
-
-      // Получим элемент
-      const elements = document.querySelectorAll(query);
-
-      if (elements.length) {
-        elements.forEach((element) => {
-          // Если элемент найден, повесим на него слушатель
-          element.addEventListener(value.type, value.method);
-          // Удалим аттрибут потому что можем (эта работа с дом нереально медленная)
-          element.removeAttribute(`data-${value.type}`);
-        });
-      }
-    });
-  }
-
-  // Отображает элемент на странице
-  private _addHtml(): void {
-    // Получит строку темплейта с проставленными переменными
-    const compiledTemplate = this._template.get();
-    // Вызываем рендер
-    if (this.container) {
-      new Render(this._template.containerSelector).render(compiledTemplate);
+    if (!events || !this._element) {
+      return;
     }
 
-    // Вызовем добавление слушателей
-    this.eventBus.emit(Block.EVENTS.ADD_LISTENERS);
+    Object.entries(events).forEach(([event, listener]) => {
+      this._element!.addEventListener(event, listener);
+    });
   }
 
-  // Вызываем рендер элемента
-  private _render(): void {
-    // Получит темплейт на основании пропсов
-    this._template = this.render();
+  _removeEvents() {
+    // this.props.events
+    const events: Record<string, () => void> = (this.props as any).events;
 
-    this.eventBus.emit(Block.EVENTS.DISPLAY_HTML);
+    if (!events || !this._element) {
+      return;
+    }
+
+    Object.entries(events).forEach(([event, listener]) => {
+      this._element!.removeEventListener(event, listener);
+    });
   }
+
+  show() {
+    this.getContent().style.display = 'block';
+  }
+
+  hide() {
+    this.getContent().style.display = 'none';
+  }
+
+  render(): DocumentFragment {
+    return new DocumentFragment();
+  }
+
+  // Отображает на странице компонент (для корневого компонента
+  display(): void {}
 }

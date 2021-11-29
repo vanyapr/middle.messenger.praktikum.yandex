@@ -1,7 +1,7 @@
 import '../../styles/components/settings/settings.scss';
 import '../../styles/components/button/button.scss';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 import editSettings from './editSettings.tpl';
 import State from '../../utils/State/State';
 

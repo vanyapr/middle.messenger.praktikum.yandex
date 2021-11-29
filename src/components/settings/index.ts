@@ -1,6 +1,6 @@
 import '../../styles/components/settings/settings.scss';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 
 import settings from './settings.tpl';
 

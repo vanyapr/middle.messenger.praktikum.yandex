@@ -1,4 +1,4 @@
-import template from './loginForm.tpl';
+import template from './root.tpl';
 import Block from '../../utils/Block/Block';
 
 import '../../styles/components/form/form.scss';
@@ -12,10 +12,10 @@ import Renderer from '../../utils/Render/Render';
 //
 // const state = new State();
 
-export default class LoginForm extends Block {
-  constructor(props: any) {
-    super(props, 'form', 'form');
-  }
+export default class Test extends Block {
+  // constructor(props: any) {
+  //   super('div', props);
+  // }
 
   // componentDidMount() {
   //   const updater = () => {

@@ -15,10 +15,10 @@ interface ICompiler {
 }
 
 // TODO:
-// 1) +Итерируется по темплейту
-// 2) +При нахождении тега добавляется соответсвтующий элемент
-// 3) +Функции заменить на листенеры
-// 4) Учитывает вложенность дочерних компонентов (всплытие листенеров)
+// 1) + Итерируется по темплейту
+// 2) + При нахождении тега добавляется соответсвтующий элемент
+// 3) + Функции заменить на листенеры
+// 4) + Учитывает вложенность дочерних компонентов (всплытие листенеров)
 
 // Принимает строку темплейта и данные, возвращает темплейт заполненный данными и слушателями
 class Compiler implements ICompiler {
@@ -52,31 +52,31 @@ class Compiler implements ICompiler {
     // Здесь объявляются триггеры для вызова события
     this.eventBus.on(Compiler.EVENTS.INIT, this.init.bind(this));
     this.eventBus.on(Compiler.EVENTS.COLLECT_EVENTS, this._collectListeners.bind(this));
-    this.eventBus.on(Compiler.EVENTS.RENDER, this._fillTemplate.bind(this));
+    this.eventBus.on(Compiler.EVENTS.FILL_DATA, this._fillTemplate.bind(this));
   }
 
-  // 1
+  // 1 Старт эвент баса
   init() {
     // Заэмитили событие в эвент басе (монтирование компонента)
     this.eventBus.emit(Compiler.EVENTS.COLLECT_EVENTS);
   }
 
-  // Собираем слушатели
+  // 2) Собираем слушатели
   private _collectListeners() {
+    // Запускаем сбор событий в темплейте
     new EventsCollector(this._template).run();
     // Вызвали заполнение темплейта данными
-    this.eventBus.emit(Compiler.EVENTS.RENDER);
+    this.eventBus.emit(Compiler.EVENTS.FILL_DATA);
   }
 
-  // Запишем значения в темплейт
+  // 3) Запишем значения переменных в темплейт
   private _fillTemplate() {
-    // Запускаем сбор событий в темплейте
+    // Заполнили темплейт данными
     new Parser(this._template).run();
   }
 
-  // Компилирует темплейт с использованием встроенных методов
+  // Возвратим заполненный темплейт
   compile(): Template {
-    // Заполняем темплейт данными и возвращаем его
     return this._template;
   }
 }

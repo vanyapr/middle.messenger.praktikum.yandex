@@ -1,5 +1,5 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 
 import '../../styles/components/controls/controls.scss';
 import '../../styles/components/button/button.scss';

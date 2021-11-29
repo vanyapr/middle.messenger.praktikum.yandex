@@ -1,5 +1,5 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 import chat from './chat.tpl';
 import '../../styles/components/chat/chat.scss';
 import State from '../../utils/State/State';

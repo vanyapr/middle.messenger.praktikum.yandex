@@ -9,7 +9,7 @@ import Chats from '../components/chats/index';
 import Search from '../components/search/search';
 import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
-import Inputs from '../components/inputs/inputs';
+import Input from '../components/input/inputs';
 import Messages from '../components/messages/messages';
 import { loginValidator, notEmptyValidator } from '../settings/validators';
 import MenuButton from '../components/menuButton';
@@ -168,7 +168,7 @@ const controls = new Controls({
   },
 });
 
-const inputs = new Inputs();
+const inputs = new Input();
 
 const messages = new Messages({
   avatar,

@@ -1,5 +1,5 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import Render from '../../utils/Templater';
 
 import '../../styles/components/messages/messages.scss';
 import '../../styles/components/message/message.scss';

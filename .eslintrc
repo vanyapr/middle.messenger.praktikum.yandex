@@ -18,6 +18,9 @@
     "no-useless-escape": "off",
     "no-unused-vars": "off",
     "max-classes-per-file": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "no-use-before-define": "off",
+    "no-param-reassign": "off",
+    "prefer-destructuring": "off",
   }
 }

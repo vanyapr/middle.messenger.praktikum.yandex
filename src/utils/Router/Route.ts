@@ -1,4 +1,5 @@
 import Block from '../Block/Block';
+import Renderer from '../Render/Render';
 
 class Route {
   private readonly _pathName: string
@@ -32,8 +33,8 @@ class Route {
   private _render() {
     // Если передан блок
     if (this._block) {
-      console.log(this._block);
-      this._block.init();
+      console.log('Рендер?');
+      this._block.display();
     }
   }
 }

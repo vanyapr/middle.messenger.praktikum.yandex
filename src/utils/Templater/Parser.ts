@@ -24,14 +24,9 @@ class Parser implements IParser {
     this._fillTemplate();
   }
 
-  // Выполняет рендер блока
-  private renderBlock() {
-
-  }
-
   // Записываем значения в темплейт
   private _fillTemplate(): void {
-    let template = this._template.get();
+    let template = this._template.getString();
 
     // Получили список переменных из итератора возвращенного методом matchAll
     const variablesToReplace = [...template.matchAll(this._regExp)];
@@ -67,7 +62,7 @@ class Parser implements IParser {
           // 2) Передаем листенеры в текущий объект (наследуем)
           this._template.setListeners({ ...this._template.getListeners(), ...templateListeners });
           // 3) Получаем рендер из темплейта
-          const templateRenderedMarkdown = childrenTemplate.get();
+          const templateRenderedMarkdown = childrenTemplate.getString();
           // 4) Производим замены
           template = template.replaceAll(templateMatch, templateRenderedMarkdown);
         } else if (variableValue === null) {

@@ -7,6 +7,7 @@ import '../styles/components/container/container.scss';
 import Router from '../utils/Router/Router';
 
 // @ts-ignore
+
 import loginForm from './login';
 import signUpForm from './signUp';
 import app from './app';
@@ -16,19 +17,37 @@ import editPassword from './editPassword';
 import page404 from './404';
 import page500 from './500';
 
+import Test from '../components/test';
+import Root from '../components/root/root';
+
+const test = new Test({
+  text: 'TEST TEXT',
+  events: {
+    click: () => {
+      console.log('test');
+    },
+  },
+});
+
+const root = new Root({
+  button: test,
+});
+
 // Объявили роутер
 const router = new Router();
 
 // Объявили доступные пути
 router
-  .use('/', loginForm)
-  .use('/signup', signUpForm)
-  .use('/chat', app)
-  .use('/settings', settings)
-  .use('/settings-edit', editSettings)
-  .use('/settings-edit-password', editPassword)
-  .use('/404', page404)
-  .use('/500', page500);
-
-// Вернули ошибку
+  // .use('/', root);
+  .use('/', loginForm);
+//   // .use('/signup', signUpForm)
+//   // .use('/chat', app)
+//   // .use('/settings', settings)
+//   // .use('/settings-edit', editSettings)
+//   // .use('/settings-edit-password', editPassword)
+//   // .use('/404', page404)
+//   // .use('/500', page500);
+//
+// // Вернули ошибку
 router.run();
+// router.go('/');
