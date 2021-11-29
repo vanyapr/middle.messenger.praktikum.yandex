@@ -16,8 +16,6 @@ class Form implements IForm {
 
   constructor(
     form: HTMLFormElement,
-    inputValidClass: string,
-    inputInvalidClass: string,
     buttonSelector: string,
   ) {
     this._form = form;

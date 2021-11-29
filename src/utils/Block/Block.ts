@@ -94,7 +94,9 @@ export default class Block<Props = any> {
     this._render();
   }
 
-  componentDidUpdate(oldProps: Props, newProps: Props): boolean {}
+  componentDidUpdate(oldProps: Props, newProps: Props): boolean {
+    return true;
+  }
 
   setProps = (nextProps: Props) => {
     if (!nextProps) {

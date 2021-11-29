@@ -9,6 +9,7 @@ import Input from '../components/input/input';
 import { loginValidator, passwordValidator } from '../settings/validators';
 // @ts-ignore
 import image from '../../static/avatar.jpg';
+import Link from '../components/link/link';
 
 // Объявили роутер
 const router = new Router();
@@ -16,7 +17,9 @@ const router = new Router();
 // Стейт приложения
 const state = new State();
 
-// TODO: Собирать состояние формы из стейта приложения, чтобы не делать дополнительные валидаторы
+// Будем хранить состояние формы локально
+const formState: Record<string, boolean> = {};
+
 const loginInput = new Input({
   name: 'login',
   type: 'text',
@@ -25,13 +28,15 @@ const loginInput = new Input({
   value: 'snowflax',
   events: {
     keyup() {
-      // TODO: Записывать в стейт валидность инпутов
       const input = this.querySelector('.input');
       const error = this.querySelector('.form__error');
       const validity = validateInput(input, loginValidator, 'input_state_valid', 'input_state_invalid');
 
       if (!validity) {
         error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+        formState.loginIsValid = false;
+      } else {
+        formState.loginIsValid = true;
       }
     },
   },
@@ -42,17 +47,28 @@ const passwordInput = new Input({
   type: 'password',
   textName: 'Пароль',
   errorText: '',
-  value: 'adrf43gd',
+  value: 'adrf43gdA',
   events: {
     keyup() {
-      // TODO: Записывать в стейт валидность инпутов
       const input = this.querySelector('.input');
       const error = this.querySelector('.form__error');
       const validity = validateInput(input, passwordValidator, 'input_state_valid', 'input_state_invalid');
 
       if (!validity) {
         error.textContent = 'Минимум 8 знаков. Обязательны ЗАГЛАВНАЯ буква и цифра';
+        formState.passwordIsValid = false;
+      } else {
+        formState.passwordIsValid = true;
       }
+    },
+  },
+});
+
+const registerLink = new Link({
+  text: 'Зарегистрироваться',
+  events: {
+    click() {
+      router.go('/signup');
     },
   },
 });
@@ -64,22 +80,23 @@ export default new LoginForm({
   error: '',
   loginInput,
   passwordInput,
+  registerLink,
   events: {
     submit(event: Event) {
-      console.log('Submit');
       event.preventDefault();
-      console.log(event.target);
-      // Собираем данные формы
+
+      // Объявили форму
       const form = new Form(
         this,
-        'input_state_valid',
-        'input_state_invalid',
-        'button',
+        '.button',
       );
 
-      const formData = form.collectData();
+      const { loginIsValid, passwordIsValid } = formState;
 
-      if (formData) {
+      if (loginIsValid && passwordIsValid) {
+        // Собрали данные
+        const formData = form.collectData();
+
         // Отключим кнопку
         form.disableButton();
 
@@ -110,11 +127,10 @@ export default new LoginForm({
               const chats = new Chats();
               return chats.getChats();
             }
+            // Иначе данные не пришли, и мы запишем ошибку
             form.enableButton();
             state.set('loginForm', { error: 'Ошибка получения данных пользователя' });
             throw new Error('Ошибка получения данных пользователя');
-
-          // Иначе данные не пришли, и мы запишем ошибку
           }).then((response: XMLHttpRequest) => {
             console.log(response);
             if (response.status === 200) {
@@ -134,12 +150,11 @@ export default new LoginForm({
             router.go('/500');
           });
       } else {
-        console.log('Форма невалидна и данных нет');
+        console.log('Данные формы невалидны');
+        state.set('loginForm', {
+          error: 'Пожалуйста, заполните форму корректно',
+        });
       }
-    },
-
-    goRoute() {
-      router.go('/signup');
     },
   },
 });

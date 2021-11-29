@@ -17,30 +17,13 @@ import editPassword from './editPassword';
 import page404 from './404';
 import page500 from './500';
 
-import Test from '../components/test';
-import Root from '../components/root/root';
-
-const test = new Test({
-  text: 'TEST TEXT',
-  events: {
-    click: () => {
-      console.log('test');
-    },
-  },
-});
-
-const root = new Root({
-  button: test,
-});
-
 // Объявили роутер
 const router = new Router();
 
 // Объявили доступные пути
 router
-  // .use('/', root);
-  .use('/', loginForm);
-//   // .use('/signup', signUpForm)
+  .use('/', loginForm)
+  .use('/signup', signUpForm);
 //   // .use('/chat', app)
 //   // .use('/settings', settings)
 //   // .use('/settings-edit', editSettings)

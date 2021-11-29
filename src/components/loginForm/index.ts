@@ -8,22 +8,23 @@ import '../../styles/components/input/input.scss';
 import compile from '../../utils/Compile/compile';
 import Renderer from '../../utils/Render/Render';
 
-// import State from '../../utils/State/State';
-//
-// const state = new State();
+import State from '../../utils/State/State';
+
+const state = new State();
 
 export default class LoginForm extends Block {
   constructor(props: any) {
     super(props, 'form', 'form');
   }
 
-  // componentDidMount() {
-  //   const updater = () => {
-  //     this.setProps(state.get('loginForm'));
-  //   };
-  //
-  //   state.registerComponent('loginForm', updater);
-  // }
+  // Подписываемся на обновление компонентов
+  componentDidMount() {
+    const updater = () => {
+      this.setProps(state.get('loginForm'));
+    };
+
+    state.registerComponent('loginForm', updater);
+  }
 
   render() {
     return compile(template, { ...this.props });
