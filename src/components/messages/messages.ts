@@ -1,15 +1,27 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-
 import '../../styles/components/messages/messages.scss';
 import '../../styles/components/message/message.scss';
 import '../../styles/components/reply/reply.scss';
-
-// Темплейт
-import messages from './messages.tpl';
+import template from './messages.tpl';
+import compile from '../../utils/Compile/compile';
+import State from '../../utils/State/State';
+// Стейт приложения
+const state = new State();
 
 export default class Messages extends Block {
+  constructor(props:any) {
+    super(props, 'section', 'messages');
+  }
+
+  componentDidMount() {
+    const updater = () => {
+      this.setProps(state.get('messages'));
+    };
+
+    state.registerComponent('messages', updater);
+  }
+
   render() {
-    return Render(messages, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }

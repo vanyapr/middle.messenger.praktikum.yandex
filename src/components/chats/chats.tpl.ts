@@ -1,7 +1,5 @@
 const template = `
-<section class="chats">
-    {{ children }}
-</section>
+  {{ chats }}
 `;
 
 export default template;

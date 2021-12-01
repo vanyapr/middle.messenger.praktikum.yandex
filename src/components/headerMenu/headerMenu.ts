@@ -1,13 +1,16 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-import Template from '../../utils/Templater/Template';
-import headerMenu from './headerMenu.tpl';
+import template from './headerMenu.tpl';
 import '../../styles/components/header-menu/header-menu.scss';
 import '../../styles/components/menu/menu.scss';
+import compile from '../../utils/Compile/compile';
 
 export default class HeaderMenu extends Block {
-  render(): Template {
-    return Render(headerMenu, this.props, this.container);
+  constructor(props: any) {
+    super(props, 'div', 'header-menu');
+  }
+
+  render() {
+    return compile(template, { ...this.props });
   }
 
   toggle() {

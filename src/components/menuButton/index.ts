@@ -1,11 +1,14 @@
 import '../../styles/components/menuButton/menuButton.scss';
-import menuButton from './menuButton.tpl';
+import template from './menuButton.tpl';
 import Block from '../../utils/Block/Block';
-import Template from '../../utils/Templater/Template';
-import Render from '../../utils/Templater';
+import compile from '../../utils/Compile/compile';
 
 export default class MenuButton extends Block {
-  render(): Template {
-    return Render(menuButton, this.props, this.container);
+  constructor(props: any) {
+    super(props, 'button', 'menu-button');
+  }
+
+  render() {
+    return compile(template, { ...this.props });
   }
 }

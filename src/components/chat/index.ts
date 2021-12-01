@@ -1,8 +1,8 @@
-import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-import chat from './chat.tpl';
 import '../../styles/components/chat/chat.scss';
+import template from './chat.tpl';
+import Block from '../../utils/Block/Block';
 import State from '../../utils/State/State';
+import compile from '../../utils/Compile/compile';
 
 // Стейт приложения
 const state = new State();
@@ -10,20 +10,22 @@ const state = new State();
 class Chat extends Block {
   private _chatID: number
 
+  constructor(props: any) {
+    super(props, 'div', 'chat');
+  }
+
   componentDidMount() {
     this._chatID = this.props.id;
 
-    // TODO: использовать идентификатор чата для подписки на стейт
     const updater = () => {
       this.setProps(state.get(`chat${this._chatID}`));
     };
 
     state.registerComponent(`chat${this._chatID}`, updater);
-    console.log(this);
   }
 
   render() {
-    return Render(chat, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }
 

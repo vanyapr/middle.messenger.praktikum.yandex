@@ -1,11 +1,14 @@
-import header from './header.tpl';
+import template from './header.tpl';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-
 import '../../styles/components/header/header.scss';
+import compile from '../../utils/Compile/compile';
 
 export default class Header extends Block {
+  constructor(props: any) {
+    super(props, 'header', 'header');
+  }
+
   render() {
-    return Render(header, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }

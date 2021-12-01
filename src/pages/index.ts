@@ -23,14 +23,14 @@ const router = new Router();
 // Объявили доступные пути
 router
   .use('/', loginForm)
-  .use('/signup', signUpForm);
-//   // .use('/chat', app)
-//   // .use('/settings', settings)
-//   // .use('/settings-edit', editSettings)
-//   // .use('/settings-edit-password', editPassword)
-//   // .use('/404', page404)
-//   // .use('/500', page500);
-//
-// // Вернули ошибку
+  .use('/signup', signUpForm)
+  .use('/chat', app)
+  // .use('/settings', settings)
+  // .use('/settings-edit', editSettings)
+  // .use('/settings-edit-password', editPassword)
+  .use('/404', page404)
+  .use('/500', page500);
+
+// Вернули ошибку
 router.run();
 // router.go('/');

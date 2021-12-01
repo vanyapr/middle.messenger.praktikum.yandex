@@ -1,5 +1,4 @@
 const template = `
-  <form class="form form_type_popup" onsubmit="{{ handleSubmit }}" novalidate>
     <h1 class="form__title">{{ title }}</h1>
 
     <div class="form__fields">
@@ -13,7 +12,6 @@ const template = `
     <div class="form__controls">
         <button class="button button_state_success" type="submit">{{ buttonText }}</button>
     </div>
-  </form>
 `;
 
 export default template;

@@ -2,14 +2,15 @@ import App from '../components/app';
 
 import '../styles/components/sidebar/sidebar.scss';
 import '../styles/components/main/main.scss';
+import '../styles/components/container/container.scss';
 
 // @ts-ignore
 import avatar from '../../static/avatar.jpg';
+import Chat from '../components/chat';
 import Chats from '../components/chats/index';
 import Search from '../components/search/search';
 import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
-import Input from '../components/input/inputs';
 import Messages from '../components/messages/messages';
 import { loginValidator, notEmptyValidator } from '../settings/validators';
 import MenuButton from '../components/menuButton';
@@ -19,9 +20,9 @@ import PopUp from '../components/popUp';
 import AddUserForm from '../components/addUserForm';
 import validateInput from '../utils/validateInput/validateInput';
 import Form from '../utils/Form/Form';
-import Chat from '../components/chat';
 
 import State from '../utils/State/State';
+import MessageForm from '../components/messageForm/messageForm';
 
 // Стейт приложения
 const state = new State();
@@ -73,28 +74,35 @@ const chatsData = [
 // по смене пропсов выполняем повторный рендер списка чатов
 // добавляя обновленный чат сверху и удаляя предыдущий
 const chatData = chatsData[0];
+
 const chat = new Chat({
   ...chatData,
-  handleMouseOver() {
-    console.log('MouseOver');
-    state.set('chat123', { unread_count: 42 });
+  events: {
+    handleMouseOver() {
+      console.log('MouseOver');
+      state.set('chat123', { unread_count: 42 });
+    },
   },
 });
 
 const chats = new Chats({
   // avatar,
-  children: chat,
+  chats: chat,
 });
 
-const search = new Search();
+const search = new Search({
+
+});
 
 // Кнопка настроек
 const headerMenuSettingsButton = new MenuButton({
   iconType: 'settings',
   buttonText: 'Настройки',
-  clickAction: () => {
-    console.log('Настройки');
-    router.go('/settings');
+  events: {
+    clickAction: () => {
+      console.log('Настройки');
+      router.go('/settings');
+    },
   },
 });
 
@@ -102,8 +110,10 @@ const headerMenuSettingsButton = new MenuButton({
 const headerMenuFilesButton = new MenuButton({
   iconType: 'attachments',
   buttonText: 'Вложения',
-  clickAction: () => {
-    console.log('Вложения');
+  events: {
+    clickAction: () => {
+      console.log('Вложения');
+    },
   },
 });
 
@@ -116,8 +126,10 @@ const headerMenu = new HeaderMenu({
 const header = new Header({
   title: 'Заголовок чата будет здесь!',
   menu: headerMenu,
-  buttonClick() {
-    headerMenu.toggle();
+  events: {
+    buttonClick() {
+      headerMenu.toggle();
+    },
   },
 });
 
@@ -125,69 +137,77 @@ const addUserForm = new AddUserForm({
   title: 'Добавить контакт',
   buttonText: 'Добавить в контакты',
   loginValidator,
-  handleSubmit(event: Event) {
-    event.preventDefault();
+  events: {
+    handleSubmit(event: Event) {
+      event.preventDefault();
 
-    // Собираем данные формы
-    const form = new Form(
-      this,
-      'input_state_valid',
-      'input_state_invalid',
-      'button',
-    );
+      // Собираем данные формы
+      const form = new Form(
+        this,
+        'button',
+      );
 
-    const formData = form.collectData();
+      const formData = form.collectData();
 
-    if (formData) {
-      console.log(formData);
-    } else {
-      console.log('Форма невалидна и данных нет');
-    }
-  },
-  validate() {
-    validateInput(this, 'input_state_valid', 'input_state_invalid', '.button');
+      if (formData) {
+        console.log(formData);
+      } else {
+        console.log('Форма невалидна и данных нет');
+      }
+    },
+    validate() {
+      validateInput(this, 'input_state_valid', 'input_state_invalid', '.button');
+    },
   },
 });
 
 const popup = new PopUp({
   children: addUserForm,
-  closePopup(event: Event) {
-    event.stopPropagation();
+  events: {
+    closePopup(event: Event) {
+      event.stopPropagation();
 
-    // @ts-ignore
-    if (event.target && event.target.classList.contains('close')) {
-      popup.toggle();
-    }
+      // @ts-ignore
+      if (event.target && event.target.classList.contains('close')) {
+        popup.toggle();
+      }
+    },
   },
+
 });
 
 const controls = new Controls({
-  handleClick() {
-    console.log('Нажата кнопка закрытия');
-    popup.toggle();
+  events: {
+    handleClick() {
+      console.log('Нажата кнопка закрытия');
+      popup.toggle();
+    },
   },
-});
 
-const inputs = new Input();
+});
 
 const messages = new Messages({
   avatar,
 });
 
+const messageForm = new MessageForm({});
+
 export default new App({
-  avatar,
+  // avatar,
   search,
   chats,
   controls,
   header,
   messages,
-  inputs,
+  messageForm,
   popup,
-  notEmptyValidator,
-  handleSubmit(event: Event) {
-    event.preventDefault();
-    // Передали форму для сбора данных
-    console.log('Отправка сообщения');
+  // notEmptyValidator,
+  events: {
+    handleSubmit(event: Event) {
+      event.preventDefault();
+      // Передали форму для сбора данных
+      console.log('Отправка сообщения');
+    },
   },
-},
-'#container');
+
+});

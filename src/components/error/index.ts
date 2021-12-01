@@ -1,13 +1,22 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-
 import '../../styles/components/error/error.scss';
 
-// Темплейт
-import error from './error.tpl';
+import template from './error.tpl';
+import Renderer from '../../utils/Render/Render';
+import compile from '../../utils/Compile/compile';
 
 export default class Error extends Block {
+  constructor(props: any) {
+    super(props, 'div', 'error');
+  }
+
   render() {
-    return Render(error, this.props, this.container);
+    return compile(template, this.props);
+  }
+
+  // Добавляем на страницу компоненты
+  display() {
+    const renderer = new Renderer('#root');
+    renderer.render(this.getContent());
   }
 }

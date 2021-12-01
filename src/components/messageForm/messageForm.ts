@@ -1,11 +1,10 @@
-import template from './search.tpl';
 import Block from '../../utils/Block/Block';
-import '../../styles/components/search/search.scss';
 import compile from '../../utils/Compile/compile';
+import template from './messageForm.tpl';
 
-export default class Search extends Block {
+export default class MessageForm extends Block {
   constructor(props: any) {
-    super(props, 'header', 'search');
+    super(props, 'form', 'inputs');
   }
 
   render() {

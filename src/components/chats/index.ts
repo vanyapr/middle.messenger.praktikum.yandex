@@ -1,14 +1,18 @@
-import chats from './chats.tpl';
+import template from './chats.tpl';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
 
 import '../../styles/components/chats/chats.scss';
 import State from '../../utils/State/State';
+import compile from '../../utils/Compile/compile';
 
 // Стейт приложения
 const state = new State();
 
 export default class Chats extends Block {
+  constructor(props: any) {
+    super(props, 'section', 'chats');
+  }
+
   componentDidMount() {
     const updater = () => {
       this.setProps(state.get('chats'));
@@ -18,9 +22,6 @@ export default class Chats extends Block {
   }
 
   render() {
-    // TODO:
-    //  собрать данные в чаты, чаты отрендерить
-
-    return Render(chats, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }
