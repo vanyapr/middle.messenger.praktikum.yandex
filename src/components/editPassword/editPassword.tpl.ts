@@ -1,5 +1,4 @@
 const template = `
-  <section class="settings">
     <div class="settings__container">
       <figure class="settings__avatar">
         <img class="settings__avatar-image" width="130" height="130" src="{{ avatar }}" alt="{{ name }}">
@@ -31,7 +30,6 @@ const template = `
         </div>
       </form>
     </div>
-  </section>
 `;
 
 export default template;

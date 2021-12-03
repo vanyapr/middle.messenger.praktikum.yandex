@@ -1,6 +1,7 @@
 import Block from '../Block/Block';
 import Templater from '../../utils/Templater';
 
+// Возвращает фрагмент документа с вложенными блоками
 function compile(templateString: string, props: any): DocumentFragment {
   const fragment = document.createElement('template');
   const components: Record<string, Block> = {};

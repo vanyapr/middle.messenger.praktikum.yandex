@@ -1,5 +1,5 @@
 const container = `
-    <main id="container" class="test">
+    <main class="container">
         {{ aside }}
         {{ main }}
     <main>

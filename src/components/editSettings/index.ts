@@ -1,13 +1,17 @@
 import '../../styles/components/settings/settings.scss';
 import '../../styles/components/button/button.scss';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-import editSettings from './editSettings.tpl';
+import template from './editSettings.tpl';
 import State from '../../utils/State/State';
+import compile from '../../utils/Compile/compile';
 
 const state = new State();
 
 export default class EditSettings extends Block {
+  constructor(props: any) {
+    super(props, 'section', 'settings');
+  }
+
   componentDidMount() {
     const updater = () => {
       this.setProps(state.get('settings'));
@@ -17,6 +21,6 @@ export default class EditSettings extends Block {
   }
 
   render() {
-    return Render(editSettings, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }

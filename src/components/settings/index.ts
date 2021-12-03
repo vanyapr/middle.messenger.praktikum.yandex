@@ -1,14 +1,17 @@
 import '../../styles/components/settings/settings.scss';
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-
-import settings from './settings.tpl';
-
+import template from './settings.tpl';
 import State from '../../utils/State/State';
+import compile from '../../utils/Compile/compile';
+import Renderer from '../../utils/Render/Render';
 
 const state = new State();
 
 export default class Settings extends Block {
+  constructor(props: any) {
+    super(props, 'section', 'settings');
+  }
+
   componentDidMount() {
     const updater = () => {
       this.setProps(state.get('settings'));
@@ -18,6 +21,13 @@ export default class Settings extends Block {
   }
 
   render() {
-    return Render(settings, this.props, this.container);
+    return compile(template, { ...this.props });
+  }
+
+  // Добавляем на страницу компоненты
+  display() {
+    console.log('Показываем');
+    const renderer = new Renderer('#root');
+    renderer.render(this.getContent());
   }
 }

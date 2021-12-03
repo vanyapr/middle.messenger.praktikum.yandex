@@ -6,8 +6,6 @@ import '../styles/components/container/container.scss';
 
 import Router from '../utils/Router/Router';
 
-// @ts-ignore
-
 import loginForm from './login';
 import signUpForm from './signUp';
 import app from './app';
@@ -25,9 +23,9 @@ router
   .use('/', loginForm)
   .use('/signup', signUpForm)
   .use('/chat', app)
-  // .use('/settings', settings)
-  // .use('/settings-edit', editSettings)
-  // .use('/settings-edit-password', editPassword)
+  .use('/settings', settings)
+  .use('/settings-edit', editSettings)
+  .use('/settings-edit-password', editPassword)
   .use('/404', page404)
   .use('/500', page500);
 

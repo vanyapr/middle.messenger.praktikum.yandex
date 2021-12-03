@@ -20,9 +20,12 @@ const router = new Router();
 
 const backButton = new BackButton({
   buttonText: 'Вернуться назад',
-  back() {
-    router.back();
+  events: {
+    click() {
+      router.back();
+    },
   },
+
 });
 
 const state = new State();
@@ -36,55 +39,56 @@ const editSettings = new EditSettings({
   nameValidator,
   emailValidator,
   phoneValidator,
-  handleSubmit(event: Event) {
-    event.preventDefault();
+  events: {
+    handleSubmit(event: Event) {
+      event.preventDefault();
 
-    // Собираем данные формы
-    const form = new Form(
-      this,
-      'settings__value_state_valid',
-      'settings__value_state_invalid',
-      '.button',
-    );
+      // Собираем данные формы
+      const form = new Form(
+        this,
+        '.button',
+      );
 
-    const formData = form.collectData();
+      const formData = form.collectData();
 
-    if (formData) {
-      form.disableButton();
-      const user = new User();
-      return user.saveProfile(formData).then((response: XMLHttpRequest) => {
-        console.log(response);
-        if (response.status === 200) {
-          console.log();
-          const newSettings = JSON.parse(response.responseText);
+      if (formData) {
+        form.disableButton();
+        const user = new User();
+        return user.saveProfile(formData).then((response: XMLHttpRequest) => {
+          console.log(response);
+          if (response.status === 200) {
+            console.log();
+            const newSettings = JSON.parse(response.responseText);
 
-          if (!newSettings.avatar) {
-            newSettings.avatar = image;
+            if (!newSettings.avatar) {
+              newSettings.avatar = image;
+            }
+            newSettings.error = '';
+            state.set('settings', newSettings);
+            form.enableButton();
+          } else {
+            state.set('settings', { error: 'Ошибка сохранения данных' });
           }
-          newSettings.error = '';
-          state.set('settings', newSettings);
+        }).catch((error: any) => {
+          console.log(error);
           form.enableButton();
-        } else {
-          state.set('settings', { error: 'Ошибка сохранения данных' });
-        }
-      }).catch((error: any) => {
-        console.log(error);
-        form.enableButton();
-        router.go('/500');
-      });
-    }
-    form.enableButton();
-    console.log('Форма невалидна и данных нет');
+          router.go('/500');
+        });
+      }
+      form.enableButton();
+      console.log('Форма невалидна и данных нет');
+    },
+    validate() {
+      validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid', '.button');
+    },
+    back() {
+      router.back();
+    },
   },
-  validate() {
-    validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid', '.button');
-  },
-  back() {
-    router.back();
-  },
+
 });
 
 export default new Container({
   aside: backButton,
   main: editSettings,
-}, '#container');
+});

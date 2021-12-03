@@ -1,16 +1,7 @@
-type TListeners = {
-  [key: string]: {
-    type: string,
-    method: any
-  }
-}
-
 interface ITemplate {
   getProp(keyString: string): any;
   getString(): string;
   set(value: string): void;
-  setListeners(listeners: TListeners): void;
-  getListeners(): TListeners;
 }
 
 // Принимает темплейт и пропсы, возвращает экземпляр с методами и данными
@@ -18,18 +9,14 @@ class Template implements ITemplate {
   // Строка темплейта
   private _template: string;
 
-  private _listeners: TListeners
-
   containerSelector: string | null | undefined
 
   // Данные темплейта
   private readonly _templateData: any;
 
-  constructor(template: string, templateData: {}, containerSelector?: string | null | undefined) {
+  constructor(template: string, templateData: {}) {
     this._template = template;
     this._templateData = templateData;
-    this._listeners = {};
-    this.containerSelector = containerSelector;
   }
 
   // Получение данных для темплейта по ключу объекта (key.subkey.morekeys)
@@ -49,7 +36,7 @@ class Template implements ITemplate {
     }, templateData);
   }
 
-  // Получить темплейт
+  // Получить строку темплейта
   getString(): string {
     return this._template;
   }
@@ -57,16 +44,6 @@ class Template implements ITemplate {
   // Перезаписать строку темплейта
   set(value: string): void {
     this._template = value;
-  }
-
-  // Записать слушатели в темплейт
-  setListeners(listeners: TListeners): void {
-    this._listeners = listeners;
-  }
-
-  // Получить объект слушателей темплейта
-  getListeners(): TListeners {
-    return this._listeners;
   }
 }
 

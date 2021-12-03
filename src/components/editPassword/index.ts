@@ -2,13 +2,17 @@ import '../../styles/components/settings/settings.scss';
 import '../../styles/components/button/button.scss';
 
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Templater';
-import editPassword from './editPassword.tpl';
+import template from './editPassword.tpl';
 import State from '../../utils/State/State';
+import compile from '../../utils/Compile/compile';
 
 const state = new State();
 
 export default class EditPassword extends Block {
+  constructor(props: any) {
+    super(props, 'section', 'settings');
+  }
+
   componentDidMount() {
     const updater = () => {
       this.setProps(state.get('settings'));
@@ -18,6 +22,6 @@ export default class EditPassword extends Block {
   }
 
   render() {
-    return Render(editPassword, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }

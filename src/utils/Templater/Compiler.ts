@@ -1,8 +1,6 @@
 // @ts-ignore
-import { v4 as makeUUID } from 'uuid';
 import EventBus from '../EventBus/EventBus';
 import Template from './Template';
-import EventsCollector from './EventsCollector';
 import Parser from './Parser';
 
 type TEvents = {
@@ -14,13 +12,7 @@ interface ICompiler {
   compile(): Template
 }
 
-// TODO:
-// 1) + Итерируется по темплейту
-// 2) + При нахождении тега добавляется соответсвтующий элемент
-// 3) + Функции заменить на листенеры
-// 4) + Учитывает вложенность дочерних компонентов (всплытие листенеров)
-
-// Принимает строку темплейта и данные, возвращает темплейт заполненный данными и слушателями
+// Принимает строку темплейта и данные, возвращает темплейт заполненный данными
 class Compiler implements ICompiler {
   static EVENTS: TEvents = {
     INIT: 'init',
@@ -34,8 +26,9 @@ class Compiler implements ICompiler {
   // Экземпляр эвентбаса
   eventBus: any;
 
-  constructor(template: string, templateData: {}, containerSelector?: string | null | undefined) {
-    this._template = new Template(template, templateData, containerSelector);
+  constructor(template: string, templateData: Record<string, any>) {
+    // Создаем экземпляр темплейта
+    this._template = new Template(template, templateData);
 
     // Объявили экземпляр эвент баса
     this.eventBus = new EventBus();
@@ -51,21 +44,12 @@ class Compiler implements ICompiler {
     // Bind this делается потому что функция не стрелочная
     // Здесь объявляются триггеры для вызова события
     this.eventBus.on(Compiler.EVENTS.INIT, this.init.bind(this));
-    this.eventBus.on(Compiler.EVENTS.COLLECT_EVENTS, this._collectListeners.bind(this));
     this.eventBus.on(Compiler.EVENTS.FILL_DATA, this._fillTemplate.bind(this));
   }
 
   // 1 Старт эвент баса
   init() {
     // Заэмитили событие в эвент басе (монтирование компонента)
-    this.eventBus.emit(Compiler.EVENTS.COLLECT_EVENTS);
-  }
-
-  // 2) Собираем слушатели
-  private _collectListeners() {
-    // Запускаем сбор событий в темплейте
-    new EventsCollector(this._template).run();
-    // Вызвали заполнение темплейта данными
     this.eventBus.emit(Compiler.EVENTS.FILL_DATA);
   }
 

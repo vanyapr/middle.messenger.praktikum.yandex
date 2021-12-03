@@ -1,9 +1,8 @@
 import Block from '../../utils/Block/Block';
 import template from './app.tpl';
 import compile from '../../utils/Compile/compile';
-import Renderer from '../../utils/Render/Render';
 import State from '../../utils/State/State';
-// import '../../styles/components/container/container.scss';
+import Renderer from '../../utils/Render/Render';
 
 // Стейт приложения
 const state = new State();
@@ -27,6 +26,7 @@ export default class App extends Block {
 
   // Добавляем на страницу компоненты
   display() {
+    console.log('Показываем');
     const renderer = new Renderer('#root');
     renderer.render(this.getContent());
   }

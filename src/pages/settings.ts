@@ -12,44 +12,47 @@ const userSettings = state.get('settings');
 
 const backButton = new BackButton({
   buttonText: 'Вернуться назад',
-  back() {
-    router.back();
+  events: {
+    click() {
+      router.back();
+    },
   },
 });
 
 // FIXME: Проблема: при монтировании компонента он не обновлен (с пустыми пропсами)
 // А при обновлении пропсов компонент не вызывает повторный рендер
 // (при переходе по роуту - тоже)
-
 const settings = new Settings({
   // name: 'Иван',
   // avatar: image,
   ...userSettings,
-  back() {
-    router.back();
-  },
-  editSettings() {
-    router.go('/settings-edit');
-  },
-  editPassword() {
-    router.go('/settings-edit-password');
-  },
-  handleLogout() {
-    auth.logOut().then((response: XMLHttpRequest) => {
-      if (response.status === 200) {
-        state.delete('settings');
-        router.go('/');
-      } else {
+  events: {
+    back() {
+      router.back();
+    },
+    editSettings() {
+      router.go('/settings-edit');
+    },
+    editPassword() {
+      router.go('/settings-edit-password');
+    },
+    handleLogout() {
+      auth.logOut().then((response: XMLHttpRequest) => {
+        if (response.status === 200) {
+          state.delete('settings');
+          router.go('/');
+        } else {
+          router.go('/500');
+        }
+      }).catch((error) => {
+        console.log(error);
         router.go('/500');
-      }
-    }).catch((error) => {
-      console.log(error);
-      router.go('/500');
-    });
+      });
+    },
   },
 });
 
 export default new Container({
   aside: backButton,
   main: settings,
-}, '#container');
+});
