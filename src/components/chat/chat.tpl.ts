@@ -7,6 +7,7 @@ const template = `
   <p class="chat__last-date">Ср</p>
   <p class="chat__messages">{{ unread_count }}</p>
   <button class="chat__edit">Редактировать чат</button>
+  {{ deleteMenu }}
 `;
 
 export default template;

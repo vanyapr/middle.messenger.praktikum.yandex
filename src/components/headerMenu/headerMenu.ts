@@ -9,6 +9,12 @@ export default class HeaderMenu extends Block {
     super(props, 'div', 'header-menu');
   }
 
+  componentDidMount(props: any) {
+    super.componentDidMount(props);
+    // Скрыли после монтирования
+    this.hide();
+  }
+
   render() {
     return compile(template, { ...this.props });
   }

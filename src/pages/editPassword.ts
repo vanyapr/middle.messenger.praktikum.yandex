@@ -11,10 +11,15 @@ import Router from '../utils/Router/Router';
 import Form from '../utils/Form/Form';
 import State from '../utils/State/State';
 import User from '../connectors/User';
+import SettingsInput from '../components/settingsInput';
+import EditPasswordForm from '../components/editPasswordForm';
 
 const router = new Router();
 const state = new State();
 const settings = state.get('settings');
+
+// Будем хранить состояние формы локально
+const formState: Record<string, boolean> = {};
 
 const backButton = new BackButton({
   buttonText: 'Вернуться назад',
@@ -25,14 +30,79 @@ const backButton = new BackButton({
   },
 });
 
-const editPassword = new EditPassword({
-  ...settings,
+const oldPasswordInput = new SettingsInput({
+  name: 'oldPassword',
+  type: 'password',
+  textName: 'Старый пароль',
+  errorText: '',
+  value: '',
+  events: {
+    keyup() {
+      const input = this.querySelector('.settings__value');
+      const error = this.querySelector('.settings__error');
+      const validity = validateInput(input, passwordValidator, 'settings__value_state_valid', 'settings__value_state_invalid');
+
+      if (!validity) {
+        error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+        formState.oldPasswordIsValid = false;
+      } else {
+        formState.oldPasswordIsValid = true;
+      }
+    },
+  },
+});
+
+const newPasswordInput = new SettingsInput({
+  name: 'newPassword',
+  type: 'password',
+  textName: 'Новый пароль',
+  errorText: '',
+  value: '',
+  events: {
+    keyup() {
+      const input = this.querySelector('.settings__value');
+      const error = this.querySelector('.settings__error');
+      const validity = validateInput(input, passwordValidator, 'settings__value_state_valid', 'settings__value_state_invalid');
+
+      if (!validity) {
+        error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+        formState.newPasswordIsValid = false;
+      } else {
+        formState.newPasswordIsValid = true;
+      }
+    },
+  },
+});
+
+const newPasswordInput2 = new SettingsInput({
+  name: 'newPassword2',
+  type: 'password',
+  textName: 'Повторите новый пароль',
+  errorText: '',
+  value: '',
+  events: {
+    keyup() {
+      const input = this.querySelector('.settings__value');
+      const error = this.querySelector('.settings__error');
+      const validity = validateInput(input, passwordValidator, 'settings__value_state_valid', 'settings__value_state_invalid');
+
+      if (!validity) {
+        error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+        formState.newPassword2IsValid = false;
+      } else {
+        formState.newPassword2IsValid = true;
+      }
+    },
+  },
+});
+
+const editPasswordForm = new EditPasswordForm({
+  oldPasswordInput,
+  newPasswordInput,
+  newPasswordInput2,
   error: '',
   events: {
-    back() {
-      router.back();
-    },
-    handleSubmit(event: Event) {
+    submit(event: Event) {
       event.preventDefault();
 
       // Собираем данные формы
@@ -78,7 +148,11 @@ const editPassword = new EditPassword({
       validateInput(this, 'settings__value_state_valid', 'settings__value_state_invalid', '.button');
     },
   },
+});
 
+const editPassword = new EditPassword({
+  ...settings,
+  editPasswordForm,
 });
 
 export default new Container({

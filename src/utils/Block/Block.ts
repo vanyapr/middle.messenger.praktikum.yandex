@@ -25,6 +25,8 @@ export default class Block<Props = any> {
 
   private readonly _meta: BlockMeta;
 
+  isVisible: boolean
+
   id = nanoid(6);
 
   /** JSDoc
@@ -150,7 +152,7 @@ export default class Block<Props = any> {
     return document.createElement(tagName);
   }
 
-  _addEvents() {
+  _addEvents(): void {
     // this.props.events
     const events: Record<string, () => void> = (this.props as any).events;
 
@@ -176,12 +178,26 @@ export default class Block<Props = any> {
     });
   }
 
-  show() {
+  show(): void {
     this.getContent().style.display = 'block';
+    this.isVisible = true;
   }
 
-  hide() {
+  hide(): void {
     this.getContent().style.display = 'none';
+    this.isVisible = false;
+  }
+
+  // Метод тогглит компонент и обновляет его состояние
+  toggle(): void {
+    console.log('toggle');
+    if (this.isVisible) {
+      this.hide();
+      this.isVisible = false;
+    } else {
+      this.show();
+      this.isVisible = true;
+    }
   }
 
   render(): DocumentFragment {

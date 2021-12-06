@@ -18,27 +18,15 @@ export default class PopUp extends Block {
     };
 
     state.registerComponent('popup', updater);
+
+    // Скрываем при монтировании
+    this.hide();
+
+    // Записываем состояние в стейт приложения
+    state.set('popup', { visible: false });
   }
 
   render() {
     return compile(template, { ...this.props });
-  }
-
-  // Показывает и скрывает попап
-  toggle() {
-    const popup = document.querySelector('.popup');
-
-    if (popup) {
-      popup.classList.toggle('popup_state_visible');
-    }
-  }
-
-  // Удаляет попап
-  delete() {
-    const popupToDelete = document.querySelector('.popup');
-
-    if (popupToDelete) {
-      popupToDelete.classList.toggle('popup_state_visible');
-    }
   }
 }

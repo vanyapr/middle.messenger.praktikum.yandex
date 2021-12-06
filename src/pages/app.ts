@@ -1,8 +1,10 @@
 import App from '../components/app';
 
+// Стили
 import '../styles/components/sidebar/sidebar.scss';
 import '../styles/components/main/main.scss';
 import '../styles/components/container/container.scss';
+import '../styles/components/chat-menu/chat-menu.scss';
 
 // @ts-ignore
 import avatar from '../../static/avatar.jpg';
@@ -20,9 +22,10 @@ import PopUp from '../components/popUp';
 import AddUserForm from '../components/addUserForm';
 import validateInput from '../utils/validateInput/validateInput';
 import Form from '../utils/Form/Form';
-
 import State from '../utils/State/State';
 import MessageForm from '../components/messageForm/messageForm';
+import HeaderSettingsButton from '../components/headerSettingsButton/headerSettingsButton';
+import DeleteChatMenu from '../styles/components/deleteChatMenu/deleteChatMenu';
 
 // Стейт приложения
 const state = new State();
@@ -69,21 +72,38 @@ const chatsData = [
 ];
 
 // TODO: рендер списка чатов
-// Каждый чат со своими пропсами
-// отображаем в контейнере чатов
-// по смене пропсов выполняем повторный рендер списка чатов
-// добавляя обновленный чат сверху и удаляя предыдущий
 const chatData = chatsData[0];
 
-const chat = new Chat({
-  ...chatData,
-  events: {
-    handleMouseOver() {
-      console.log('MouseOver');
-      state.set('chat123', { unread_count: 42 });
+// TODO: Конструктор чата
+function chatConstructor(): Chat {
+  const deleteChatButton = new MenuButton({
+    iconType: 'delete',
+    buttonText: 'Удалить чат',
+    events: {
+      click() {
+        console.log('Удаляем чат');
+      },
     },
-  },
-});
+  });
+
+  const deleteChatMenu = new DeleteChatMenu({
+    deleteChat: deleteChatButton,
+  });
+
+  return new Chat({
+    ...chatData,
+    deleteMenu: deleteChatMenu,
+    events: {
+      click(event: any) {
+        if (event.target.className === 'chat__edit') {
+          deleteChatMenu.toggle();
+        }
+      },
+    },
+  });
+}
+
+const chat = chatConstructor();
 
 const chats = new Chats({
   // avatar,
@@ -94,13 +114,12 @@ const search = new Search({
 
 });
 
-// Кнопка настроек
+// Кнопка настроек в меню
 const headerMenuSettingsButton = new MenuButton({
   iconType: 'settings',
   buttonText: 'Настройки',
   events: {
-    clickAction: () => {
-      console.log('Настройки');
+    click: () => {
       router.go('/settings');
     },
   },
@@ -111,7 +130,7 @@ const headerMenuFilesButton = new MenuButton({
   iconType: 'attachments',
   buttonText: 'Вложения',
   events: {
-    clickAction: () => {
+    click: () => {
       console.log('Вложения');
     },
   },
@@ -123,14 +142,25 @@ const headerMenu = new HeaderMenu({
   headerMenuFilesButton,
 });
 
-const header = new Header({
-  title: 'Заголовок чата будет здесь!',
-  menu: headerMenu,
+const headerSettingsButton = new HeaderSettingsButton({
+  text: 'Открыть меню настроек',
   events: {
-    buttonClick() {
-      headerMenu.toggle();
+    click() {
+      if (state.get('headerSettingsButton').pressed) {
+        headerMenu.hide();
+        state.set('headerSettingsButton', { pressed: false });
+      } else {
+        headerMenu.show();
+        state.set('headerSettingsButton', { pressed: true });
+      }
     },
   },
+});
+
+const header = new Header({
+  title: 'Заголовок чата будет здесь!',
+  button: headerSettingsButton,
+  menu: headerMenu,
 });
 
 const addUserForm = new AddUserForm({
@@ -164,12 +194,13 @@ const addUserForm = new AddUserForm({
 const popup = new PopUp({
   children: addUserForm,
   events: {
-    closePopup(event: Event) {
+    click(event: Event) {
       event.stopPropagation();
+      console.log('Нажата кнопка закрытия');
 
       // @ts-ignore
-      if (event.target && event.target.classList.contains('close')) {
-        popup.toggle();
+      if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
+        popup.hide();
       }
     },
   },
@@ -178,22 +209,30 @@ const popup = new PopUp({
 
 const controls = new Controls({
   events: {
-    handleClick() {
-      console.log('Нажата кнопка закрытия');
-      popup.toggle();
+    click() {
+      popup.show();
     },
   },
-
 });
 
 const messages = new Messages({
   avatar,
 });
 
-const messageForm = new MessageForm({});
+const messageForm = new MessageForm({
+  events: {
+    submit(event: { preventDefault: () => void; target: { message: any; }; }) {
+      event.preventDefault();
+      if (event) {
+        const { message } = event.target;
+        // Текст сообщения
+        console.log(message.value);
+      }
+    },
+  },
+});
 
 export default new App({
-  // avatar,
   search,
   chats,
   controls,
@@ -201,7 +240,6 @@ export default new App({
   messages,
   messageForm,
   popup,
-  // notEmptyValidator,
   events: {
     handleSubmit(event: Event) {
       event.preventDefault();

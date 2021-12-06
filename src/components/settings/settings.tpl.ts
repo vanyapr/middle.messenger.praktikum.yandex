@@ -35,15 +35,9 @@ const template = `
     </div>
 
     <div class="settings__controls">
-      <div class="settings__group">
-        <button class="settings__button" onclick="{{ editSettings }}">Изменить данные</button>
-      </div>
-      <div class="settings__group">
-        <button class="settings__button" onclick="{{ editPassword }}">Изменить пароль</button>
-      </div>
-      <div class="settings__group">
-        <button class="settings__button settings__button_color_red"  onclick="{{ handleLogout }}">Выйти</button>
-      </div>
+     {{ editSettingsButton }}
+     {{ editPasswordButton }}
+     {{ logoutButton }}
     </div>
   </div>
 `;
