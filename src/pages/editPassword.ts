@@ -13,6 +13,9 @@ import State from '../utils/State/State';
 import User from '../connectors/User';
 import SettingsInput from '../components/settingsInput';
 import EditPasswordForm from '../components/editPasswordForm';
+import AvatarUploadForm from '../components/avatarUploadForm';
+import PopUp from '../components/popUp';
+import Avatar from '../components/avatar';
 
 const router = new Router();
 const state = new State();
@@ -100,7 +103,7 @@ const editPasswordForm = new EditPasswordForm({
   oldPasswordInput,
   newPasswordInput,
   newPasswordInput2,
-  error: '',
+  ...settings,
   events: {
     submit(event: Event) {
       event.preventDefault();
@@ -150,9 +153,61 @@ const editPasswordForm = new EditPasswordForm({
   },
 });
 
+// Редактирование аватара
+const uploadAvatarForm = new AvatarUploadForm({
+  title: 'Загрузить файл',
+  buttonText: 'Сохранить изменения',
+  fileUploadInput: 'Выберите файл для загрузки',
+  events: {
+    submit(event: Event) {
+      event.preventDefault();
+
+      // Собираем данные формы
+      const form = new Form(
+        this,
+        'button',
+      );
+
+      const formData = form.collectData();
+
+      if (formData) {
+        console.log(formData);
+      } else {
+        console.log('Форма невалидна и данных нет');
+      }
+    },
+  },
+});
+
+const editAvatarPopUp = new PopUp({
+  children: uploadAvatarForm,
+  events: {
+    click(event: any) {
+      event.stopPropagation();
+      console.log('Нажата кнопка закрытия');
+
+      if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
+        editAvatarPopUp.hide();
+      }
+    },
+  },
+});
+
+const avatarBlock = new Avatar({
+  ...settings,
+  events: {
+    click() {
+      editAvatarPopUp.show();
+    },
+  },
+});
+// Конец редактирования аватара
+
 const editPassword = new EditPassword({
   ...settings,
   editPasswordForm,
+  avatarBlock,
+  editAvatarPopUp,
 });
 
 export default new Container({

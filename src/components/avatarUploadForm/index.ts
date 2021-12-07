@@ -1,13 +1,13 @@
 import Block from '../../utils/Block/Block';
 import compile from '../../utils/Compile/compile';
-import template from './editPasswordForm.tpl';
+import template from './avatarUploadForm.tpl';
 import State from '../../utils/State/State';
 
 const state = new State();
 
-export default class EditPasswordForm extends Block {
+export default class AvatarUploadForm extends Block {
   constructor(props: any) {
-    super(props, 'form', 'settings__form');
+    super(props, 'form', 'form');
   }
 
   componentDidMount() {

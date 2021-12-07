@@ -9,7 +9,6 @@ const template = `
     <span class="settings__controls-error">{{ error }}</span>
     <button class="button button_state_success">Сохранить</button>
   </div>
-
 `;
 
 export default template;

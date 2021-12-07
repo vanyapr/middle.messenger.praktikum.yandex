@@ -7,7 +7,6 @@ import {
   emailValidator,
   loginValidator,
   nameValidator,
-  passwordValidator,
   phoneValidator,
 } from '../settings/validators';
 import Container from '../components/container/container';
@@ -16,8 +15,10 @@ import State from '../utils/State/State';
 // @ts-ignore
 import image from '../../static/avatar.jpg';
 import SettingsInput from '../components/settingsInput';
-import EditPasswordForm from '../components/editPasswordForm';
 import EditSettingsForm from '../components/editSettingsForm';
+import AvatarUploadForm from '../components/avatarUploadForm';
+import PopUp from '../components/popUp';
+import Avatar from '../components/avatar';
 
 const router = new Router();
 
@@ -40,7 +41,7 @@ const usernameInput = new SettingsInput({
   type: 'text',
   textName: 'Имя пользователя',
   errorText: '',
-  value: '',
+  value: settings.login,
   events: {
     keyup() {
       const input = this.querySelector('.settings__value');
@@ -62,7 +63,7 @@ const emailInput = new SettingsInput({
   type: 'text',
   textName: 'Адрес электронной почты',
   errorText: '',
-  value: '',
+  value: settings.email,
   events: {
     keyup() {
       const input = this.querySelector('.settings__value');
@@ -84,7 +85,7 @@ const nickNameInput = new SettingsInput({
   type: 'text',
   textName: 'Имя в чате (никнейм)',
   errorText: '',
-  value: '',
+  value: settings.display_name,
   events: {
     keyup() {
       const input = this.querySelector('.settings__value');
@@ -106,7 +107,7 @@ const firstNameInput = new SettingsInput({
   type: 'text',
   textName: 'Ваше имя',
   errorText: '',
-  value: '',
+  value: settings.first_name,
   events: {
     keyup() {
       const input = this.querySelector('.settings__value');
@@ -128,7 +129,7 @@ const secondNameInput = new SettingsInput({
   type: 'text',
   textName: 'Ваше имя',
   errorText: '',
-  value: '',
+  value: settings.second_name,
   events: {
     keyup() {
       const input = this.querySelector('.settings__value');
@@ -150,7 +151,7 @@ const phoneInput = new SettingsInput({
   type: 'text',
   textName: 'Номер телефона',
   errorText: '',
-  value: '',
+  value: settings.phone,
   events: {
     keyup() {
       const input = this.querySelector('.settings__value');
@@ -218,9 +219,61 @@ const editSettingsForm = new EditSettingsForm({
   },
 });
 
+// Редактирование аватара
+const uploadAvatarForm = new AvatarUploadForm({
+  title: 'Загрузить файл',
+  buttonText: 'Сохранить изменения',
+  fileUploadInput: 'Выберите файл для загрузки',
+  events: {
+    submit(event: Event) {
+      event.preventDefault();
+
+      // Собираем данные формы
+      const form = new Form(
+        this,
+        'button',
+      );
+
+      const formData = form.collectData();
+
+      if (formData) {
+        console.log(formData);
+      } else {
+        console.log('Форма невалидна и данных нет');
+      }
+    },
+  },
+});
+
+const editAvatarPopUp = new PopUp({
+  children: uploadAvatarForm,
+  events: {
+    click(event: any) {
+      event.stopPropagation();
+      console.log('Нажата кнопка закрытия');
+
+      if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
+        editAvatarPopUp.hide();
+      }
+    },
+  },
+});
+
+const avatarBlock = new Avatar({
+  ...settings,
+  events: {
+    click() {
+      editAvatarPopUp.show();
+    },
+  },
+});
+// Конец редактирования аватара
+
 const editSettings = new EditSettings({
   ...settings,
+  avatarBlock,
   editSettingsForm,
+  editAvatarPopUp,
   error: '',
 });
 

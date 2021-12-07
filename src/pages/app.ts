@@ -14,7 +14,7 @@ import Search from '../components/search/search';
 import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
 import Messages from '../components/messages/messages';
-import { loginValidator, notEmptyValidator } from '../settings/validators';
+import { loginValidator, notEmptyValidator, passwordValidator } from '../settings/validators';
 import MenuButton from '../components/menuButton';
 import HeaderMenu from '../components/headerMenu/headerMenu';
 import Router from '../utils/Router/Router';
@@ -26,6 +26,7 @@ import State from '../utils/State/State';
 import MessageForm from '../components/messageForm/messageForm';
 import HeaderSettingsButton from '../components/headerSettingsButton/headerSettingsButton';
 import DeleteChatMenu from '../styles/components/deleteChatMenu/deleteChatMenu';
+import Input from '../components/input/input';
 
 // Стейт приложения
 const state = new State();
@@ -163,12 +164,31 @@ const header = new Header({
   menu: headerMenu,
 });
 
+const userNameInput = new Input({
+  name: 'login',
+  type: 'text',
+  textName: 'Имя пользователя',
+  errorText: '',
+  value: '',
+  events: {
+    keyup() {
+      const input = this.querySelector('.input');
+      const error = this.querySelector('.form__error');
+      const validity = validateInput(input, loginValidator, 'input_state_valid', 'input_state_invalid');
+
+      if (!validity) {
+        error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+      }
+    },
+  },
+});
+
 const addUserForm = new AddUserForm({
   title: 'Добавить контакт',
   buttonText: 'Добавить в контакты',
-  loginValidator,
+  userNameInput,
   events: {
-    handleSubmit(event: Event) {
+    submit(event: Event) {
       event.preventDefault();
 
       // Собираем данные формы
@@ -185,26 +205,21 @@ const addUserForm = new AddUserForm({
         console.log('Форма невалидна и данных нет');
       }
     },
-    validate() {
-      validateInput(this, 'input_state_valid', 'input_state_invalid', '.button');
-    },
   },
 });
 
 const popup = new PopUp({
   children: addUserForm,
   events: {
-    click(event: Event) {
+    click(event: any) {
       event.stopPropagation();
       console.log('Нажата кнопка закрытия');
 
-      // @ts-ignore
       if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
         popup.hide();
       }
     },
   },
-
 });
 
 const controls = new Controls({

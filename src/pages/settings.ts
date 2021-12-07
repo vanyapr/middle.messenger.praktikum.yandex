@@ -6,6 +6,10 @@ import State from '../utils/State/State';
 import Auth from '../connectors/Auth';
 import SettingsButton from '../components/settingsButton';
 import LogoutButton from '../components/logoutButton';
+import Form from '../utils/Form/Form';
+import PopUp from '../components/popUp';
+import AvatarUploadForm from '../components/avatarUploadForm';
+import Avatar from '../components/avatar';
 
 const auth = new Auth();
 const router = new Router();
@@ -58,14 +62,63 @@ const backButton = new BackButton({
   },
 });
 
-// FIXME: Проблема: при монтировании компонента он не обновлен (с пустыми пропсами)
-// А при обновлении пропсов компонент не вызывает повторный рендер
-// (при переходе по роуту - тоже)
+// Редактирование аватара
+const uploadAvatarForm = new AvatarUploadForm({
+  title: 'Загрузить файл',
+  buttonText: 'Сохранить изменения',
+  fileUploadInput: 'Выберите файл для загрузки',
+  events: {
+    submit(event: Event) {
+      event.preventDefault();
+
+      // Собираем данные формы
+      const form = new Form(
+        this,
+        'button',
+      );
+
+      const formData = form.collectData();
+
+      if (formData) {
+        console.log(formData);
+      } else {
+        console.log('Форма невалидна и данных нет');
+      }
+    },
+  },
+});
+
+const editAvatarPopUp = new PopUp({
+  children: uploadAvatarForm,
+  events: {
+    click(event: any) {
+      event.stopPropagation();
+      console.log('Нажата кнопка закрытия');
+
+      if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
+        editAvatarPopUp.hide();
+      }
+    },
+  },
+});
+
+const avatarBlock = new Avatar({
+  ...userSettings,
+  events: {
+    click() {
+      editAvatarPopUp.show();
+    },
+  },
+});
+// Конец редактирования аватара
+
 const settings = new Settings({
+  avatarBlock,
   ...userSettings,
   editSettingsButton,
   editPasswordButton,
   logoutButton,
+  editAvatarPopUp,
 });
 
 export default new Container({

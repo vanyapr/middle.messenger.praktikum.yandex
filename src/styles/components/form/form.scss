@@ -38,6 +38,18 @@
     margin-top: 42px;
   }
 
+  &__file {
+    height: 65px;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    text-decoration-line: underline;
+    color: #6380CB;
+    width: 122px;
+    margin: auto;
+    cursor: pointer;
+  }
+
   &__group {
     position: relative;
     //padding-bottom: 20px;
