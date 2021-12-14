@@ -224,7 +224,6 @@ export default new SignUpForm({
         auth.signUp(formData).then((response: XMLHttpRequest) => {
           console.log(response);
           if (response.status === 200) {
-            state.set('user', { registered: true });
             state.set('signUpForm', {
               error: 'Вы успешно зарегистрировались',
             });

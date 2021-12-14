@@ -1,5 +1,5 @@
 const template = `
-  <img src="{{ avatar }}" width="47" height="47" alt="" class="chat__logo">
+  <img src="{{ avatar }}" width="47" height="47" alt="{{ title }}" class="chat__logo">
   <div class="chat__info">
     <h2 class="chat__name">{{ title }}</h2>
     <p class="chat__last-message">{{ last_message.content }}</p>

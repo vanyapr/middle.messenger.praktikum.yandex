@@ -1,12 +1,12 @@
 import Block from '../../utils/Block/Block';
-import template from './addUserForm.tpl';
+import template from './addChatForm.tpl';
 import compile from '../../utils/Compile/compile';
 import State from '../../utils/State/State';
 
 // Стейт приложения
 const state = new State();
 
-export default class AddUserForm extends Block {
+export default class AddChatForm extends Block {
   constructor(props: any) {
     // form form_type_popup
     super(props, 'form', 'form');
@@ -14,10 +14,10 @@ export default class AddUserForm extends Block {
 
   componentDidMount() {
     const updater = () => {
-      this.setProps(state.get('addUserForm'));
+      this.setProps(state.get('addChatForm'));
     };
 
-    state.registerComponent('addUserForm', updater);
+    state.registerComponent('addChatForm', updater);
   }
 
   render() {

@@ -2,7 +2,7 @@ const template = `
     <h1 class="form__title">{{ title }}</h1>
 
     <div class="form__fields">
-      {{ userNameInput }}
+      {{ chatNameInput }}
     </div>
 
     <div class="form__controls">

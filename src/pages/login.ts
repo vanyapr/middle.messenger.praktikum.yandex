@@ -25,7 +25,7 @@ const loginInput = new Input({
   type: 'text',
   textName: 'Пользователь',
   errorText: '',
-  value: 'snowflax',
+  value: 'snowflaxxxx',
   events: {
     keyup() {
       const input = this.querySelector('.input');

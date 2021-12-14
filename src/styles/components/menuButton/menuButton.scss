@@ -22,6 +22,14 @@
       background-image: url('./delete.svg');
     }
 
+    &_add-user {
+      background-image: url('./add-user.svg');
+    }
+
+    &_delete-user {
+      background-image: url('./delete-user.svg');
+    }
+
     &_settings {
       background-image: url('./settings.svg');
     }

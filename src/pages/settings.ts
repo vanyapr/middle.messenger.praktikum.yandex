@@ -10,6 +10,9 @@ import Form from '../utils/Form/Form';
 import PopUp from '../components/popUp';
 import AvatarUploadForm from '../components/avatarUploadForm';
 import Avatar from '../components/avatar';
+import User from '../connectors/User';
+import FileInput from '../components/fileInput';
+import FileText from '../components/fileText';
 
 const auth = new Auth();
 const router = new Router();
@@ -63,10 +66,33 @@ const backButton = new BackButton({
 });
 
 // Редактирование аватара
+const avatarUploadText = new FileText({
+  text: 'Выбрать файл на компьютере',
+});
+
+const avatarFileInput = new FileInput({
+  id: 'avatar',
+  text: avatarUploadText,
+  events: {
+    change(event: any) {
+      const file = event.target.files[0];
+      if (file.size > 650000) {
+        state.set('avatarUploadForm', { error: 'Файл слишком большой' });
+      } else {
+        state.set('avatarUploadForm', { error: '' });
+      }
+
+      state.set('fileText', { text: event.target.files[0].name });
+    },
+  },
+});
+
 const uploadAvatarForm = new AvatarUploadForm({
   title: 'Загрузить файл',
   buttonText: 'Сохранить изменения',
-  fileUploadInput: 'Выберите файл для загрузки',
+  fileUploadInput: avatarFileInput,
+  error: '',
+
   events: {
     submit(event: Event) {
       event.preventDefault();
@@ -77,12 +103,32 @@ const uploadAvatarForm = new AvatarUploadForm({
         'button',
       );
 
-      const formData = form.collectData();
+      // Инпут с файлом и сам файл
+      const fileInput = document.querySelector('#avatar') as HTMLFormElement;
+      const file = fileInput.files[0];
 
-      if (formData) {
-        console.log(formData);
+      if (file) {
+        // Данные формы
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        form.disableButton();
+
+        // Отправка запроса
+        const user = new User();
+
+        user.changeAvatar(formData).then((responce: XMLHttpRequest) => {
+          const parsedResponce = JSON.parse(responce.responseText);
+          parsedResponce.avatar = `https://ya-praktikum.tech/api/v2/resources${parsedResponce.avatar} `;
+          state.set('settings', parsedResponce);
+          state.set('avatarUploadForm', { error: '' });
+          editAvatarPopUp.hide();
+        }).catch((error) => {
+          state.set('avatarUploadForm', { error });
+          form.enableButton();
+        });
       } else {
-        console.log('Форма невалидна и данных нет');
+        state.set('avatarUploadForm', { error: 'Выберите файл для загрузки' });
       }
     },
   },
@@ -93,9 +139,9 @@ const editAvatarPopUp = new PopUp({
   events: {
     click(event: any) {
       event.stopPropagation();
-      console.log('Нажата кнопка закрытия');
 
       if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
+        console.log('Нажата кнопка закрытия');
         editAvatarPopUp.hide();
       }
     },

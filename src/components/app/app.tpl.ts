@@ -9,7 +9,8 @@ const template = `
        {{ messages }}
        {{ messageForm }}
     </section>
-    {{popup}}
+    {{ addUserPopup }}
+    {{ addChatPopup }}
 `;
 
 export default template;

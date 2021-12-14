@@ -12,10 +12,10 @@ export default class AvatarUploadForm extends Block {
 
   componentDidMount() {
     const updater = () => {
-      this.setProps(state.get('settings'));
+      this.setProps(state.get('avatarUploadForm'));
     };
 
-    state.registerComponent('settings', updater);
+    state.registerComponent('avatarUploadForm', updater);
   }
 
   render() {

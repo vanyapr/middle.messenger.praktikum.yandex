@@ -9,6 +9,7 @@ const template = `
 
 
     <div class="form__controls">
+        <div class="form__controls-error">{{ error }}</div>
         <button class="button button_state_success" type="submit">{{ buttonText }}</button>
     </div>
 `;

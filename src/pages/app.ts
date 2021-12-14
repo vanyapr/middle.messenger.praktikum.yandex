@@ -27,6 +27,8 @@ import MessageForm from '../components/messageForm/messageForm';
 import HeaderSettingsButton from '../components/headerSettingsButton/headerSettingsButton';
 import DeleteChatMenu from '../styles/components/deleteChatMenu/deleteChatMenu';
 import Input from '../components/input/input';
+import User from '../connectors/User';
+import AddChatForm from '../components/addChatForm';
 
 // Стейт приложения
 const state = new State();
@@ -53,7 +55,7 @@ const chatsData = [
     },
   },
   {
-    id: 123,
+    id: 321,
     title: 'my-chat',
     avatar: '/123/avatar1.jpg',
     unread_count: 15,
@@ -73,21 +75,46 @@ const chatsData = [
 ];
 
 // TODO: рендер списка чатов
-const chatData = chatsData[0];
+const chatDataForConstructor = chatsData[0];
+
+// ID текущего чата просто будем хранить тут
+const currentChatId: any = undefined;
 
 // TODO: Конструктор чата
-function chatConstructor(): Chat {
+function chatConstructor(chatData: Record<string, any>): Chat {
   const deleteChatButton = new MenuButton({
     iconType: 'delete',
     buttonText: 'Удалить чат',
     events: {
       click() {
-        console.log('Удаляем чат');
+        console.log(`Удаляем чат ${chatData.id}`);
+      },
+    },
+  });
+
+  const deleteUserButton = new MenuButton({
+    iconType: 'delete-user',
+    buttonText: 'Удалить пользователя',
+    events: {
+      click() {
+        console.log(`Удаляем юзера из чата ${chatData.id}`);
+      },
+    },
+  });
+
+  const addUserButton = new MenuButton({
+    iconType: 'add-user',
+    buttonText: 'Добавить пользователя',
+    events: {
+      click() {
+        console.log(`Добавляем юзера в чат ${chatData.id}`);
       },
     },
   });
 
   const deleteChatMenu = new DeleteChatMenu({
+    addUser: addUserButton,
+    deleteUser: deleteUserButton,
     deleteChat: deleteChatButton,
   });
 
@@ -104,7 +131,7 @@ function chatConstructor(): Chat {
   });
 }
 
-const chat = chatConstructor();
+const chat = chatConstructor(chatDataForConstructor);
 
 const chats = new Chats({
   // avatar,
@@ -184,9 +211,10 @@ const userNameInput = new Input({
 });
 
 const addUserForm = new AddUserForm({
-  title: 'Добавить контакт',
-  buttonText: 'Добавить в контакты',
+  title: 'Добавить пользователя в чат',
+  buttonText: 'Добавить в пользователя',
   userNameInput,
+  error: '',
   events: {
     submit(event: Event) {
       event.preventDefault();
@@ -197,10 +225,41 @@ const addUserForm = new AddUserForm({
         'button',
       );
 
-      const formData = form.collectData();
+      // Обнулили ошибку (если она до этого была)
+      state.set('addUserForm', { error: '' });
+
+      const formData: any = form.collectData();
 
       if (formData) {
         console.log(formData);
+        // TODO:
+        //  1) Ищем юзера с таким именем
+        //    а) Юзер не найден, ошибка
+        //    б) Юзер найден, тогда
+        //  2) Получить айди текущего чата?
+        //  3) Добавляем юзера в чат
+        const user = new User();
+        user.findUserByLogin(formData).then((apiResponce: XMLHttpRequest) => {
+          console.log(apiResponce);
+          if (apiResponce.status === 200) {
+            // Если данные пришли, мы должны проверить, найден ли юзер
+            return JSON.parse(apiResponce.responseText);
+          }
+          // Показываем ошибку
+          throw new Error('Ошибка добавления пользователя');
+        }).then((usersList) => {
+          if (usersList.length > 0) {
+            console.log('Список юзеров');
+            console.log(usersList);
+            // Выбираем юзера только с точным совпадением
+          } else {
+            throw new Error('Пользователь с таким именем не найден');
+          }
+        }).catch((error) => {
+          console.log('Ошибка поиска юзера');
+          // Записали ошибку в стейт
+          state.set('addUserForm', { error });
+        });
       } else {
         console.log('Форма невалидна и данных нет');
       }
@@ -208,7 +267,54 @@ const addUserForm = new AddUserForm({
   },
 });
 
-const popup = new PopUp({
+const chatNameInput = new Input({
+  name: 'title',
+  type: 'text',
+  textName: 'Название чата',
+  errorText: '',
+  value: '',
+  events: {
+    keyup() {
+      const input = this.querySelector('.input');
+      const error = this.querySelector('.form__error');
+      const validity = validateInput(input, loginValidator, 'input_state_valid', 'input_state_invalid');
+
+      if (!validity) {
+        error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+      }
+    },
+  },
+});
+
+const addChatForm = new AddChatForm({
+  title: 'Создать чат',
+  buttonText: 'Создать',
+  chatNameInput,
+  error: '',
+  events: {
+    submit(event: Event) {
+      event.preventDefault();
+      console.log('Добавлен чат такой-то');
+
+      // Собираем данные формы
+      const form = new Form(
+        this,
+        'button',
+      );
+
+      // Обнулили ошибку (если она до этого была)
+      state.set('addChatForm', { error: '' });
+
+      const formData: any = form.collectData();
+
+      if (formData) {
+        console.log(formData);
+      }
+    },
+  },
+});
+
+const addUserPopup = new PopUp({
   children: addUserForm,
   events: {
     click(event: any) {
@@ -216,7 +322,21 @@ const popup = new PopUp({
       console.log('Нажата кнопка закрытия');
 
       if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
-        popup.hide();
+        addUserPopup.hide();
+      }
+    },
+  },
+});
+
+const addChatPopup = new PopUp({
+  children: addChatForm,
+  events: {
+    click(event: any) {
+      event.stopPropagation();
+      console.log('Нажата кнопка закрытия');
+
+      if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
+        addChatPopup.hide();
       }
     },
   },
@@ -225,7 +345,7 @@ const popup = new PopUp({
 const controls = new Controls({
   events: {
     click() {
-      popup.show();
+      addChatPopup.show();
     },
   },
 });
@@ -254,7 +374,8 @@ export default new App({
   header,
   messages,
   messageForm,
-  popup,
+  addUserPopup,
+  addChatPopup,
   events: {
     handleSubmit(event: Event) {
       event.preventDefault();

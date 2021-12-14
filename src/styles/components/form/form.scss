@@ -40,14 +40,24 @@
 
   &__file {
     height: 65px;
-    font-size: 14px;
-    line-height: 20px;
-    text-align: center;
-    text-decoration-line: underline;
-    color: #6380CB;
     width: 122px;
     margin: auto;
-    cursor: pointer;
+
+    &-label {
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      text-decoration-line: underline;
+      color: #6380CB;
+      display: block;
+      cursor: pointer;
+
+      input[type='file'] {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+    }
   }
 
   &__group {
