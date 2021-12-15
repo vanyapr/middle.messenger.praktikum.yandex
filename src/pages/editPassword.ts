@@ -28,7 +28,7 @@ const backButton = new BackButton({
   buttonText: 'Вернуться назад',
   events: {
     click() {
-      router.back();
+      router.go('/settings');
     },
   },
 });
