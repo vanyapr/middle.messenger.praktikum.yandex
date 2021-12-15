@@ -28,7 +28,12 @@ class Template implements ITemplate {
     return keysArray.reduce((dataObject, objectKey) => {
       // Если ключа нет, вернём undefined, потому что у undefined нельзя получить ключ (не объект)
       if (dataObject[objectKey] === undefined) {
-        return undefined;
+        return '';
+      }
+
+      // FIXME: remove this Фикс на случай NULL
+      if (dataObject[objectKey] === null) {
+        return 'null';
       }
 
       // Если в объекте есть такой ключ, запишем его в аккумулятор

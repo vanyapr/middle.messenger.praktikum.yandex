@@ -55,6 +55,11 @@
     line-height: 13px;
     color: #1e1e1e;
     font-weight: 700;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 175px;
+    display: block;
+    overflow: hidden;
   }
 
   &__last-message {

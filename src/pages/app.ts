@@ -1,5 +1,3 @@
-import App from '../components/app';
-
 // Стили
 import '../styles/components/sidebar/sidebar.scss';
 import '../styles/components/main/main.scss';
@@ -8,6 +6,7 @@ import '../styles/components/chat-menu/chat-menu.scss';
 
 // @ts-ignore
 import avatar from '../../static/avatar.jpg';
+import App from '../components/app';
 import Chat from '../components/chat';
 import Chats from '../components/chats/index';
 import Search from '../components/search/search';
@@ -29,55 +28,64 @@ import DeleteChatMenu from '../styles/components/deleteChatMenu/deleteChatMenu';
 import Input from '../components/input/input';
 import User from '../connectors/User';
 import AddChatForm from '../components/addChatForm';
+import ChatsAPI from '../connectors/ChatsAPI';
 
 // Стейт приложения
 const state = new State();
 
 const router = new Router();
 
-const chatsData = [
-  {
-    id: 123,
-    title: 'my-chat',
-    avatar,
-    unread_count: 15,
-    last_message: {
-      user: {
-        first_name: 'Petya',
-        second_name: 'Pupkin',
-        avatar,
-        email: 'my@email.com',
-        login: 'userLogin',
-        phone: '8(911)-222-33-22',
-      },
-      time: '2020-01-02T14:22:22.000Z',
-      content: 'this is message content',
-    },
-  },
-  {
-    id: 321,
-    title: 'my-chat',
-    avatar: '/123/avatar1.jpg',
-    unread_count: 15,
-    last_message: {
-      user: {
-        first_name: 'Vasya',
-        second_name: 'Pupkin',
-        avatar,
-        email: 'my@email2.com',
-        login: 'userLogins',
-        phone: '8(911)-222-33-22',
-      },
-      time: '2020-01-02T14:22:22.000Z',
-      content: 'Another message',
-    },
-  },
-];
+// const chatsData = [
+//   {
+//     id: 123,
+//     title: 'my-chat',
+//     avatar,
+//     unread_count: 15,
+//     last_message: {
+//       user: {
+//         first_name: 'Petya',
+//         second_name: 'Pupkin',
+//         avatar,
+//         email: 'my@email.com',
+//         login: 'userLogin',
+//         phone: '8(911)-222-33-22',
+//       },
+//       time: '2020-01-02T14:22:22.000Z',
+//       content: 'this is message content',
+//     },
+//   },
+//   {
+//     id: 321,
+//     title: 'my-chat',
+//     avatar: '/123/avatar1.jpg',
+//     unread_count: 15,
+//     last_message: {
+//       user: {
+//         first_name: 'Vasya',
+//         second_name: 'Pupkin',
+//         avatar,
+//         email: 'my@email2.com',
+//         login: 'userLogins',
+//         phone: '8(911)-222-33-22',
+//       },
+//       time: '2020-01-02T14:22:22.000Z',
+//       content: 'Another message',
+//     },
+//   },
+// ];
 
-// TODO: рендер списка чатов
-const chatDataForConstructor = chatsData[0];
+const chatsData = state.get('chats').list;
 
-// ID текущего чата просто будем хранить тут
+// Пересобираем объект чатов так, чтобы он был заполнен данными
+const processedChats = chatsData.map((chat: Record<string, any>) => {
+  if (!chat.avatar) {
+    chat.avatar = avatar;
+  }
+
+  return chat;
+});
+
+// FIXME: ID текущего чата пока что будем хранить тут
 const currentChatId: any = undefined;
 
 // TODO: Конструктор чата
@@ -131,11 +139,16 @@ function chatConstructor(chatData: Record<string, any>): Chat {
   });
 }
 
-const chat = chatConstructor(chatDataForConstructor);
+const chatArray = [];
+// Массив с элементами для рендера
+processedChats.forEach((chatItem: Record<string, any>) => {
+  chatArray.push(chatConstructor(chatItem));
+});
+console.log(chatArray);
 
 const chats = new Chats({
   // avatar,
-  chats: chat,
+  chats: chatArray,
 });
 
 const search = new Search({
@@ -277,10 +290,10 @@ const chatNameInput = new Input({
     keyup() {
       const input = this.querySelector('.input');
       const error = this.querySelector('.form__error');
-      const validity = validateInput(input, loginValidator, 'input_state_valid', 'input_state_invalid');
+      const validity = validateInput(input, notEmptyValidator, 'input_state_valid', 'input_state_invalid');
 
       if (!validity) {
-        error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+        error.textContent = 'Название не может быть пустым';
       }
     },
   },
@@ -294,7 +307,6 @@ const addChatForm = new AddChatForm({
   events: {
     submit(event: Event) {
       event.preventDefault();
-      console.log('Добавлен чат такой-то');
 
       // Собираем данные формы
       const form = new Form(
@@ -302,13 +314,33 @@ const addChatForm = new AddChatForm({
         'button',
       );
 
-      // Обнулили ошибку (если она до этого была)
-      state.set('addChatForm', { error: '' });
-
       const formData: any = form.collectData();
 
       if (formData) {
-        console.log(formData);
+        const chatsAPI = new ChatsAPI();
+        chatsAPI.createChat(formData).then((chatCreationResult: XMLHttpRequest) => {
+          if (chatCreationResult.status === 200) {
+            return;
+          }
+
+          throw new Error('Ошибка создания чата');
+        }).then(() => chatsAPI.getChats().then((chatsListRequest: XMLHttpRequest) => {
+          if (chatsListRequest.status === 200) {
+            return JSON.parse(chatsListRequest.responseText);
+          }
+
+          throw new Error('Ошибка при получении списка чатов');
+        }).then((chatsArray) => {
+          // Закрыли попап
+          addChatPopup.hide();
+          // Обновили список чатов
+          state.set('chats', { list: chatsArray });
+          // Обнулили ошибку (если она до этого была)
+          state.set('addChatForm', { error: '' });
+        })).catch((error) => {
+          state.set('addChatForm', { error: 'Ошибка создания чата' });
+          console.log(error);
+        });
       }
     },
   },

@@ -7,13 +7,24 @@ function compile(templateString: string, props: any): DocumentFragment {
   const components: Record<string, Block> = {};
 
   Object.entries(props).forEach(([name, value]) => {
+    // Если пропсы являются одиночным элементом
     if (value instanceof Block) {
       components[value.id] = value;
       props[name] = `<div id="id-${value.id}">Заглушка</div>`;
     }
+
+    // TODO: Если тут массив, то каждый элемент по ключу + индексу
+    //  записываем в строку темплейта, а потом так же заменяем
+    if (value instanceof Array) {
+      props[name] = '';
+      value.forEach((arrayItem, index) => {
+        components[`${name}-${index}`] = arrayItem;
+        props[name] += `<div id="id-${name}-${index}">Заглушка итема</div>`;
+      });
+    }
   });
 
-  // Передали в фрагмент значения пропсов, в нашем случае надо это переделать
+  // Передали в фрагмент значения пропсов
   fragment.innerHTML = Templater(templateString, props).getString();
 
   Object.entries(components).forEach(([id, component]) => {
@@ -21,6 +32,7 @@ function compile(templateString: string, props: any): DocumentFragment {
 
     // Если заглушка не найдена
     if (!stub) {
+      console.log(`Заглушка не найдена ${id}`);
       return;
     }
 

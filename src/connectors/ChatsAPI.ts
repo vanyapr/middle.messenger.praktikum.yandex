@@ -1,7 +1,7 @@
 import BaseApi from './BaseApi';
 import { chats, chatsArchive } from '../settings/api';
 
-class Chats extends BaseApi {
+class ChatsAPI extends BaseApi {
   private _chats: string
 
   private _chatsArchive: string
@@ -30,6 +30,18 @@ class Chats extends BaseApi {
     };
     return this.http.get(this._chats, options);
   }
+
+  // Создает чат
+  createChat(data: Object) {
+    const options = {
+      headers: {
+        'content-type': 'application/json',
+      },
+      data: JSON.stringify(data),
+    };
+
+    return this.http.post(this._chats, options);
+  }
 }
 
-export default Chats;
+export default ChatsAPI;

@@ -15,6 +15,7 @@ export default class Chats extends Block {
 
   componentDidMount() {
     const updater = () => {
+      console.log('Выполнен апдейт компонента');
       this.setProps(state.get('chats'));
     };
 

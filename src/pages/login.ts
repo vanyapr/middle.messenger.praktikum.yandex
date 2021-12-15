@@ -4,7 +4,7 @@ import Form from '../utils/Form/Form';
 import Router from '../utils/Router/Router';
 import Auth from '../connectors/Auth';
 import State from '../utils/State/State';
-import Chats from '../connectors/Chats';
+import ChatsAPI from '../connectors/ChatsAPI';
 import Input from '../components/input/input';
 import { loginValidator, passwordValidator } from '../settings/validators';
 // @ts-ignore
@@ -124,7 +124,7 @@ export default new LoginForm({
               state.set('settings', userSettings);
 
               // TODO: Получить данные чатов
-              const chats = new Chats();
+              const chats = new ChatsAPI();
               return chats.getChats();
             }
             // Иначе данные не пришли, и мы запишем ошибку
@@ -136,7 +136,7 @@ export default new LoginForm({
             if (response.status === 200) {
               const chats = JSON.parse(response.responseText);
               console.log(chats);
-              state.set('chats', chats);
+              state.set('chats', { list: chats });
               router.go('/chat');
             }
           })
