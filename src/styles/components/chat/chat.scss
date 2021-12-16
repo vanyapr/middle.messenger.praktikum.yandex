@@ -11,6 +11,12 @@
   cursor: pointer;
   height: 48px;
 
+  &_state {
+    &_current {
+      background-color: #e6ffd8;
+    }
+  }
+
   &:hover {
     background-color: #e6ffd8;
 

@@ -120,6 +120,9 @@ export default new LoginForm({
               console.log(userSettings);
               if (!userSettings.avatar) {
                 userSettings.avatar = image;
+              } else {
+                // Перезаписали аватар на случай авторизации
+                userSettings.avatar = `https://ya-praktikum.tech/api/v2/resources${userSettings.avatar}`;
               }
               state.set('settings', userSettings);
 

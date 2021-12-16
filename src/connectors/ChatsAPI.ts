@@ -21,16 +21,6 @@ class ChatsAPI extends BaseApi {
     return this.http.get(this._chats, options);
   }
 
-  getChats2(data: Object) {
-    const options = {
-      headers: {
-        'content-type': 'application/json',
-      },
-      data: JSON.stringify(data),
-    };
-    return this.http.get(this._chats, options);
-  }
-
   // Создает чат
   createChat(data: Object) {
     const options = {
@@ -41,6 +31,17 @@ class ChatsAPI extends BaseApi {
     };
 
     return this.http.post(this._chats, options);
+  }
+
+  deleteChat(data: Object) {
+    const options = {
+      headers: {
+        'content-type': 'application/json',
+      },
+      data: JSON.stringify(data),
+    };
+
+    return this.http.delete(this._chats, options);
   }
 }
 

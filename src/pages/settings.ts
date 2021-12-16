@@ -17,6 +17,9 @@ import FileText from '../components/fileText';
 const auth = new Auth();
 const router = new Router();
 const state = new State();
+// Отправка запроса
+const user = new User();
+
 const userSettings = state.get('settings');
 
 const editSettingsButton = new SettingsButton({
@@ -114,12 +117,9 @@ const uploadAvatarForm = new AvatarUploadForm({
 
         form.disableButton();
 
-        // Отправка запроса
-        const user = new User();
-
         user.changeAvatar(formData).then((responce: XMLHttpRequest) => {
           const parsedResponce = JSON.parse(responce.responseText);
-          parsedResponce.avatar = `https://ya-praktikum.tech/api/v2/resources${parsedResponce.avatar} `;
+          parsedResponce.avatar = `https://ya-praktikum.tech/api/v2/resources${parsedResponce.avatar}`;
           state.set('settings', parsedResponce);
           state.set('avatarUploadForm', { error: '' });
           editAvatarPopUp.hide();

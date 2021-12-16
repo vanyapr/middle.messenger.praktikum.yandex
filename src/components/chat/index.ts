@@ -24,6 +24,10 @@ class Chat extends Block {
     state.registerComponent(`chat${this._chatID}`, updater);
   }
 
+  makeActive() {
+    this.getContent().classList.add('chat_state_current');
+  }
+
   render() {
     return compile(template, { ...this.props });
   }

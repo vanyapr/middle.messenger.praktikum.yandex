@@ -5,6 +5,7 @@ import '../styles/components/container/container.scss';
 import '../styles/components/chat-menu/chat-menu.scss';
 
 // @ts-ignore
+import { response } from 'express';
 import avatar from '../../static/avatar.jpg';
 import App from '../components/app';
 import Chat from '../components/chat';
@@ -24,7 +25,6 @@ import Form from '../utils/Form/Form';
 import State from '../utils/State/State';
 import MessageForm from '../components/messageForm/messageForm';
 import HeaderSettingsButton from '../components/headerSettingsButton/headerSettingsButton';
-import DeleteChatMenu from '../styles/components/deleteChatMenu/deleteChatMenu';
 import Input from '../components/input/input';
 import User from '../connectors/User';
 import AddChatForm from '../components/addChatForm';
@@ -35,50 +35,20 @@ const state = new State();
 
 const router = new Router();
 
-// const chatsData = [
-//   {
-//     id: 123,
-//     title: 'my-chat',
-//     avatar,
-//     unread_count: 15,
-//     last_message: {
-//       user: {
-//         first_name: 'Petya',
-//         second_name: 'Pupkin',
-//         avatar,
-//         email: 'my@email.com',
-//         login: 'userLogin',
-//         phone: '8(911)-222-33-22',
-//       },
-//       time: '2020-01-02T14:22:22.000Z',
-//       content: 'this is message content',
-//     },
-//   },
-//   {
-//     id: 321,
-//     title: 'my-chat',
-//     avatar: '/123/avatar1.jpg',
-//     unread_count: 15,
-//     last_message: {
-//       user: {
-//         first_name: 'Vasya',
-//         second_name: 'Pupkin',
-//         avatar,
-//         email: 'my@email2.com',
-//         login: 'userLogins',
-//         phone: '8(911)-222-33-22',
-//       },
-//       time: '2020-01-02T14:22:22.000Z',
-//       content: 'Another message',
-//     },
-//   },
-// ];
-
 // FIXME: ID текущего чата пока что будем хранить тут
-const currentChatId: any = undefined;
+let currentChatId: any;
 
-const chatsList = state.get('chats').list;
+const chatsState = state.get('chats');
+let chatsList;
 
+// Проверка на наличие стейта
+if (!chatsState) {
+  chatsList = [];
+} else {
+  chatsList = chatsState.list;
+}
+
+// Фабрика списка чатов
 function getChatsList(chatsData: [Record<string, any>]) {
   console.log('Вызван конструктор списка чатов');
 
@@ -91,66 +61,26 @@ function getChatsList(chatsData: [Record<string, any>]) {
     return chat;
   });
 
-  // TODO: Конструктор чата
+  // Конструктор чата
   function chatConstructor(chatData: Record<string, any>): Chat {
-    const deleteChatButton = new MenuButton({
-      iconType: 'delete',
-      buttonText: 'Удалить чат',
-      events: {
-        click() {
-          console.log(`Удаляем чат ${chatData.id}`);
-        },
-      },
-    });
-
-    const deleteUserButton = new MenuButton({
-      iconType: 'delete-user',
-      buttonText: 'Удалить пользователя',
-      events: {
-        click() {
-          console.log(`Удаляем юзера из чата ${chatData.id}`);
-        },
-      },
-    });
-
-    const addUserButton = new MenuButton({
-      iconType: 'add-user',
-      buttonText: 'Добавить пользователя',
-      events: {
-        click() {
-          console.log(`Добавляем юзера в чат ${chatData.id}`);
-        },
-      },
-    });
-
-    const deleteChatMenu = new DeleteChatMenu({
-      addUser: addUserButton,
-      deleteUser: deleteUserButton,
-      deleteChat: deleteChatButton,
-    });
-
     const chat = new Chat({
       ...chatData,
-      deleteMenu: deleteChatMenu,
       events: {
         click(event: any) {
-          if (event.target.className === 'chat__edit') {
-            deleteChatMenu.toggle();
-          }
+          console.log(`Нажали на чат ${chatData.id}`);
+          currentChatId = chatData.id;
+          document.querySelectorAll('.chat').forEach((item) => {
+            item.classList.remove('chat_state_current');
+          });
+          chat.makeActive();
         },
-        // mouseover() {
-        //   chat.setProps({ ...chatData, title: 'hovered' });
-        // },
       },
     });
 
     return chat;
   }
 
-  const chatArray = processedChats.map((chatItem: Record<string, any>) => chatConstructor(chatItem));
-  console.log(chatArray);
-
-  return chatArray;
+  return processedChats.map((chatItem: Record<string, any>) => chatConstructor(chatItem));
 }
 
 const chats = new Chats({
@@ -184,10 +114,55 @@ const headerMenuFilesButton = new MenuButton({
   },
 });
 
+// Кнопка удаления чата
+const deleteChatButton = new MenuButton({
+  iconType: 'delete',
+  buttonText: 'Удалить чат',
+  events: {
+    click() {
+      console.log(`Удаляем чат ${currentChatId}`);
+      // const chatsAPI = new ChatsAPI();
+      //
+      // if (currentChatId) {
+      //   chatsAPI.deleteChat({ chatId: currentChatId })
+      //     .then(() => {
+      //       console.log('Удален');
+      //     });
+      // }
+    },
+  },
+});
+
+// Кнопка удаления пользователя
+const deleteUserButton = new MenuButton({
+  iconType: 'delete-user',
+  buttonText: 'Удалить пользователя',
+  events: {
+    click() {
+      console.log(`Удаляем юзера из чата ${currentChatId}`);
+    },
+  },
+});
+
+// Кнопка добавления юзера в чат
+const addUserButton = new MenuButton({
+  iconType: 'add-user',
+  buttonText: 'Добавить пользователя',
+  events: {
+    click() {
+      console.log(`Добавляем юзера в чат ${currentChatId}`);
+      addUserPopup.show();
+    },
+  },
+});
+
 // Меню в шапке сайта
 const headerMenu = new HeaderMenu({
-  headerMenuSettingsButton,
+  addUserButton,
+  deleteUserButton,
+  deleteChatButton,
   headerMenuFilesButton,
+  headerMenuSettingsButton,
 });
 
 const headerSettingsButton = new HeaderSettingsButton({

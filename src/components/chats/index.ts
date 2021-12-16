@@ -25,6 +25,7 @@ export default class Chats extends Block {
   }
 
   render() {
+    // Будем пересобирать список чатов при апдейте
     const chatsList = this.props.getChatsList(this.props.list);
     return compile(template, { list: chatsList });
   }

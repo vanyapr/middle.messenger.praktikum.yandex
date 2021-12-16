@@ -35,7 +35,15 @@ const backButton = new BackButton({
 });
 
 const state = new State();
-const settings = state.get('settings');
+let settings = state.get('settings');
+
+// Фикс на случай, если стейт приложения удален
+if (!settings) {
+  settings = {};
+  settings.login = '';
+  settings.email = '';
+}
+
 // Будем хранить состояние формы локально
 const formState: Record<string, boolean> = {};
 
