@@ -1,5 +1,5 @@
 const template = `
-  {{ chats }}
+  {{ list }}
 `;
 
 export default template;

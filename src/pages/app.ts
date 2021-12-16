@@ -74,81 +74,88 @@ const router = new Router();
 //   },
 // ];
 
-const chatsData = state.get('chats').list;
-
-// Пересобираем объект чатов так, чтобы он был заполнен данными
-const processedChats = chatsData.map((chat: Record<string, any>) => {
-  if (!chat.avatar) {
-    chat.avatar = avatar;
-  }
-
-  return chat;
-});
-
 // FIXME: ID текущего чата пока что будем хранить тут
 const currentChatId: any = undefined;
 
-// TODO: Конструктор чата
-function chatConstructor(chatData: Record<string, any>): Chat {
-  const deleteChatButton = new MenuButton({
-    iconType: 'delete',
-    buttonText: 'Удалить чат',
-    events: {
-      click() {
-        console.log(`Удаляем чат ${chatData.id}`);
-      },
-    },
+const chatsList = state.get('chats').list;
+
+function getChatsList(chatsData: [Record<string, any>]) {
+  console.log('Вызван конструктор списка чатов');
+
+  // Пересобираем объект чатов так, чтобы он был заполнен данными
+  const processedChats = chatsData.map((chat: Record<string, any>) => {
+    if (!chat.avatar) {
+      chat.avatar = avatar;
+    }
+
+    return chat;
   });
 
-  const deleteUserButton = new MenuButton({
-    iconType: 'delete-user',
-    buttonText: 'Удалить пользователя',
-    events: {
-      click() {
-        console.log(`Удаляем юзера из чата ${chatData.id}`);
+  // TODO: Конструктор чата
+  function chatConstructor(chatData: Record<string, any>): Chat {
+    const deleteChatButton = new MenuButton({
+      iconType: 'delete',
+      buttonText: 'Удалить чат',
+      events: {
+        click() {
+          console.log(`Удаляем чат ${chatData.id}`);
+        },
       },
-    },
-  });
+    });
 
-  const addUserButton = new MenuButton({
-    iconType: 'add-user',
-    buttonText: 'Добавить пользователя',
-    events: {
-      click() {
-        console.log(`Добавляем юзера в чат ${chatData.id}`);
+    const deleteUserButton = new MenuButton({
+      iconType: 'delete-user',
+      buttonText: 'Удалить пользователя',
+      events: {
+        click() {
+          console.log(`Удаляем юзера из чата ${chatData.id}`);
+        },
       },
-    },
-  });
+    });
 
-  const deleteChatMenu = new DeleteChatMenu({
-    addUser: addUserButton,
-    deleteUser: deleteUserButton,
-    deleteChat: deleteChatButton,
-  });
-
-  return new Chat({
-    ...chatData,
-    deleteMenu: deleteChatMenu,
-    events: {
-      click(event: any) {
-        if (event.target.className === 'chat__edit') {
-          deleteChatMenu.toggle();
-        }
+    const addUserButton = new MenuButton({
+      iconType: 'add-user',
+      buttonText: 'Добавить пользователя',
+      events: {
+        click() {
+          console.log(`Добавляем юзера в чат ${chatData.id}`);
+        },
       },
-    },
-  });
+    });
+
+    const deleteChatMenu = new DeleteChatMenu({
+      addUser: addUserButton,
+      deleteUser: deleteUserButton,
+      deleteChat: deleteChatButton,
+    });
+
+    const chat = new Chat({
+      ...chatData,
+      deleteMenu: deleteChatMenu,
+      events: {
+        click(event: any) {
+          if (event.target.className === 'chat__edit') {
+            deleteChatMenu.toggle();
+          }
+        },
+        // mouseover() {
+        //   chat.setProps({ ...chatData, title: 'hovered' });
+        // },
+      },
+    });
+
+    return chat;
+  }
+
+  const chatArray = processedChats.map((chatItem: Record<string, any>) => chatConstructor(chatItem));
+  console.log(chatArray);
+
+  return chatArray;
 }
 
-const chatArray = [];
-// Массив с элементами для рендера
-processedChats.forEach((chatItem: Record<string, any>) => {
-  chatArray.push(chatConstructor(chatItem));
-});
-console.log(chatArray);
-
 const chats = new Chats({
-  // avatar,
-  chats: chatArray,
+  list: chatsList,
+  getChatsList,
 });
 
 const search = new Search({

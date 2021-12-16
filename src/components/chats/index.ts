@@ -15,14 +15,17 @@ export default class Chats extends Block {
 
   componentDidMount() {
     const updater = () => {
-      console.log('Выполнен апдейт компонента');
-      this.setProps(state.get('chats'));
+      console.log('Записали пропсы компонента');
+      const chats = state.get('chats');
+      console.log(chats);
+      this.setProps(chats);
     };
 
     state.registerComponent('chats', updater);
   }
 
   render() {
-    return compile(template, { ...this.props });
+    const chatsList = this.props.getChatsList(this.props.list);
+    return compile(template, { list: chatsList });
   }
 }
