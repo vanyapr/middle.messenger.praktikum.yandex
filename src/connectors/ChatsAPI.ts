@@ -60,6 +60,31 @@ class ChatsAPI extends BaseApi {
 
     return this.http.put(this._chatsUsers, options);
   }
+
+  // Получить список юзеров в чате по id чата
+  getChatUsersList(id: number) {
+    const options = {
+      headers: {
+        'content-type': 'application/json',
+      },
+    };
+
+    const requestUrl = `${this._chats}/${id}/users`;
+
+    return this.http.get(requestUrl, options);
+  }
+
+  // Удалить юзера из чата
+  deleteUserFromChat(data: Object) {
+    const options = {
+      headers: {
+        'content-type': 'application/json',
+      },
+      data: JSON.stringify(data),
+    };
+
+    return this.http.delete(this._chatsUsers, options);
+  }
 }
 
 export default ChatsAPI;

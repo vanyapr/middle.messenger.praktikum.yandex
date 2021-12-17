@@ -11,6 +11,7 @@ const template = `
     </section>
     {{ addUserPopup }}
     {{ addChatPopup }}
+    {{ removeUserPopup }}
 `;
 
 export default template;

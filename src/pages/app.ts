@@ -28,6 +28,7 @@ import Input from '../components/input/input';
 import User from '../connectors/User';
 import AddChatForm from '../components/addChatForm';
 import ChatsAPI from '../connectors/ChatsAPI';
+import DeleteUserForm from '../components/deleteUserForm';
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
 // Стейт приложения
@@ -76,6 +77,19 @@ function getChatsList(chatsData: [Record<string, any>]) {
           // Скрыли меню если оно было открыто
           headerMenu.hide();
           headerMenuVisible = false;
+
+          // Получаем данные по списку юзеров в текущем чате
+          chatsAPI.getChatUsersList(currentChatId)
+            .then((usersList: XMLHttpRequest) => JSON.parse(usersList.responseText))
+            .then((responseText) => {
+              console.log(responseText);
+            });
+
+          headerSettingsButton.show();
+
+          state.set('header', {
+            title: chatData.title,
+          });
         },
       },
     });
@@ -141,6 +155,12 @@ const deleteChatButton = new MenuButton({
           }).then((chatsData: Record<string, any>) => {
             console.log(chatsData);
             state.set('chats', { list: chatsData });
+
+            // Очистили состояние шапки чатов
+            headerSettingsButton.hide();
+            state.set('header', {
+              title: '',
+            });
           }).catch((error) => {
             // Отловленную ошибку просто выведем в консоль
             console.log(error);
@@ -157,6 +177,8 @@ const deleteUserButton = new MenuButton({
   events: {
     click() {
       console.log(`Удаляем юзера из чата ${currentChatId}`);
+      removeUserPopup.show();
+      headerMenu.hide();
     },
   },
 });
@@ -201,7 +223,7 @@ const headerSettingsButton = new HeaderSettingsButton({
 });
 
 const header = new Header({
-  title: 'Заголовок чата будет здесь!',
+  title: '',
   button: headerSettingsButton,
   menu: headerMenu,
 });
@@ -227,7 +249,7 @@ const userNameInput = new Input({
 
 const addUserForm = new AddUserForm({
   title: 'Добавить пользователя в чат',
-  buttonText: 'Добавить в пользователя',
+  buttonText: 'Добавить пользователя',
   userNameInput,
   error: '',
   events: {
@@ -284,6 +306,73 @@ const addUserForm = new AddUserForm({
       } else {
         console.log('Форма невалидна и данных нет');
       }
+    },
+  },
+});
+
+const userNameInputToDelete = new Input({
+  name: 'login',
+  type: 'text',
+  textName: 'Имя пользователя',
+  errorText: '',
+  value: '',
+  events: {
+    keyup() {
+      const input = this.querySelector('.input');
+      const error = this.querySelector('.form__error');
+      const validity = validateInput(input, loginValidator, 'input_state_valid', 'input_state_invalid');
+
+      if (!validity) {
+        error.textContent = 'Минимум 4 знака: буквы, цифры или символы \'-\' и \'_\'';
+      }
+    },
+  },
+});
+
+const deleteUserForm = new DeleteUserForm({
+  title: 'Удалить пользователя из чата',
+  buttonText: 'Удалить пользователя',
+  userNameInput: userNameInputToDelete,
+  error: '',
+  events: {
+    submit(event: Event) {
+      event.preventDefault();
+
+      // Собираем данные формы
+      const form = new Form(
+        this,
+        'button',
+      );
+
+      // Обнулили ошибку (если она до этого была)
+      state.set('deleteUserForm', { error: '' });
+
+      const formData = form.collectData();
+
+      chatsAPI.getChatUsersList(currentChatId)
+        .then((usersList: XMLHttpRequest) => JSON.parse(usersList.responseText))
+        .then((chatUsers) => {
+          // Если в чате больше 1 юзера
+          if (chatUsers.length > 1) {
+            const usersToDelete = chatUsers.filter((user) => user.login === formData.login);
+
+            if (usersToDelete.length === 1) {
+              return chatsAPI.deleteUserFromChat({
+                users: [usersToDelete[0].id],
+                chatId: currentChatId,
+              }).then((result: XMLHttpRequest) => {
+                if (result.status === 200) {
+                  return;
+                }
+                throw new Error('Ошибка удаления пользователя');
+              });
+            }
+            throw new Error('Такого пользователя в чате нет');
+          }
+        }).catch((error) => {
+          console.log(error);
+          state.set('deleteUserForm', { error });
+        });
     },
   },
 });
@@ -353,6 +442,20 @@ const addChatForm = new AddChatForm({
   },
 });
 
+const removeUserPopup = new PopUp({
+  children: deleteUserForm,
+  events: {
+    click(event: any) {
+      event.stopPropagation();
+      console.log('Нажата кнопка закрытия');
+
+      if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
+        addUserPopup.hide();
+      }
+    },
+  },
+});
+
 const addUserPopup = new PopUp({
   children: addUserForm,
   events: {
@@ -415,6 +518,7 @@ export default new App({
   messageForm,
   addUserPopup,
   addChatPopup,
+  removeUserPopup,
   events: {
     handleSubmit(event: Event) {
       event.preventDefault();
