@@ -16,8 +16,8 @@ export default class HeaderSettingsButton extends Block {
 
     state.registerComponent('headerSettingsButton', updater);
 
-    // Установили состояние в "не нажата"
-    state.set('headerSettingsButton', { pressed: false });
+    // Скрыли по умолчанию
+    this.hide();
   }
 
   render(): DocumentFragment {
