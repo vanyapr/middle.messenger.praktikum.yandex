@@ -18,3 +18,4 @@ export const findUser = '/user/search';
 // Чаты
 export const chats = '/chats';
 export const chatsArchive = '/chats/archive';
+export const chatsUsers = '/chats/users';

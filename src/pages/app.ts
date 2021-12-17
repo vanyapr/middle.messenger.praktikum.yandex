@@ -5,7 +5,6 @@ import '../styles/components/container/container.scss';
 import '../styles/components/chat-menu/chat-menu.scss';
 
 // @ts-ignore
-import { response } from 'express';
 import avatar from '../../static/avatar.jpg';
 import App from '../components/app';
 import Chat from '../components/chat';
@@ -170,6 +169,7 @@ const addUserButton = new MenuButton({
     click() {
       console.log(`Добавляем юзера в чат ${currentChatId}`);
       addUserPopup.show();
+      headerMenu.hide();
     },
   },
 });
@@ -246,16 +246,8 @@ const addUserForm = new AddUserForm({
       const formData: any = form.collectData();
 
       if (formData) {
-        console.log(formData);
-        // TODO:
-        //  1) Ищем юзера с таким именем
-        //    а) Юзер не найден, ошибка
-        //    б) Юзер найден, тогда
-        //  2) Получить айди текущего чата?
-        //  3) Добавляем юзера в чат
         const user = new User();
         user.findUserByLogin(formData).then((apiResponce: XMLHttpRequest) => {
-          console.log(apiResponce);
           if (apiResponce.status === 200) {
             // Если данные пришли, мы должны проверить, найден ли юзер
             return JSON.parse(apiResponce.responseText);
@@ -264,9 +256,23 @@ const addUserForm = new AddUserForm({
           throw new Error('Ошибка добавления пользователя');
         }).then((usersList) => {
           if (usersList.length > 0) {
-            console.log('Список юзеров');
-            console.log(usersList);
-            // Выбираем юзера только с точным совпадением
+            // eslint-disable-next-line max-len
+            const filteredUsersList = usersList.filter((item: Record<string, any>) => item.login === formData.login);
+
+            // Добавляем юзера только с точным совпадением
+            if (filteredUsersList.length === 1) {
+              // Добавляем в текущий чат найденного юзера
+              chatsAPI.addUsersToChat({
+                users: [filteredUsersList[0].id],
+                chatId: currentChatId,
+              }).then((response: XMLHttpRequest) => {
+                if (response.status === 200) {
+                  console.log('Пользователь успешно добавлен в чат');
+                }
+              });
+            } else {
+              throw new Error('Пользователь с таким именем не найден');
+            }
           } else {
             throw new Error('Пользователь с таким именем не найден');
           }
