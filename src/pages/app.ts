@@ -29,6 +29,7 @@ import Input from '../components/input/input';
 import User from '../connectors/User';
 import AddChatForm from '../components/addChatForm';
 import ChatsAPI from '../connectors/ChatsAPI';
+const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
 // Стейт приложения
 const state = new State();
@@ -67,12 +68,15 @@ function getChatsList(chatsData: [Record<string, any>]) {
       ...chatData,
       events: {
         click(event: any) {
-          console.log(`Нажали на чат ${chatData.id}`);
+          console.log(`Нажали на чат. ID текущего чата: ${chatData.id}`);
           currentChatId = chatData.id;
           document.querySelectorAll('.chat').forEach((item) => {
             item.classList.remove('chat_state_current');
           });
           chat.makeActive();
+          // Скрыли меню если оно было открыто
+          headerMenu.hide();
+          headerMenuVisible = false;
         },
       },
     });
@@ -120,15 +124,29 @@ const deleteChatButton = new MenuButton({
   buttonText: 'Удалить чат',
   events: {
     click() {
+      headerMenu.hide();
       console.log(`Удаляем чат ${currentChatId}`);
-      // const chatsAPI = new ChatsAPI();
-      //
-      // if (currentChatId) {
-      //   chatsAPI.deleteChat({ chatId: currentChatId })
-      //     .then(() => {
-      //       console.log('Удален');
-      //     });
-      // }
+
+      if (currentChatId) {
+        chatsAPI.deleteChat({ chatId: currentChatId })
+          .then(() => {
+            console.log('Удален');
+            return chatsAPI.getChats().then((chatsListResponse: XMLHttpRequest) => {
+              if (chatsListResponse.status === 200) {
+                console.log(chatsListResponse);
+                return JSON.parse(chatsListResponse.responseText);
+              }
+
+              throw new Error('Ошибка удаления чата');
+            });
+          }).then((chatsData: Record<string, any>) => {
+            console.log(chatsData);
+            state.set('chats', { list: chatsData });
+          }).catch((error) => {
+            // Отловленную ошибку просто выведем в консоль
+            console.log(error);
+          });
+      }
     },
   },
 });
@@ -165,16 +183,18 @@ const headerMenu = new HeaderMenu({
   headerMenuSettingsButton,
 });
 
+let headerMenuVisible = false;
+
 const headerSettingsButton = new HeaderSettingsButton({
   text: 'Открыть меню настроек',
   events: {
     click() {
-      if (state.get('headerSettingsButton').pressed) {
+      if (headerMenuVisible) {
         headerMenu.hide();
-        state.set('headerSettingsButton', { pressed: false });
+        headerMenuVisible = false;
       } else {
         headerMenu.show();
-        state.set('headerSettingsButton', { pressed: true });
+        headerMenuVisible = true;
       }
     },
   },
@@ -299,7 +319,6 @@ const addChatForm = new AddChatForm({
       const formData: any = form.collectData();
 
       if (formData) {
-        const chatsAPI = new ChatsAPI();
         chatsAPI.createChat(formData).then((chatCreationResult: XMLHttpRequest) => {
           if (chatCreationResult.status === 200) {
             return;
