@@ -14,7 +14,7 @@ import Search from '../components/search/search';
 import Header from '../components/header/header';
 import Controls from '../components/controls/controls';
 import Messages from '../components/messages/messages';
-import { loginValidator, notEmptyValidator, passwordValidator } from '../settings/validators';
+import { loginValidator, notEmptyValidator } from '../settings/validators';
 import MenuButton from '../components/menuButton';
 import HeaderMenu from '../components/headerMenu/headerMenu';
 import Router from '../utils/Router/Router';
