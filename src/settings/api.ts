@@ -1,6 +1,10 @@
 const apiProtocol = 'https://';
+const socketProtocol = 'wss://';
 const apiRoute = 'ya-praktikum.tech/api/v2';
+const wsRoute = 'ya-praktikum.tech/ws';
+export const wsPingPongInterval = 10000; // Интервал пинга сокета
 export const apiURL = `${apiProtocol}${apiRoute}`;
+export const socketURL = `${socketProtocol}${wsRoute}`;
 
 // Авторизация и работа с пользователем
 export const signUp = '/auth/signup';
@@ -19,3 +23,4 @@ export const findUser = '/user/search';
 export const chats = '/chats';
 export const chatsArchive = '/chats/archive';
 export const chatsUsers = '/chats/users';
+export const chatsTokens = '/chats/token';

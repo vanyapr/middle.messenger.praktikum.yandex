@@ -2,7 +2,7 @@ import { apiURL } from '../settings/api';
 import HTTPTransport from '../utils/Fetch/Fetch';
 
 // Базовый класс для работы с апи
-class BaseApi {
+class BaseAPI {
   http: HTTPTransport
 
   baseURL: string
@@ -13,4 +13,4 @@ class BaseApi {
   }
 }
 
-export default BaseApi;
+export default BaseAPI;

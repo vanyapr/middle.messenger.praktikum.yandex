@@ -29,6 +29,7 @@ import User from '../connectors/User';
 import AddChatForm from '../components/addChatForm';
 import ChatsAPI from '../connectors/ChatsAPI';
 import DeleteUserForm from '../components/deleteUserForm';
+import SocketConnector from '../utils/Socket';
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
 // Стейт приложения
@@ -68,6 +69,8 @@ function getChatsList(chatsData: [Record<string, any>]) {
       ...chatData,
       events: {
         click(event: any) {
+          // const chatID = chatData.id;
+
           console.log(`Нажали на чат. ID текущего чата: ${chatData.id}`);
           currentChatId = chatData.id;
           document.querySelectorAll('.chat').forEach((item) => {
@@ -78,11 +81,22 @@ function getChatsList(chatsData: [Record<string, any>]) {
           headerMenu.hide();
           headerMenuVisible = false;
 
-          // Получаем данные по списку юзеров в текущем чате
-          chatsAPI.getChatUsersList(currentChatId)
-            .then((usersList: XMLHttpRequest) => JSON.parse(usersList.responseText))
-            .then((responseText) => {
-              console.log(responseText);
+          // Получаем данные по апи
+          Promise.all([
+            chatsAPI.getChatUsersList(currentChatId),
+            chatsAPI.getChatToken(currentChatId),
+          ])
+            .then((result: any) => {
+              const [usersList, chatToken] = result;
+              const users = JSON.parse(usersList.responseText);
+              const token = JSON.parse(chatToken.responseText);
+              return [users, token];
+            }).then(([users, tokenData]) => {
+              console.log(users);
+              const token = tokenData.token;
+              // Подключаемся к сокету
+              const chatSocket = new SocketConnector(state.get('settings').id, chatData.id, token);
+              chatSocket.init();
             });
 
           headerSettingsButton.show();

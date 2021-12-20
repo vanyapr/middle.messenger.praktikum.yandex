@@ -1,18 +1,21 @@
-import BaseApi from './BaseApi';
-import { chats, chatsArchive, chatsUsers } from '../settings/api';
+import BaseAPI from './BaseAPI';
+import { chats, chatsArchive, chatsUsers, chatsTokens } from '../settings/api';
 
-class ChatsAPI extends BaseApi {
+class ChatsAPI extends BaseAPI {
   private _chats: string
 
   private _chatsArchive: string
 
   private _chatsUsers: string
 
+  private _chatsTokens: string
+
   constructor() {
     super();
     this._chats = this.baseURL + chats;
     this._chatsArchive = this.baseURL + chatsArchive;
     this._chatsUsers = this.baseURL + chatsUsers;
+    this._chatsTokens = this.baseURL + chatsTokens;
   }
 
   // Получить список чатов
@@ -84,6 +87,19 @@ class ChatsAPI extends BaseApi {
     };
 
     return this.http.delete(this._chatsUsers, options);
+  }
+
+  // Получить токен чата
+  getChatToken(id: number) {
+    const options = {
+      headers: {
+        'content-type': 'application/json',
+      },
+    };
+
+    const requestUrl = `${this._chatsTokens}/${id}`;
+
+    return this.http.post(requestUrl, options);
   }
 }
 
