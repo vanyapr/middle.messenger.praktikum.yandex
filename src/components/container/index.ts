@@ -3,7 +3,7 @@ import template from './container.tpl';
 import compile from '../../utils/Compile/compile';
 import Renderer from '../../utils/Render/Render';
 
-export default class Container extends Block {
+export default class Index extends Block {
   constructor(props: any) {
     super(props, 'section', 'settings');
   }

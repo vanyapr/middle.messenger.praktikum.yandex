@@ -2,7 +2,7 @@ const apiProtocol = 'https://';
 const socketProtocol = 'wss://';
 const apiRoute = 'ya-praktikum.tech/api/v2';
 const wsRoute = 'ya-praktikum.tech/ws';
-export const wsPingPongInterval = 10000; // Интервал пинга сокета
+export const wsPingPongInterval = 30000; // Интервал пинга сокета
 export const apiURL = `${apiProtocol}${apiRoute}`;
 export const socketURL = `${socketProtocol}${wsRoute}`;
 
@@ -24,3 +24,4 @@ export const chats = '/chats';
 export const chatsArchive = '/chats/archive';
 export const chatsUsers = '/chats/users';
 export const chatsTokens = '/chats/token';
+export const chatsMessages = '/chats/new';

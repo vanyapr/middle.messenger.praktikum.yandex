@@ -9,7 +9,7 @@ import {
   nameValidator,
   phoneValidator,
 } from '../settings/validators';
-import Container from '../components/container/container';
+import Index from '../components/container';
 import Form from '../utils/Form/Form';
 import State from '../utils/State/State';
 // @ts-ignore
@@ -332,7 +332,7 @@ const editSettings = new EditSettings({
   error: '',
 });
 
-export default new Container({
+export default new Index({
   aside: backButton,
   main: editSettings,
 });

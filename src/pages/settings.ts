@@ -1,6 +1,6 @@
 import BackButton from '../components/backButton';
 import Settings from '../components/settings';
-import Container from '../components/container/container';
+import Index from '../components/container';
 import Router from '../utils/Router/Router';
 import State from '../utils/State/State';
 import Auth from '../connectors/Auth';
@@ -167,7 +167,7 @@ const settings = new Settings({
   editAvatarPopUp,
 });
 
-export default new Container({
+export default new Index({
   aside: backButton,
   main: settings,
 });

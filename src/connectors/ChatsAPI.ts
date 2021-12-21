@@ -1,10 +1,10 @@
 import BaseAPI from './BaseAPI';
-import { chats, chatsArchive, chatsUsers, chatsTokens } from '../settings/api';
+import { chats, chatsUsers, chatsTokens, chatsMessages } from '../settings/api';
 
 class ChatsAPI extends BaseAPI {
   private _chats: string
 
-  private _chatsArchive: string
+  private _chatsMessages: string
 
   private _chatsUsers: string
 
@@ -13,7 +13,7 @@ class ChatsAPI extends BaseAPI {
   constructor() {
     super();
     this._chats = this.baseURL + chats;
-    this._chatsArchive = this.baseURL + chatsArchive;
+    this._chatsMessages = this.baseURL + chatsMessages;
     this._chatsUsers = this.baseURL + chatsUsers;
     this._chatsTokens = this.baseURL + chatsTokens;
   }
@@ -98,6 +98,19 @@ class ChatsAPI extends BaseAPI {
     };
 
     const requestUrl = `${this._chatsTokens}/${id}`;
+
+    return this.http.post(requestUrl, options);
+  }
+
+  // Получить число непрочитанных сообщений в чате
+  getChatUnreadMessagesCount(id: number) {
+    const options = {
+      headers: {
+        'content-type': 'application/json',
+      },
+    };
+
+    const requestUrl = `${this._chatsMessages}/${id}`;
 
     return this.http.post(requestUrl, options);
   }

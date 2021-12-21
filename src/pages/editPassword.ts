@@ -1,12 +1,10 @@
 import BackButton from '../components/backButton';
 import EditPassword from '../components/editPassword';
-
-// Импорт картинок
 // @ts-ignore
 import image from '../../static/avatar.jpg';
 import { passwordValidator } from '../settings/validators';
 import validateInput from '../utils/validateInput/validateInput';
-import Container from '../components/container/container';
+import Index from '../components/container';
 import Router from '../utils/Router/Router';
 import Form from '../utils/Form/Form';
 import State from '../utils/State/State';
@@ -210,7 +208,7 @@ const editPassword = new EditPassword({
   editAvatarPopUp,
 });
 
-export default new Container({
+export default new Index({
   aside: backButton,
   main: editPassword,
 });

@@ -12,6 +12,7 @@
   height: 48px;
 
   &_state {
+
     &_current {
       background-color: #e6ffd8;
     }
@@ -19,18 +20,6 @@
 
   &:hover {
     background-color: #e6ffd8;
-
-    .chat__last-date {
-      display: none;
-    }
-
-    .chat__messages {
-      display: none;
-    }
-
-    .chat__edit {
-      display: block;
-    }
   }
 
   &:not(:last-child) {
@@ -113,22 +102,5 @@
     line-height: 12px;
     text-align: center;
     padding: 4px 7px 5px;
-  }
-
-  &__edit {
-    display: none;
-    position: absolute;
-    text-indent: -9000px;
-    background-color: transparent;
-    border: none;
-    background-image: url('./ellipsis.svg');
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 15px;
-    height: 15px;
-    right: 20px;
-    top: 50%;
-    transform: translate(0, -50%);
-    cursor: pointer;
   }
 }

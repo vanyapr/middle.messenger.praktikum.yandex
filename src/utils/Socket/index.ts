@@ -1,6 +1,6 @@
 import { socketURL, chats, wsPingPongInterval } from '../../settings/api';
 
-export default class SocketConnector {
+export default class Socket {
   private _chatID: string
 
   private _token: string
@@ -16,12 +16,11 @@ export default class SocketConnector {
     this._chatID = chatID;
     this._token = token;
     this._chatURL = `${socketURL}${chats}/${this._userID}/${this._chatID}/${this._token}`;
-    console.log(this._chatURL);
   }
 
   // Создает сокет с указанным чатом, поддерживает соединение
   createConnection() {
-    console.log('Подключили сокет для чата');
+    console.log(`Подключили сокет для чата ${this._chatID}`);
     // Создали подключение
     const socket = new WebSocket(this._chatURL);
 
@@ -43,10 +42,27 @@ export default class SocketConnector {
     this.socket.send(JSON.stringify(ping));
   }
 
-  // // Слушает сообщения
+  // Слушает сообщения
   listenMessages(event: any): void {
     const incomingMessage = event.data;
     console.log(incomingMessage);
+
+    // TODO: При получении сообщения
+    //  1) Проверяем тип сообщения
+    //  2) Если тип message
+    //  3) То добавляем новое сообщение в список сообщений чата
+    //  4) Повторно рендерим чаты
+    if (incomingMessage.type === 'pong') {
+      console.log('Служебное сообщение');
+    } else if (incomingMessage.type === 'message') {
+      console.log('Получено сообщение');
+      console.log(incomingMessage.content);
+    }
+  }
+
+  // Отправка сообщения
+  sendMessage(data: any) {
+    this.socket.send(data);
   }
 
   // Инициализируем сокет
