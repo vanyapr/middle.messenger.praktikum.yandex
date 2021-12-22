@@ -31,7 +31,6 @@ import ChatsAPI from '../connectors/ChatsAPI';
 import DeleteUserForm from '../components/deleteUserForm';
 import ChatMessage from '../components/chatMessage';
 import ChatReply from '../components/chatReply';
-import user from '../connectors/User';
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
 // Стейт приложения

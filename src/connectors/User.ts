@@ -1,5 +1,5 @@
 import BaseAPI from './BaseApi';
-import { findUser, getUserById, saveAvatar, savePassword, saveProFile } from '../settings/api';
+import { findUser, saveAvatar, savePassword, saveProFile } from '../settings/api';
 
 class User extends BaseAPI {
   private _savePasswordURL: string;
@@ -8,8 +8,6 @@ class User extends BaseAPI {
 
   private _saveAvatardURL: string
 
-  private _getUserByIdURL: string
-
   private _findUserURL: string
 
   constructor() {
@@ -17,7 +15,6 @@ class User extends BaseAPI {
     this._saveProfileURL = this.baseURL + saveProFile;
     this._savePasswordURL = this.baseURL + savePassword;
     this._saveAvatardURL = this.baseURL + saveAvatar;
-    this._getUserByIdURL = this.baseURL + getUserById;
     this._findUserURL = this.baseURL + findUser;
   }
 
