@@ -16,6 +16,7 @@ export default class Socket {
     this._chatID = chatID;
     this._token = token;
     this._chatURL = `${socketURL}${chats}/${this._userID}/${this._chatID}/${this._token}`;
+    this.init();
   }
 
   // Создает сокет с указанным чатом, поддерживает соединение
@@ -63,6 +64,16 @@ export default class Socket {
   // Отправка сообщения
   sendMessage(data: any) {
     this.socket.send(data);
+  }
+
+  // Получаем объект с новыми сообщениями
+  getNewMessages(offset: number) {
+    const requestBody = JSON.stringify({
+      content: `${offset}`,
+      type: 'get old',
+    });
+
+    this.socket.send(requestBody);
   }
 
   // Инициализируем сокет

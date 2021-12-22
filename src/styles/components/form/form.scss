@@ -40,8 +40,9 @@
 
   &__file {
     height: 65px;
-    width: 122px;
+    width: 200px;
     margin: auto;
+    word-break: break-all;
 
     &-label {
       font-size: 14px;

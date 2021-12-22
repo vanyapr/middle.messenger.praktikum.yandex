@@ -227,7 +227,7 @@ export default new SignUpForm({
             state.set('signUpForm', {
               error: 'Вы успешно зарегистрировались',
             });
-            router.go('/login');
+            router.go('/');
           } else {
             state.set('signUpForm', { error: 'Ошибка создания пользователя' });
           }

@@ -29,7 +29,6 @@ import User from '../connectors/User';
 import AddChatForm from '../components/addChatForm';
 import ChatsAPI from '../connectors/ChatsAPI';
 import DeleteUserForm from '../components/deleteUserForm';
-import SocketConnector from '../utils/Socket';
 import ChatMessage from '../components/chatMessage';
 import ChatReply from '../components/chatReply';
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
@@ -40,7 +39,7 @@ const state = new State();
 const router = new Router();
 
 // ID текущего чата будем хранить здесь
-let currentChatId: any;
+let currentChat: Chat;
 
 // Будем получать список чатов из стейта
 const chatsState = state.get('chats');
@@ -52,31 +51,6 @@ if (!chatsState) {
 } else {
   chatsList = chatsState.list;
 }
-
-// FIXME: В этой итерации просто передадим список сообщений
-const messagesList = [
-  {
-    id: '123',
-    time: '12:30',
-    user_id: '123',
-    content: 'Проверка работы сообещний',
-    type: 'message',
-  },
-  {
-    id: '1234',
-    time: '12:30',
-    user_id: '123',
-    content: 'Проверка работы сообещний 2',
-    type: 'message',
-  },
-  {
-    id: '1234',
-    time: '12:30',
-    user_id: state.get('settings').id,
-    content: 'Проверка работы сообещний 2',
-    type: 'message',
-  },
-];
 
 // Фабрика списка чатов
 function getChatsList(chatsData: [Record<string, any>]) {
@@ -98,7 +72,7 @@ function getChatsList(chatsData: [Record<string, any>]) {
       events: {
         click() {
           console.log(`Нажали на чат. ID текущего чата: ${chatData.id}`);
-          currentChatId = chatData.id;
+          currentChat = chat;
           document.querySelectorAll('.chat').forEach((item) => {
             item.classList.remove('chat_state_current');
           });
@@ -106,50 +80,16 @@ function getChatsList(chatsData: [Record<string, any>]) {
           // Скрыли меню если оно было открыто
           headerMenu.hide();
           headerMenuVisible = false;
-
-          // TODO: при объявления чата:
-          //  0) Мы получаем данные чата (юзеров и токен)
-          //  1) Мы получаем число сообщений в этом чате
-          //  2) Мы получаем сообщения чата и собираем их в массив
-          //  3) Мы записываем сообщения чата в стейт
-          //  4) Мы рендерим сообщения чата
-          //  5) Мы подписываем чат на новые сообщения
-          // Получаем данные по апи
-          Promise.all([
-            chatsAPI.getChatUsersList(currentChatId),
-            chatsAPI.getChatToken(currentChatId),
-          ])
-            .then((result: any) => {
-              const [usersList, chatToken] = result;
-              const users = JSON.parse(usersList.responseText);
-              const token = JSON.parse(chatToken.responseText);
-              return [users, token];
-            }).then(([users, tokenData]) => {
-              // Получили значение токена из объекта
-              const token = tokenData.token;
-
-              // Запишем список юзеров и токен в пропсы чата
-              chat.setProps({ users, token, messagesList });
-
-              // Подключаемся к сокету
-              const chatSocket = new SocketConnector(state.get('settings').id, chatData.id, token);
-              chatSocket.init();
-
-              // TODO: при получении сообщения через сокет
-              //  1) Проверяется чьё сообщение пришло
-              //  2) Создается экземпляр сообщения
-              //  3) Сообщение добавляется в список сообщений чата
-
-              state.set('messages', { messagesList });
-            }).catch((error) => {
-              console.log(error);
-            });
-
           headerSettingsButton.show();
 
           state.set('header', {
             title: chatData.title,
           });
+
+          console.log(chat);
+
+          // Записали в стейт текущий список сообщений
+          state.set('messages', { messagesList: chat.getMessagesList() });
         },
       },
     });
@@ -198,10 +138,10 @@ const deleteChatButton = new MenuButton({
   events: {
     click() {
       headerMenu.hide();
-      console.log(`Удаляем чат ${currentChatId}`);
+      console.log(`Удаляем чат ${currentChat.getID()}`);
 
-      if (currentChatId) {
-        chatsAPI.deleteChat({ chatId: currentChatId })
+      if (currentChat) {
+        chatsAPI.deleteChat({ chatId: currentChat.getID() })
           .then(() => {
             console.log('Удален');
             return chatsAPI.getChats().then((chatsListResponse: XMLHttpRequest) => {
@@ -221,6 +161,8 @@ const deleteChatButton = new MenuButton({
             state.set('header', {
               title: '',
             });
+
+            state.delete(`chat-${currentChat.getID()}`);
           }).catch((error) => {
             // Отловленную ошибку просто выведем в консоль
             console.log(error);
@@ -236,7 +178,7 @@ const deleteUserButton = new MenuButton({
   buttonText: 'Удалить пользователя',
   events: {
     click() {
-      console.log(`Удаляем юзера из чата ${currentChatId}`);
+      console.log(`Удаляем юзера из чата ${currentChat.getID()}`);
       removeUserPopup.show();
       headerMenu.hide();
     },
@@ -249,7 +191,7 @@ const addUserButton = new MenuButton({
   buttonText: 'Добавить пользователя',
   events: {
     click() {
-      console.log(`Добавляем юзера в чат ${currentChatId}`);
+      console.log(`Добавляем юзера в чат ${currentChat.getID()}`);
       addUserPopup.show();
       headerMenu.hide();
     },
@@ -346,12 +288,13 @@ const addUserForm = new AddUserForm({
               // Добавляем в текущий чат найденного юзера
               chatsAPI.addUsersToChat({
                 users: [filteredUsersList[0].id],
-                chatId: currentChatId,
+                chatId: currentChat.getID(),
               }).then((response: XMLHttpRequest) => {
                 if (response.status === 200) {
                   console.log('Пользователь успешно добавлен в чат');
 
                   // TODO: Обновить список пользователей в чате
+                  addUserPopup.hide();
                 }
               });
             } else {
@@ -411,7 +354,7 @@ const deleteUserForm = new DeleteUserForm({
 
       const formData = form.collectData();
 
-      chatsAPI.getChatUsersList(currentChatId)
+      chatsAPI.getChatUsersList(currentChat.getID())
         .then((usersList: XMLHttpRequest) => JSON.parse(usersList.responseText))
         .then((chatUsers) => {
           // Если в чате больше 1 юзера
@@ -421,7 +364,7 @@ const deleteUserForm = new DeleteUserForm({
             if (usersToDelete.length === 1) {
               return chatsAPI.deleteUserFromChat({
                 users: [usersToDelete[0].id],
-                chatId: currentChatId,
+                chatId: currentChat.getID(),
               }).then((result: XMLHttpRequest) => {
                 if (result.status === 200) {
                   // TODO: Обновить список пользователей в чате
@@ -558,10 +501,15 @@ const controls = new Controls({
 
 const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
   // Получаем ID текущего юзера
-  const currentUserID = state.get('settings').id;
+  const settings = state.get('settings');
+
+  let currentUserID = '0';
+  if (settings) {
+    currentUserID = settings.id;
+  }
 
   const result = messagesArray.map((item: any) => {
-    const { id, type, time, content } = item;
+    const { time, content } = item;
 
     // TODO: Преобразовывать дату в человеко-понятный формат
 
@@ -599,9 +547,14 @@ const messageForm = new MessageForm({
     submit(event: { preventDefault: () => void; target: { message: any; }; }) {
       event.preventDefault();
       if (event) {
-        const { message } = event.target;
-        // Текст сообщения
-        console.log(message.value);
+        const chatMessage = event.target.message.value;
+        // Если текущий чат выбран, отправляем сообщение
+        if (currentChat) {
+          currentChat.sendMessage(`${chatMessage}`);
+          event.target.message.value = '';
+        } else {
+          console.log('Чат не выбран');
+        }
       }
     },
   },

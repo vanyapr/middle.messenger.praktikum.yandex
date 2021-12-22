@@ -112,7 +112,7 @@ class ChatsAPI extends BaseAPI {
 
     const requestUrl = `${this._chatsMessages}/${id}`;
 
-    return this.http.post(requestUrl, options);
+    return this.http.get(requestUrl, options);
   }
 }
 

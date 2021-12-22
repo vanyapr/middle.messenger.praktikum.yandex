@@ -21,6 +21,8 @@ export default class Messages extends Block {
     state.registerComponent('messages', updater);
   }
 
+  // TODO: Написать метод appendChild, который будет добавлять в список сообщений сообщения
+
   render() {
     // Будем пересобирать список чатов при апдейте компонента
     const messagesList = this.props.messagesListConstructor(this.props.messagesList);

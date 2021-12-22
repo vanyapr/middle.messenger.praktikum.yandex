@@ -12,8 +12,6 @@ type TProps = { [key: string]: string | Function | number | InstanceType<any> };
 class State {
   static EVENTS: TEvents = {
     INIT: 'init',
-    // ADD: 'add',
-    // UPDATE: 'update',
     UPDATED: 'updated', // Запуск апдейта компонента
   }
 
@@ -24,14 +22,13 @@ class State {
   private eventBus: EventBus
 
   constructor() {
-    // 1) Синглтон, сущесвует лишь 1 на приложение
+    // 1) Синглтон, сущесвует лишь 1 экземпляр на приложение
     if (State.__instance) {
       return State.__instance;
     }
-
-    // 3) Записываем в локал сторадж свое состояние
+    // 2) Записываем в локал сторадж свое состояние
     // и если состояния нет читает локал сторадж
-    // 4) Компонент перед рендером получает данные из хранилища
+    // 3) Компонент перед рендером получает данные из хранилища
     if (localStorage.getItem('state')) {
       this._state = JSON.parse(<string>localStorage.getItem('state'));
     } else {

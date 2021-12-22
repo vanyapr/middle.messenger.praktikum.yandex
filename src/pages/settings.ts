@@ -46,7 +46,8 @@ const logoutButton = new LogoutButton({
     click() {
       auth.logOut().then((response: XMLHttpRequest) => {
         if (response.status === 200) {
-          state.delete('settings');
+          // Удалим стейт при логауте
+          localStorage.removeItem('state');
           router.go('/');
         } else {
           router.go('/500');
