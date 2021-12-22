@@ -31,6 +31,7 @@ import ChatsAPI from '../connectors/ChatsAPI';
 import DeleteUserForm from '../components/deleteUserForm';
 import ChatMessage from '../components/chatMessage';
 import ChatReply from '../components/chatReply';
+import user from '../connectors/User';
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
 // Стейт приложения
@@ -504,30 +505,57 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
   const settings = state.get('settings');
 
   let currentUserID = '0';
+
   if (settings) {
     currentUserID = settings.id;
   }
 
   const result = messagesArray.map((item: any) => {
-    const { time, content } = item;
+    // eslint-disable-next-line camelcase
+    const { user_id, time, content } = item;
 
     // TODO: Преобразовывать дату в человеко-понятный формат
+    function beautifyTime(timeValue: any) {
+      const date = new Date(timeValue);
+      const dateNow = new Date();
+
+      // @ts-ignore
+      const daysPassed: number = Math.round((dateNow - date) / (1000 * 60 * 60 * 24));
+      if (daysPassed === 1) {
+        return `Вчера в ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      } if (daysPassed === 2) {
+        return `Позавчера в ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      } if (daysPassed) {
+        return date.toLocaleTimeString([], { day: 'numeric', month: 'long' });
+      }
+
+      // Если меньше суток, то время
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
 
     // Является ли автором сообщений текущий юзер
     if (item.user_id === currentUserID) {
     //  1) Если является - reply
       return new ChatReply({
-        avatar,
+        avatar: settings.avatar,
         content,
-        time,
+        time: beautifyTime(time),
       });
     }
 
+    // eslint-disable-next-line max-len,camelcase,no-shadow
+    const messageAuthor = currentChat.getUsers().filter((user: Record<string, any>) => user.id === user_id);
+
+    const userAvatar = messageAuthor[0].avatar;
+    // eslint-disable-next-line max-len
+    const nickName = messageAuthor[0].display_name ? messageAuthor[0].display_name : messageAuthor[0].first_name;
+
     //  1) Если не является - message
     return new ChatMessage({
-      avatar,
+      avatar: `https://ya-praktikum.tech/api/v2/resources${userAvatar}`,
       content,
-      time,
+      time: beautifyTime(time),
+      nickName,
     });
   });
 

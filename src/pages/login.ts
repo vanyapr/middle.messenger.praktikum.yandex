@@ -6,7 +6,7 @@ import Auth from '../connectors/Auth';
 import State from '../utils/State/State';
 import ChatsAPI from '../connectors/ChatsAPI';
 import Input from '../components/input/input';
-import { loginValidator, passwordValidator, notEmptyValidator } from '../settings/validators';
+import { loginValidator, passwordValidator } from '../settings/validators';
 // @ts-ignore
 import image from '../../static/avatar.jpg';
 import Link from '../components/link/link';
@@ -52,10 +52,10 @@ const passwordInput = new Input({
     keyup() {
       const input = this.querySelector('.input');
       const error = this.querySelector('.form__error');
-      const validity = validateInput(input, notEmptyValidator, 'input_state_valid', 'input_state_invalid');
+      const validity = validateInput(input, passwordValidator, 'input_state_valid', 'input_state_invalid');
 
       if (!validity) {
-        error.textContent = 'Введите пароль';
+        error.textContent = 'Минимум 8 знаков. Обязательны ЗАГЛАВНАЯ буква и цифра';
         formState.passwordIsValid = false;
       } else {
         formState.passwordIsValid = true;

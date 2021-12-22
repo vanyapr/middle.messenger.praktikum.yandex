@@ -5,7 +5,6 @@ import State from '../../utils/State/State';
 import compile from '../../utils/Compile/compile';
 import ChatsAPI from '../../connectors/ChatsAPI';
 import { chats, socketURL, wsPingPongInterval } from '../../settings/api';
-import linkTpl from '../link/link.tpl';
 const chatsAPI = new ChatsAPI();
 
 // Стейт приложения
@@ -24,9 +23,11 @@ class Chat extends Block {
     this._configure();
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     const updater = () => {
-      this.setProps(state.get(`chat-${this._chatID}`));
+      const chat = state.get(`chat-${this._chatID}`);
+
+      this.setProps(chat);
     };
 
     state.registerComponent(`chat-${this._chatID}`, updater);
@@ -49,13 +50,6 @@ class Chat extends Block {
 
   // Конфигурация чата для дальнейшей работы
   protected _configure() {
-    // TODO: при объявления чата:
-    //  0) +Мы получаем данные чата (юзеров, токен, непрочитанные сообщения)
-    //  1) +Мы получаем число сообщений в этом чате
-    //  2) +Мы получаем сообщения чата и собираем их в массив
-    //  3) Мы записываем сообщения чата в стейт
-    //  4) Мы рендерим сообщения чата
-    //  5) Мы подписываем чат на новые сообщения
     // Получаем данные по апи
     Promise.all([
       chatsAPI.getChatUsersList(this._chatID),
@@ -122,9 +116,7 @@ class Chat extends Block {
     const incomingMessage = event.data;
     const message = JSON.parse(incomingMessage);
 
-    if (message.type === 'pong') {
-      console.log('Служебное сообщение');
-    } else if (message.type === 'message') {
+    if (message.type === 'message') {
       console.log('Получено сообщение');
       console.log(message.content);
 
@@ -134,6 +126,11 @@ class Chat extends Block {
       state.set('messages', { messagesList });
       state.set(`chat-${this._chatID}`, { messagesList });
     }
+  }
+
+  // Получить список юзеров чата
+  getUsers() {
+    return this.props.users;
   }
 
   // Получить список сообщений чата
