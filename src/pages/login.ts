@@ -140,6 +140,7 @@ export default new LoginForm({
               const chats = JSON.parse(response.responseText);
               console.log(chats);
               state.set('chats', { list: chats });
+              state.set('user', { authorised: true });
               router.go('/chat');
             }
           })

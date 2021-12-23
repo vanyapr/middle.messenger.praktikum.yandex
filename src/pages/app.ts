@@ -1,8 +1,6 @@
 // Стили
 import '../styles/components/sidebar/sidebar.scss';
-import '../styles/components/main/main.scss';
 import '../styles/components/container/container.scss';
-import '../styles/components/chat-menu/chat-menu.scss';
 
 // @ts-ignore
 import avatar from '../../static/avatar.jpg';
@@ -31,6 +29,8 @@ import ChatsAPI from '../connectors/ChatsAPI';
 import DeleteUserForm from '../components/deleteUserForm';
 import ChatMessage from '../components/chatMessage';
 import ChatReply from '../components/chatReply';
+import Main from '../components/main';
+import beautifyTime from '../utils/ beautifyTime';
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
 // Стейт приложения
@@ -49,7 +49,7 @@ let chatsList;
 if (!chatsState) {
   chatsList = [];
 } else {
-  chatsList = chatsState.list;
+  chatsList = chatsState.chatsList;
 }
 
 // Фабрика списка чатов
@@ -85,8 +85,6 @@ function getChatsList(chatsData: [Record<string, any>]) {
           state.set('header', {
             title: chatData.title,
           });
-
-          console.log(chat);
 
           // Записали в стейт текущий список сообщений
           state.set('messages', { messagesList: chat.getMessagesList() });
@@ -132,6 +130,7 @@ const headerMenuFilesButton = new MenuButton({
 });
 
 // Кнопка удаления чата
+// FIXME: Не показывать кнопку удаления в чате, где мы не владельцы
 const deleteChatButton = new MenuButton({
   iconType: 'delete',
   buttonText: 'Удалить чат',
@@ -143,7 +142,9 @@ const deleteChatButton = new MenuButton({
       if (currentChat) {
         chatsAPI.deleteChat({ chatId: currentChat.getID() })
           .then(() => {
-            console.log('Удален');
+            // Отключаем чат
+            currentChat.hide();
+            currentChat.destroy();
             return chatsAPI.getChats().then((chatsListResponse: XMLHttpRequest) => {
               if (chatsListResponse.status === 200) {
                 console.log(chatsListResponse);
@@ -513,25 +514,6 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
     // eslint-disable-next-line camelcase
     const { user_id, time, content } = item;
 
-    // TODO: Преобразовывать дату в человеко-понятный формат
-    function beautifyTime(timeValue: any) {
-      const date = new Date(timeValue);
-      const dateNow = new Date();
-
-      // @ts-ignore
-      const daysPassed: number = Math.round((dateNow - date) / (1000 * 60 * 60 * 24));
-      if (daysPassed === 1) {
-        return `Вчера в ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-      } if (daysPassed === 2) {
-        return `Позавчера в ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-      } if (daysPassed) {
-        return date.toLocaleTimeString([], { day: 'numeric', month: 'long' });
-      }
-
-      // Если меньше суток, то время
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
     // Является ли автором сообщений текущий юзер
     if (item.user_id === currentUserID) {
     //  1) Если является - reply
@@ -543,7 +525,8 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
     }
 
     // eslint-disable-next-line max-len,camelcase,no-shadow
-    const messageAuthor = currentChat.getUsers().filter((user: Record<string, any>) => user.id === user_id);
+    const chatUsers = currentChat.getUsers();
+    const messageAuthor = chatUsers.filter((user: Record<string, any>) => user.id === user_id);
 
     const userAvatar = messageAuthor[0].avatar;
     // eslint-disable-next-line max-len
@@ -587,13 +570,17 @@ const messageForm = new MessageForm({
   },
 });
 
+const main = new Main({
+  header,
+  messages,
+  messageForm,
+});
+
 export default new App({
   search,
   chats,
   controls,
-  header,
-  messages,
-  messageForm,
+  main,
   addUserPopup,
   addChatPopup,
   removeUserPopup,

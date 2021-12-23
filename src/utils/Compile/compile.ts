@@ -32,7 +32,7 @@ function compile(templateString: string, props: any): DocumentFragment {
 
     // Если заглушка не найдена
     if (!stub) {
-      console.log(`Заглушка не найдена ${id}`);
+      // console.log(`Заглушка не найдена ${id}`);
       return;
     }
 

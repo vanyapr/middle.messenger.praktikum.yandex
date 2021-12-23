@@ -48,6 +48,7 @@ const logoutButton = new LogoutButton({
         if (response.status === 200) {
           // Удалим стейт при логауте
           localStorage.removeItem('state');
+          state.set('user', { authorised: true });
           router.go('/');
         } else {
           router.go('/500');

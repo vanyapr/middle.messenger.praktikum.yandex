@@ -17,10 +17,16 @@ class Chat extends Block {
 
   private _socket: WebSocket
 
+  private _pingIntervalID: any
+
   constructor(props: any) {
     super(props, 'div', 'chat');
     this._chatID = props.id;
     this._configure();
+    // this._getUnreadedMessages();
+
+    // Вызываем вручную, я устал и не понимаю почему кдм не вызывается тут
+    this.componentDidMount();
   }
 
   componentDidMount = () => {
@@ -44,7 +50,7 @@ class Chat extends Block {
   }
 
   // Вернуть ID текущего чата
-  getID() {
+  getID(): number {
     return this._chatID;
   }
 
@@ -68,17 +74,8 @@ class Chat extends Block {
         // eslint-disable-next-line camelcase
         const { unread_count } = unreadData;
 
-        // Если в чате есть непрочитанные сообщения, получим их
-        // eslint-disable-next-line camelcase
-        if (unread_count) {
-          // TODO: Получить непрочитанные сообщения
-          //  И добавить в пропс чата число непрочитанных сообщений
-        }
-
         // Если в стейте есть сообщения, прочитаем их
         const messagesList = state.get(`chat-${this._chatID}`) ? state.get(`chat-${this._chatID}`).messagesList : [];
-
-        console.log(messagesList);
 
         // Запишем список юзеров и число непрочитанных сообщений в пропсы
         this.setProps({ users, unread_count, messagesList });
@@ -94,21 +91,43 @@ class Chat extends Block {
       });
   }
 
+  protected _sendPing = () => {
+    // Запустили обмен пакетами для поддержания соединения
+    const ping = JSON.stringify({ type: 'ping' });
+
+    this._socket.send(ping);
+  }
+
   // Подключили к сокету
   protected _connectSocket = () => {
     // Создали подключение
     this._socket = new WebSocket(this._chatURL);
     console.log(`Подключили сокет для чата ${this._chatID}`);
-
-    // Запустили обмен пакетами для поддержания соединения
-    const ping = JSON.stringify({ type: 'ping' });
-
-    setInterval(() => {
-      this._socket.send(ping);
-    }, wsPingPongInterval);
+    this._pingIntervalID = setInterval(this._sendPing, wsPingPongInterval);
 
     // Обработка ответа от сервера
     this._socket.onmessage = this._listenSocketMessages;
+
+    // Получение непрочитанных сообщений
+    this._socket.addEventListener('open', () => {
+      const unreadCount = this.props.unread_count;
+      console.log(unreadCount);
+
+      // Если в чате есть непрочитанные сообщения, получим их
+      if (unreadCount) {
+        let offset = 0;
+        while (unreadCount > offset) {
+          this._socket.send(JSON.stringify({
+            content: `${offset}`,
+            type: 'get old',
+          }));
+
+          offset += 20;
+        }
+      } else {
+        console.log('Нет непрочитанных сообщений');
+      }
+    });
   }
 
   // Слушает сообщения из сокета
@@ -116,16 +135,48 @@ class Chat extends Block {
     const incomingMessage = event.data;
     const message = JSON.parse(incomingMessage);
 
-    if (message.type === 'message') {
-      console.log('Получено сообщение');
-      console.log(message.content);
+    // Если получен список сообщений
+    if (Array.isArray(message)) {
+      // Запись в начало списка сообщений
+      const unsortedMessagesList = [...this.props.messagesList, ...message];
+      // @ts-ignore
+      const messagesList = unsortedMessagesList.sort((item1, item2) => {
+        if (item1.time > item2.time) {
+          return 1;
+        } if (item1.time < item2.time) {
+          return -1;
+        }
 
-      // eslint-disable-next-line no-shadow
-      const messagesList = [...this.props.messagesList, message];
-      this.setProps({ messagesList });
-      state.set('messages', { messagesList });
-      state.set(`chat-${this._chatID}`, { messagesList });
+        return 0;
+      });
+
+      state.set(`chat-${this._chatID}`, { messagesList, last_message: messagesList[messagesList.length - 1], unread_count: messagesList.length });
     }
+
+    if (message.type === 'message') {
+      // eslint-disable-next-line no-shadow
+      let currentMessages = this.props.messagesList;
+
+      if (!currentMessages) {
+        currentMessages = [];
+      }
+
+      const messagesList = [...currentMessages, message];
+
+      // TODO: Если чат уже открыт, то
+      //  мы не увеличиваем его число не прочитанных сообщений
+      let unreadMessagesCount = this.props.unread_count;
+      unreadMessagesCount += 1;
+
+      state.set(`chat-${this._chatID}`, { messagesList, last_message: message, unread_count: unreadMessagesCount });
+      state.set('messages', { messagesList });
+    }
+  }
+
+  destroy = () => {
+    clearInterval(this._pingIntervalID);
+    this._socket.close(1000, 'Чат будет удален');
+    state.delete(`chat-${this._chatID}`);
   }
 
   // Получить список юзеров чата
@@ -135,8 +186,7 @@ class Chat extends Block {
 
   // Получить список сообщений чата
   getMessagesList() {
-    const messagesList = this.props.messagesList ? this.props.messagesList : [];
-    return messagesList;
+    return this.props.messagesList ? this.props.messagesList : [];
   }
 
   // Метод отправки сообщений
@@ -154,6 +204,11 @@ class Chat extends Block {
 
   makeActive() {
     this.getContent().classList.add('chat_state_current');
+
+    console.log(this);
+
+    // Обнулили число непрочитанных сообщений
+    state.set(`chat-${this._chatID}`, { unread_count: 0 });
   }
 
   render() {

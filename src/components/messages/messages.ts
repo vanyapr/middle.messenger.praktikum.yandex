@@ -21,7 +21,10 @@ export default class Messages extends Block {
     state.registerComponent('messages', updater);
   }
 
-  // TODO: Написать метод appendChild, который будет добавлять в список сообщений сообщения
+  // TODO: Написать метод скролла чата вниз, который будет скроллить чат вниз
+  scrollToBottom() {
+
+  }
 
   render() {
     // Будем пересобирать список чатов при апдейте компонента

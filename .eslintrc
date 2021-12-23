@@ -7,6 +7,7 @@
   "parser": "@typescript-eslint/parser", // Для TS
   "plugins": ["@typescript-eslint"],  // Для TS
   "rules": {
+    "max-len": "off",
     "indent": ["error", 2],
     "object-curly-newline": "off",
     "no-underscore-dangle": "off",
@@ -22,5 +23,6 @@
     "no-use-before-define": "off",
     "no-param-reassign": "off",
     "prefer-destructuring": "off",
+    "no-shadow": "off",
   }
 }

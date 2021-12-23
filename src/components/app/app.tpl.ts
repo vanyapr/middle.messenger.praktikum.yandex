@@ -1,14 +1,10 @@
 const template = `
     <aside class="sidebar">
-        {{ search }}
-        {{ chats }}
-        {{ controls }}
+      {{ search }}
+      {{ chats }}
+      {{ controls }}
     </aside>
-    <section class="main">
-       {{ header }}
-       {{ messages }}
-       {{ messageForm }}
-    </section>
+    {{ main }}
     {{ addUserPopup }}
     {{ addChatPopup }}
     {{ removeUserPopup }}

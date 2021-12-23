@@ -1,5 +1,5 @@
 const template = `
-   <button class="back-button__button" onclick="{{ back }}">{{ buttonText }}</button>
+   <button class="back-button__button">{{ buttonText }}</button>
 `;
 
 export default template;
