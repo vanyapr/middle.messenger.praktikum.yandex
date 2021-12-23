@@ -31,6 +31,7 @@ import ChatMessage from '../components/chatMessage';
 import ChatReply from '../components/chatReply';
 import Main from '../components/main';
 import beautifyTime from '../utils/ beautifyTime';
+
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
 // Стейт приложения
@@ -60,6 +61,13 @@ function getChatsList(chatsData: [Record<string, any>]) {
   const processedChats = chatsData.map((chat: Record<string, any>) => {
     if (!chat.avatar) {
       chat.avatar = avatar;
+    }
+
+    if (chat.last_message) {
+      const { content } = chat.last_message;
+
+      const regExp = /(<|&lt;)/gim;
+      chat.last_message.content = content.replaceAll(regExp, '!!!');
     }
 
     return chat;
@@ -516,7 +524,7 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
 
     // Сделаем тупую реализацию защиты от XSS чтобы что-то была какая-то защита
     const regExp = /(<|&lt;)/gim;
-    content = content.replaceAll(regExp, '!');
+    content = content.replaceAll(regExp, '!!!');
 
     // Является ли автором сообщений текущий юзер
     if (item.user_id === currentUserID) {
@@ -566,7 +574,7 @@ const messageForm = new MessageForm({
         if (currentChat) {
           // Сделаем тупую реализацию защиты от XSS чтобы что-то была какая-то защита
           const regExp = /(<|&lt;)/gim;
-          const message = chatMessage.replaceAll(regExp, '<!');
+          const message = chatMessage.replaceAll(regExp, '!!!');
           currentChat.sendMessage(`${message}`);
           event.target.message.value = '';
         } else {
