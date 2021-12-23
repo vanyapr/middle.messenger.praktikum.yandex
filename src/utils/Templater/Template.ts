@@ -24,7 +24,7 @@ class Template implements ITemplate {
     const keysArray = keyString.split('.');
     const templateData = this._templateData;
 
-    // Выполняем поиск значения в ключе, вторым аргументом передаем объект
+    // Выполняем поиск значения в ключе, вторым аргументом передаем строку
     return keysArray.reduce((dataObject, objectKey) => {
       // Если ключа нет, вернём undefined, потому что у undefined нельзя получить ключ (не объект)
       if (dataObject[objectKey] === undefined) {

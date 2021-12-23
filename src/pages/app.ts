@@ -511,8 +511,12 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
   }
 
   const result = messagesArray.map((item: any) => {
-    // eslint-disable-next-line camelcase
-    const { user_id, time, content } = item;
+    // eslint-disable-next-line camelcase,prefer-const
+    let { user_id, time, content } = item;
+
+    // Сделаем тупую реализацию защиты от XSS чтобы что-то была какая-то защита
+    const regExp = /(<|&lt;)/gim;
+    content = content.replaceAll(regExp, '!');
 
     // Является ли автором сообщений текущий юзер
     if (item.user_id === currentUserID) {
@@ -560,7 +564,10 @@ const messageForm = new MessageForm({
         const chatMessage = event.target.message.value;
         // Если текущий чат выбран, отправляем сообщение
         if (currentChat) {
-          currentChat.sendMessage(`${chatMessage}`);
+          // Сделаем тупую реализацию защиты от XSS чтобы что-то была какая-то защита
+          const regExp = /(<|&lt;)/gim;
+          const message = chatMessage.replaceAll(regExp, '<!');
+          currentChat.sendMessage(`${message}`);
           event.target.message.value = '';
         } else {
           console.log('Чат не выбран');

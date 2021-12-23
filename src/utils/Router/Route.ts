@@ -1,5 +1,4 @@
 import Block from '../Block/Block';
-import Renderer from '../Render/Render';
 
 class Route {
   private readonly _pathName: string
