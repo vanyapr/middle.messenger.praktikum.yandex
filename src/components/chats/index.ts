@@ -75,22 +75,30 @@ export default class Chats extends Block {
           }, []);
 
           if (newChats.length) {
+            console.log('Добавлен новый чат');
             const newChatsList = this.props.getChatsList(newChats);
 
             this._chatsList = [...newChatsList, ...restOfChats];
+
+            // Обновить список чатов
+            state.set('chats', { chatsList: chatsArray });
           } else if (deletedChats.length) {
+            console.log('Удалён чат');
             // Размонтируем сокеты и слушатели удаляемого чата
             deletedChats.forEach((chatToDelete: Chat) => {
               chatToDelete.destroy();
             });
 
             this._chatsList = [...restOfChats];
+
+            // Обновить список чатов
+            state.set('chats', { chatsList: chatsArray });
+
+            // Очистить список сообщений
+            state.set('messages', { messagesList: [] });
           } else {
             console.log('Чаты не обновлены');
           }
-
-          // Новый чат добавить список чатов
-          state.set('chats', { chatsList: chatsArray });
         });
     }, 10000);
   }

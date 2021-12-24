@@ -148,10 +148,11 @@ const deleteChatButton = new MenuButton({
   events: {
     click() {
       headerMenu.hide();
-      console.log(`Удаляем чат ${currentChat.getID()}`);
+      const currentChatId = state.get('current-chat-id').id;
+      console.log(`Удаляем чат ${currentChatId}`);
 
-      if (currentChat) {
-        chatsAPI.deleteChat({ chatId: currentChat.getID() })
+      if (currentChatId) {
+        chatsAPI.deleteChat({ chatId: currentChatId })
           .then((apiResponse: XMLHttpRequest) => {
             if (apiResponse.status === 200) {
               return JSON.parse(apiResponse.responseText);
@@ -160,9 +161,10 @@ const deleteChatButton = new MenuButton({
             throw new Error('Ошибка удаления чата');
           })
           .then((responseText) => {
-            // Отключаем чат
+            // Размонтируем чат
             currentChat.hide();
             currentChat.destroy();
+
             return chatsAPI.getChats().then((chatsListResponse: XMLHttpRequest) => {
               if (chatsListResponse.status === 200) {
                 console.log(chatsListResponse);
@@ -172,16 +174,21 @@ const deleteChatButton = new MenuButton({
               throw new Error('Ошибка удаления чата');
             });
           }).then((chatsData: Record<string, any>) => {
-            console.log(chatsData);
+            // Записали обновленный список чатов
             state.set('chats', { list: chatsData });
 
             // Очистили состояние шапки чатов
             headerSettingsButton.hide();
+
+            // Удалили заголовок чата
             state.set('header', {
               title: '',
             });
 
-            state.delete(`chat-${currentChat.getID()}`);
+            // Очистить список сообщений
+            state.set('messages', { messagesList: [] });
+
+            state.delete(`chat-${currentChatId}`);
           })
           .catch((error) => {
             // Отловленную ошибку просто выведем в консоль
@@ -302,24 +309,32 @@ const addUserForm = new AddUserForm({
           if (usersList.length > 0) {
             // eslint-disable-next-line max-len
             const filteredUsersList = usersList.filter((item: Record<string, any>) => item.login === formData.login);
+            const currentChatID = state.get('current-chat-id').id;
 
             // Добавляем юзера только с точным совпадением
             if (filteredUsersList.length === 1) {
               // Добавляем в текущий чат найденного юзера
-              chatsAPI.addUsersToChat({
+              return chatsAPI.addUsersToChat({
                 users: [filteredUsersList[0].id],
-                chatId: currentChat.getID(),
+                chatId: currentChatID,
               }).then((response: XMLHttpRequest) => {
                 if (response.status === 200) {
                   console.log('Пользователь успешно добавлен в чат');
-
-                  // TODO: Обновить список пользователей в чате
-                  addUserPopup.hide();
+                  return chatsAPI.getChatUsersList(currentChatID)
+                    .then((chatUsersList: XMLHttpRequest) => JSON.parse(chatUsersList.responseText))
+                    .then((users) => {
+                      addUserPopup.hide();
+                      // Обновили список пользователей в чате
+                      state.set(`chat-${currentChatID}`, { users });
+                    }).catch((error) => {
+                      throw new Error('Ошибка получения списка юзеров после добавления юзера в чат');
+                    });
                 }
+
+                throw new Error('Ошибка при добавлении пользователя в чат (найден, но не добавлен)');
               });
-            } else {
-              throw new Error('Пользователь с таким именем не найден');
             }
+            throw new Error('Пользователь с таким именем не найден');
           } else {
             throw new Error('Пользователь с таким именем не найден');
           }
@@ -380,16 +395,23 @@ const deleteUserForm = new DeleteUserForm({
           // Если в чате больше 1 юзера
           if (chatUsers.length > 1) {
             const usersToDelete = chatUsers.filter((user: any) => user.login === formData.login);
+            const currentChatID = state.get('current-chat-id').id;
 
             if (usersToDelete.length === 1) {
               return chatsAPI.deleteUserFromChat({
                 users: [usersToDelete[0].id],
-                chatId: currentChat.getID(),
+                chatId: currentChatID,
               }).then((result: XMLHttpRequest) => {
                 if (result.status === 200) {
-                  // TODO: Обновить список пользователей в чате
-
-                  return;
+                  return chatsAPI.getChatUsersList(currentChatID)
+                    .then((chatUsersList: XMLHttpRequest) => JSON.parse(chatUsersList.responseText))
+                    .then((users) => {
+                      removeUserPopup.hide();
+                      // Обновили список пользователей в чате
+                      state.set(`chat-${currentChatID}`, { users });
+                    }).catch((error) => {
+                      throw new Error('Ошибка получения списка пользователей после удаления пользователя из чата');
+                    });
                 }
                 throw new Error('Ошибка удаления пользователя');
               });
@@ -522,6 +544,16 @@ const controls = new Controls({
 const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
   // Получаем ID текущего юзера
   const settings = state.get('settings');
+  const currentChatID = state.get('current-chat-id').id;
+
+  // Получаем список пользователей текущего чата по апи
+  chatsAPI.getChatUsersList(currentChatID)
+    .then((chatUsersList: XMLHttpRequest) => JSON.parse(chatUsersList.responseText))
+    .then((users) => {
+      console.log(users);
+    }).catch((error) => {
+      throw new Error('Ошибка получения списка пользователей после удаления пользователя из чата');
+    });
 
   let currentUserID = '0';
 
@@ -549,6 +581,7 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
 
     // eslint-disable-next-line max-len,camelcase,no-shadow
     // FIXME: переделать так, чтобы ид текущего чата бралось из стейта
+
     const chatUsers = currentChat.getUsers();
     const messageAuthor = chatUsers.filter((user: Record<string, any>) => user.id === user_id);
 

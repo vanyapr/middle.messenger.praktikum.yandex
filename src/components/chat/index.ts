@@ -227,6 +227,10 @@ class Chat extends Block {
 
     // Обнулили число непрочитанных сообщений
     state.set(`chat-${this._chatID}`, { unread_count: 0 });
+    const currentChatUsers = state.get(`chat-${this._chatID}`).users;
+
+    // TODO: Возможно хранить в стейте список юзеров текущего чата?
+    // state.set('current-chat-id');
 
     this.getUnreadMessagesCount();
   }
