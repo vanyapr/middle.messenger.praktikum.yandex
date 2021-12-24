@@ -47,6 +47,7 @@ class State {
     this.eventBus.on(State.EVENTS.UPDATED, this.onUpdate.bind(this));
   }
 
+  // Записывает стейт без вызова эффекта (статическое хранилище)
   addState(path: string, props: TProps) {
     console.log('Добавляем пропсы формы в глобальный стейт');
 
@@ -54,6 +55,7 @@ class State {
     this._state[path] = props;
   }
 
+  // Регистрирует эффект по ключу (вызывается при записи значений)
   registerComponent(path: string, updateFunction: any) {
     console.log(path);
     this.eventBus.on(path, updateFunction);
@@ -63,11 +65,11 @@ class State {
     this.eventBus.emit(path);
   }
 
-  // Записывает значения
+  // Записывает стейт с вызовом эффекта
   set(path: string, value: TProps) {
     // Если такого ключа нет, создадим его
     if (!this._state[path]) {
-      console.log('Такого ключа нет');
+      console.log('Такого ключа нет, создадим');
       this._state[path] = {};
     }
 
@@ -77,17 +79,17 @@ class State {
     console.log(this._state);
   }
 
-  // Возвращает значения по пути
+  // Получает значение стейта по ключу
   get(path: string) {
     return this._state[path];
   }
 
-  // Удаляет значение по пути
+  // Удаляет значение по ключу
   delete(path: string) {
     this._state[path] = undefined;
   }
 
-  // Записывает данные в локал сторадж
+  // Записывает данные в localstorage
   private _backUp() {
     localStorage.setItem('state', JSON.stringify(this._state));
   }

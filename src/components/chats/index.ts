@@ -78,9 +78,6 @@ export default class Chats extends Block {
             const newChatsList = this.props.getChatsList(newChats);
 
             this._chatsList = [...newChatsList, ...restOfChats];
-
-            // Новый чат добавить список чатов
-            state.set('chats', { chatsList: chatsArray });
           } else if (deletedChats.length) {
             // Размонтируем сокеты и слушатели удаляемого чата
             deletedChats.forEach((chatToDelete: Chat) => {
@@ -88,19 +85,19 @@ export default class Chats extends Block {
             });
 
             this._chatsList = [...restOfChats];
-
-            // Новый чат добавить список чатов
-            state.set('chats', { chatsList: chatsArray });
           } else {
             console.log('Чаты не обновлены');
           }
+
+          // Новый чат добавить список чатов
+          state.set('chats', { chatsList: chatsArray });
         });
     }, 10000);
   }
 
   render() {
     if (!this._chatsList) {
-      // Будем пересобирать список чатов при первом рендере и обновлять далее
+      // Будем пересобирать список чатов при первом рендере и обновлять далее в компоненте
       const chatsList = this.props.getChatsList(this.props.list);
       this._chatsList = chatsList;
     }

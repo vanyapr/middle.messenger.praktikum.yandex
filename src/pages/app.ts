@@ -81,6 +81,9 @@ function getChatsList(chatsData: [Record<string, any>]) {
         click() {
           console.log(`Нажали на чат. ID текущего чата: ${chatData.id}`);
           currentChat = chat;
+          // Записали ID текущего чата в стейт
+          state.addState('current-chat-id', { id: chat.getID() });
+
           document.querySelectorAll('.chat').forEach((item) => {
             item.classList.remove('chat_state_current');
           });
@@ -149,7 +152,14 @@ const deleteChatButton = new MenuButton({
 
       if (currentChat) {
         chatsAPI.deleteChat({ chatId: currentChat.getID() })
-          .then(() => {
+          .then((apiResponse: XMLHttpRequest) => {
+            if (apiResponse.status === 200) {
+              return JSON.parse(apiResponse.responseText);
+            }
+
+            throw new Error('Ошибка удаления чата');
+          })
+          .then((responseText) => {
             // Отключаем чат
             currentChat.hide();
             currentChat.destroy();
@@ -172,7 +182,8 @@ const deleteChatButton = new MenuButton({
             });
 
             state.delete(`chat-${currentChat.getID()}`);
-          }).catch((error) => {
+          })
+          .catch((error) => {
             // Отловленную ошибку просто выведем в консоль
             console.log(error);
           });
@@ -466,7 +477,7 @@ const removeUserPopup = new PopUp({
       console.log('Нажата кнопка закрытия');
 
       if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
-        addUserPopup.hide();
+        removeUserPopup.hide();
       }
     },
   },
@@ -537,6 +548,7 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
     }
 
     // eslint-disable-next-line max-len,camelcase,no-shadow
+    // FIXME: переделать так, чтобы ид текущего чата бралось из стейта
     const chatUsers = currentChat.getUsers();
     const messageAuthor = chatUsers.filter((user: Record<string, any>) => user.id === user_id);
 
