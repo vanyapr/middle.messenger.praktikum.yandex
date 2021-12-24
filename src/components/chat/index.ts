@@ -39,16 +39,6 @@ class Chat extends Block {
     state.registerComponent(`chat-${this._chatID}`, updater);
   }
 
-  // Получить число непрочитанных сообщений
-  getUnreadMessagesCount() {
-    chatsAPI.getChatUnreadMessagesCount(this._chatID)
-      .then((response: XMLHttpRequest) => JSON.parse(response.responseText))
-      .then((parsed) => parsed.unreadCount)
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   // Вернуть ID текущего чата
   getID(): number {
     return this._chatID;
@@ -158,7 +148,18 @@ class Chat extends Block {
         return 0;
       });
 
-      state.set(`chat-${this._chatID}`, { messagesList, last_message: messagesList[messagesList.length - 1], unread_count: messagesList.length });
+      const { id: currentChatId } = state.get('currentChat');
+
+      // eslint-disable-next-line camelcase
+      let unread_count = messagesList.length;
+
+      if (currentChatId !== this._chatID) {
+        // eslint-disable-next-line camelcase
+        unread_count = 0;
+        state.set('messages', { messagesList });
+      }
+
+      state.set(`chat-${this._chatID}`, { messagesList, last_message: messagesList[messagesList.length - 1], unread_count });
     }
 
     if (message.type === 'message') {
@@ -170,10 +171,10 @@ class Chat extends Block {
       }
 
       const updatedMessagesList = [...messagesList, message];
-      const currentChatId = state.get('current-chat-id');
+      const { id: currentChatId } = state.get('currentChat');
 
       // Если этот чат уже открыт, то мы не увеличиваем его число непрочитанных сообщений
-      if (currentChatId.id !== this._chatID) {
+      if (currentChatId !== this._chatID) {
         // eslint-disable-next-line camelcase
         unread_count += 1;
       }
@@ -185,13 +186,14 @@ class Chat extends Block {
       });
 
       // Если этот чат уже открыт, то мы добавляем в него сообщения
-      if (currentChatId.id === this._chatID) {
+      if (currentChatId === this._chatID) {
         state.set('messages', { messagesList: updatedMessagesList });
       }
     }
   }
 
   destroy = () => {
+    console.log('Размонтировали чат');
     clearInterval(this._pingIntervalID);
     this._socket.close(1000, 'Чат будет удален');
     state.delete(`chat-${this._chatID}`);
@@ -227,12 +229,10 @@ class Chat extends Block {
 
     // Обнулили число непрочитанных сообщений
     state.set(`chat-${this._chatID}`, { unread_count: 0 });
+
+    // Записали ID и юзеров текущего чата в стейт
     const currentChatUsers = state.get(`chat-${this._chatID}`).users;
-
-    // TODO: Возможно хранить в стейте список юзеров текущего чата?
-    // state.set('current-chat-id');
-
-    this.getUnreadMessagesCount();
+    state.addState('currentChat', { id: this._chatID, users: currentChatUsers });
   }
 
   render() {

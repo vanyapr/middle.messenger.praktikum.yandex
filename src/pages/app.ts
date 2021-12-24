@@ -37,9 +37,10 @@ const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 // Стейт приложения
 const state = new State();
 
+// Роутер
 const router = new Router();
 
-// ID текущего чата будем хранить здесь
+// Текущий чат будем хранить здесь
 let currentChat: Chat;
 
 // Будем получать список чатов из стейта
@@ -80,13 +81,12 @@ function getChatsList(chatsData: [Record<string, any>]) {
       events: {
         click() {
           console.log(`Нажали на чат. ID текущего чата: ${chatData.id}`);
+          // Записываем текущий чат в локальную переменную (для корректного размонтирования)
           currentChat = chat;
-          // Записали ID текущего чата в стейт
-          state.addState('current-chat-id', { id: chat.getID() });
-
           document.querySelectorAll('.chat').forEach((item) => {
             item.classList.remove('chat_state_current');
           });
+
           chat.makeActive();
           // Скрыли меню если оно было открыто
           headerMenu.hide();
@@ -148,7 +148,7 @@ const deleteChatButton = new MenuButton({
   events: {
     click() {
       headerMenu.hide();
-      const currentChatId = state.get('current-chat-id').id;
+      const currentChatId = state.get('currentChat').id;
       console.log(`Удаляем чат ${currentChatId}`);
 
       if (currentChatId) {
@@ -309,7 +309,7 @@ const addUserForm = new AddUserForm({
           if (usersList.length > 0) {
             // eslint-disable-next-line max-len
             const filteredUsersList = usersList.filter((item: Record<string, any>) => item.login === formData.login);
-            const currentChatID = state.get('current-chat-id').id;
+            const currentChatID = state.get('currentChat').id;
 
             // Добавляем юзера только с точным совпадением
             if (filteredUsersList.length === 1) {
@@ -395,7 +395,7 @@ const deleteUserForm = new DeleteUserForm({
           // Если в чате больше 1 юзера
           if (chatUsers.length > 1) {
             const usersToDelete = chatUsers.filter((user: any) => user.login === formData.login);
-            const currentChatID = state.get('current-chat-id').id;
+            const currentChatID = state.get('currentChat').id;
 
             if (usersToDelete.length === 1) {
               return chatsAPI.deleteUserFromChat({
@@ -541,27 +541,18 @@ const controls = new Controls({
   },
 });
 
-const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
-  // Получаем ID текущего юзера
-  const settings = state.get('settings');
-  const currentChatID = state.get('current-chat-id').id;
-
-  // Получаем список пользователей текущего чата по апи
-  chatsAPI.getChatUsersList(currentChatID)
-    .then((chatUsersList: XMLHttpRequest) => JSON.parse(chatUsersList.responseText))
-    .then((users) => {
-      console.log(users);
-    }).catch((error) => {
-      throw new Error('Ошибка получения списка пользователей после удаления пользователя из чата');
-    });
-
-  let currentUserID = '0';
-
-  if (settings) {
-    currentUserID = settings.id;
+const messagesListConstructor = (messagesArray: [Record<string, any>]): Array<ChatMessage | ChatReply | never> => {
+  // Если текущего чата нет, или нет текущего юзера, вернем пустой массив
+  if (!(state.get('currentChat') && state.get('settings'))) {
+    return [];
   }
 
-  const result = messagesArray.map((item: any) => {
+  // Если юзер и настройки есть, сгенерируем список чатов
+  const { users } = state.get('currentChat');
+  const { id: currentUserId, avatar } = state.get('settings');
+
+  // Формируем массив сообщений чата
+  return messagesArray.map((item: any) => {
     // eslint-disable-next-line camelcase,prefer-const
     let { user_id, time, content } = item;
 
@@ -569,21 +560,18 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
     const regExp = /(<|&lt;)/gim;
     content = content.replaceAll(regExp, '!!!');
 
-    // Является ли автором сообщений текущий юзер
-    if (item.user_id === currentUserID) {
-    //  1) Если является - reply
+    // Автор сообщений текущий юзер?
+    if (item.user_id === currentUserId) {
+      //  1) Да
       return new ChatReply({
-        avatar: settings.avatar,
+        avatar,
         content,
         time: beautifyTime(time),
       });
     }
 
-    // eslint-disable-next-line max-len,camelcase,no-shadow
-    // FIXME: переделать так, чтобы ид текущего чата бралось из стейта
-
-    const chatUsers = currentChat.getUsers();
-    const messageAuthor = chatUsers.filter((user: Record<string, any>) => user.id === user_id);
+    // const chatUsers = currentChat.getUsers();
+    const messageAuthor = users.filter((user: Record<string, any>) => user.id === user_id);
 
     const userAvatar = messageAuthor[0].avatar;
     // eslint-disable-next-line max-len
@@ -597,10 +585,6 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]) => {
       nickName,
     });
   });
-
-  console.log(result);
-
-  return result;
 };
 
 const messages = new Messages({

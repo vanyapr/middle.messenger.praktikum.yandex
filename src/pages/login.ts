@@ -138,15 +138,16 @@ export default new LoginForm({
             console.log(response);
             if (response.status === 200) {
               const chats = JSON.parse(response.responseText);
-              console.log(chats);
-              state.set('chats', { list: chats });
-              state.set('user', { authorised: true });
+              state.set('chats', { chatsList: chats });
+              router.go('/chat');
+            }
+
+            if (response.status === 400) {
               router.go('/chat');
             }
           })
           .catch((error) => {
             console.log(error);
-            state.set('user', { authorised: false });
             form.enableButton();
             state.set('loginForm', {
               error: 'При отправке данных возникла ошибка',

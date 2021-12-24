@@ -44,11 +44,14 @@ const logoutButton = new LogoutButton({
   buttonText: 'Выйти',
   events: {
     click() {
+      state.destroy();
+
       auth.logOut().then((response: XMLHttpRequest) => {
         if (response.status === 200) {
-          // Удалим стейт при логауте
-          localStorage.removeItem('state');
-          state.set('user', { authorised: true });
+          // Почистим стейт при логауте
+          // state.delete('chats');
+          // state.delete('currentChat');
+
           router.go('/');
         } else {
           router.go('/500');

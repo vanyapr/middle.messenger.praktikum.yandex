@@ -87,6 +87,13 @@ class State {
   // Удаляет значение по ключу
   delete(path: string) {
     this._state[path] = undefined;
+    this._backUp();
+  }
+
+  // Уничтожает стейт
+  destroy() {
+    localStorage.removeItem('state');
+    this._state = {};
   }
 
   // Записывает данные в localstorage

@@ -16,6 +16,9 @@ export default class Chats extends Block {
   // Здесь будем хранить список экземпляров чато
   private _chatsList: Chat[]
 
+  // Здесь будем хранить таймаут рефреша списка чатов
+  private _refreshInterval: any
+
   constructor(props: any) {
     super(props, 'section', 'chats');
   }
@@ -30,7 +33,20 @@ export default class Chats extends Block {
 
     // При апдейте надо не перерисовывать все чаты, а лишь добавлять новые в список
     // Подпишем компонент на постоянный апдейт списка чатов
-    setInterval(() => {
+    this._refreshInterval = setInterval(() => {
+      // FIXME
+      // Если произошел логаут, убираем запросы
+      if (!state.get('chats')) {
+        console.log('ЧЕТО ЧАТОВ ТО НЕТ');
+        this._chatsList.forEach((chat: Chat) => {
+          chat.destroy();
+        });
+
+        clearInterval(this._refreshInterval);
+        return;
+      }
+
+      // Получаем список чатов
       chatsAPI.getChats()
         .then((chatsList: XMLHttpRequest) => JSON.parse(chatsList.responseText))
         .then((chatsArray) => {
@@ -40,7 +56,7 @@ export default class Chats extends Block {
           // Проверяем чтобы ID чата в полученном списке не были в текущем списке чатов
           const newChats = chatsArray.reduce((acc: any, item: Record<string, any>) => {
             // Если ID итема есть в одном из чатов
-            const matchFound = this._chatsList.some((someItem) => someItem.getID() === item.id);
+            const matchFound = this._chatsList.some((someItem: Chat) => someItem.getID() === item.id);
 
             // Не делаем ничего
             // Если ID нет ни в одном из текущих чатов, добавляем в acc
