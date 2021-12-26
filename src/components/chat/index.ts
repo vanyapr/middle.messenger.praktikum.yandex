@@ -64,9 +64,6 @@ class Chat extends Block {
         // eslint-disable-next-line camelcase
         const { unread_count } = unreadData;
 
-        console.log('Число непрочитанных сообщений:');
-        console.log(unread_count);
-
         // Если в стейте есть сообщения, прочитаем их
         const messagesList = state.get(`chat-${this._chatID}`) ? state.get(`chat-${this._chatID}`).messagesList : [];
 
@@ -98,7 +95,6 @@ class Chat extends Block {
   protected _connectSocket = () => {
     // Создали подключение
     this._socket = new WebSocket(this._chatURL);
-    console.log(`Подключили сокет для чата ${this._chatID}`);
     this._pingIntervalID = setInterval(this._sendPing, wsPingPongInterval);
 
     // Обработка ответа от сервера
@@ -122,8 +118,6 @@ class Chat extends Block {
 
           offset += 20;
         }
-      } else {
-        console.log('Нет непрочитанных сообщений');
       }
     });
   }
@@ -193,7 +187,6 @@ class Chat extends Block {
   }
 
   destroy = () => {
-    console.log('Размонтировали чат');
     clearInterval(this._pingIntervalID);
     this._socket.close(1000, 'Чат будет удален');
     state.delete(`chat-${this._chatID}`);
@@ -211,8 +204,6 @@ class Chat extends Block {
 
   // Метод отправки сообщений
   sendMessage = (message: string) => {
-    console.log(`Отправка сообщения в чат ${this._chatID}`);
-
     const chatMessage = JSON.stringify({
       content: message,
       type: 'message',
@@ -224,8 +215,6 @@ class Chat extends Block {
 
   makeActive() {
     this.getContent().classList.add('chat_state_current');
-
-    console.log(this);
 
     // Обнулили число непрочитанных сообщений
     state.set(`chat-${this._chatID}`, { unread_count: 0 });

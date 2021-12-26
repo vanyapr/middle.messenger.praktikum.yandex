@@ -49,15 +49,12 @@ class State {
 
   // Записывает стейт без вызова эффекта (статическое хранилище)
   addState(path: string, props: TProps) {
-    console.log('Добавляем пропсы формы в глобальный стейт');
-
     // 5) При обновлении пропсов в хранилище компонент запускает рендер
     this._state[path] = props;
   }
 
   // Регистрирует эффект по ключу (вызывается при записи значений)
   registerComponent(path: string, updateFunction: any) {
-    console.log(path);
     this.eventBus.on(path, updateFunction);
   }
 
@@ -76,7 +73,6 @@ class State {
     Object.assign(this._state[path], value);
     this._backUp();
     this.eventBus.emit(State.EVENTS.UPDATED, path);
-    console.log(this._state);
   }
 
   // Получает значение стейта по ключу

@@ -56,8 +56,6 @@ if (!chatsState) {
 
 // Фабрика списка чатов
 function getChatsList(chatsData: [Record<string, any>]) {
-  console.log('Вызван конструктор списка чатов');
-
   // Пересобираем объект чатов так, чтобы он был заполнен данными
   const processedChats = chatsData.map((chat: Record<string, any>) => {
     if (!chat.avatar) {
@@ -80,7 +78,6 @@ function getChatsList(chatsData: [Record<string, any>]) {
       ...chatData,
       events: {
         click() {
-          console.log(`Нажали на чат. ID текущего чата: ${chatData.id}`);
           // Записываем текущий чат в локальную переменную (для корректного размонтирования)
           currentChat = chat;
           document.querySelectorAll('.chat').forEach((item) => {
@@ -149,7 +146,6 @@ const deleteChatButton = new MenuButton({
     click() {
       headerMenu.hide();
       const currentChatId = state.get('currentChat').id;
-      console.log(`Удаляем чат ${currentChatId}`);
 
       if (currentChatId) {
         chatsAPI.deleteChat({ chatId: currentChatId })
@@ -167,7 +163,6 @@ const deleteChatButton = new MenuButton({
 
             return chatsAPI.getChats().then((chatsListResponse: XMLHttpRequest) => {
               if (chatsListResponse.status === 200) {
-                console.log(chatsListResponse);
                 return JSON.parse(chatsListResponse.responseText);
               }
 
@@ -205,7 +200,6 @@ const deleteUserButton = new MenuButton({
   buttonText: 'Удалить пользователя',
   events: {
     click() {
-      console.log(`Удаляем юзера из чата ${currentChat.getID()}`);
       removeUserPopup.show();
       headerMenu.hide();
     },
@@ -218,7 +212,6 @@ const addUserButton = new MenuButton({
   buttonText: 'Добавить пользователя',
   events: {
     click() {
-      console.log(`Добавляем юзера в чат ${currentChat.getID()}`);
       addUserPopup.show();
       headerMenu.hide();
     },
@@ -319,7 +312,6 @@ const addUserForm = new AddUserForm({
                 chatId: currentChatID,
               }).then((response: XMLHttpRequest) => {
                 if (response.status === 200) {
-                  console.log('Пользователь успешно добавлен в чат');
                   return chatsAPI.getChatUsersList(currentChatID)
                     .then((chatUsersList: XMLHttpRequest) => JSON.parse(chatUsersList.responseText))
                     .then((users) => {
@@ -496,7 +488,6 @@ const removeUserPopup = new PopUp({
   events: {
     click(event: any) {
       event.stopPropagation();
-      console.log('Нажата кнопка закрытия');
 
       if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
         removeUserPopup.hide();
@@ -510,7 +501,6 @@ const addUserPopup = new PopUp({
   events: {
     click(event: any) {
       event.stopPropagation();
-      console.log('Нажата кнопка закрытия');
 
       if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
         addUserPopup.hide();
@@ -524,7 +514,6 @@ const addChatPopup = new PopUp({
   events: {
     click(event: any) {
       event.stopPropagation();
-      console.log('Нажата кнопка закрытия');
 
       if (event.target.classList.contains('popup__close') || event.target.className === 'popup') {
         addChatPopup.hide();
@@ -628,12 +617,4 @@ export default new App({
   addUserPopup,
   addChatPopup,
   removeUserPopup,
-  events: {
-    handleSubmit(event: Event) {
-      event.preventDefault();
-      // Передали форму для сбора данных
-      console.log('Отправка сообщения');
-    },
-  },
-
 });

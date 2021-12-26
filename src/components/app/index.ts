@@ -26,7 +26,6 @@ export default class App extends Block {
 
   // Добавляем на страницу компоненты
   display() {
-    console.log('Показываем');
     const renderer = new Renderer('#root');
     renderer.render(this.getContent());
   }

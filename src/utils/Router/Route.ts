@@ -32,7 +32,6 @@ class Route {
   private _render() {
     // Если передан блок
     if (this._block) {
-      console.log('Рендер?');
       this._block.display();
     }
   }
