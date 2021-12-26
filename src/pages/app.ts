@@ -31,6 +31,7 @@ import ChatMessage from '../components/chatMessage';
 import ChatReply from '../components/chatReply';
 import Main from '../components/main';
 import beautifyTime from '../utils/beautifyTime';
+import SettingsButton from '../components/settingsButton';
 
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
@@ -111,13 +112,7 @@ const chats = new Chats({
   getChatsList,
 });
 
-const search = new Search({
-
-});
-
-// Кнопка настроек в меню
-const headerMenuSettingsButton = new MenuButton({
-  iconType: 'settings',
+const settingsButton = new SettingsButton({
   buttonText: 'Настройки',
   events: {
     click: () => {
@@ -125,6 +120,21 @@ const headerMenuSettingsButton = new MenuButton({
     },
   },
 });
+
+const search = new Search({
+  settingsButton,
+});
+
+// Кнопка настроек в меню
+// const headerMenuSettingsButton = new MenuButton({
+//   iconType: 'settings',
+//   buttonText: 'Настройки',
+//   events: {
+//     click: () => {
+//       router.go('/settings');
+//     },
+//   },
+// });
 
 // Кнопка "показать вложения"
 const headerMenuFilesButton = new MenuButton({
@@ -224,7 +234,7 @@ const headerMenu = new HeaderMenu({
   deleteUserButton,
   deleteChatButton,
   headerMenuFilesButton,
-  headerMenuSettingsButton,
+  // headerMenuSettingsButton,
 });
 
 let headerMenuVisible = false;

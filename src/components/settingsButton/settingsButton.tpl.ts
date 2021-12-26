@@ -1,5 +1,5 @@
 const template = `
-    <button class="settings__button">{{ buttonText }}</button>
+    {{ buttonText }}
 `;
 
 export default template;
