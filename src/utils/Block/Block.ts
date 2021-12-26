@@ -86,6 +86,7 @@ export default class Block<Props = any> {
     this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
   }
 
+  // @ts-ignore
   componentDidMount(props: Props) {}
 
   _componentDidUpdate(oldProps: Props, newProps: Props) {
@@ -96,6 +97,7 @@ export default class Block<Props = any> {
     this._render();
   }
 
+  // @ts-ignore
   componentDidUpdate(oldProps: Props, newProps: Props): boolean {
     return true;
   }
@@ -188,7 +190,7 @@ export default class Block<Props = any> {
     this.isVisible = false;
   }
 
-  // Метод тогглит компонент и обновляет его состояние
+  // Метод показывает/скрывает компонент и обновляет его состояние
   toggle(): void {
     console.log('toggle');
     if (this.isVisible) {
@@ -204,6 +206,6 @@ export default class Block<Props = any> {
     return new DocumentFragment();
   }
 
-  // Отображает на странице компонент (для корневого компонента
+  // Отображает на странице компонент (для корневого компонента)
   display(): void {}
 }

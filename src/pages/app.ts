@@ -30,7 +30,7 @@ import DeleteUserForm from '../components/deleteUserForm';
 import ChatMessage from '../components/chatMessage';
 import ChatReply from '../components/chatReply';
 import Main from '../components/main';
-import beautifyTime from '../utils/ beautifyTime';
+import beautifyTime from '../utils/beautifyTime';
 
 const chatsAPI = new ChatsAPI(); // Экземпляр апи чатов
 
@@ -160,7 +160,7 @@ const deleteChatButton = new MenuButton({
 
             throw new Error('Ошибка удаления чата');
           })
-          .then((responseText) => {
+          .then(() => {
             // Размонтируем чат
             currentChat.hide();
             currentChat.destroy();
@@ -326,7 +326,7 @@ const addUserForm = new AddUserForm({
                       addUserPopup.hide();
                       // Обновили список пользователей в чате
                       state.set(`chat-${currentChatID}`, { users });
-                    }).catch((error) => {
+                    }).catch(() => {
                       throw new Error('Ошибка получения списка юзеров после добавления юзера в чат');
                     });
                 }
@@ -409,7 +409,7 @@ const deleteUserForm = new DeleteUserForm({
                       removeUserPopup.hide();
                       // Обновили список пользователей в чате
                       state.set(`chat-${currentChatID}`, { users });
-                    }).catch((error) => {
+                    }).catch(() => {
                       throw new Error('Ошибка получения списка пользователей после удаления пользователя из чата');
                     });
                 }
@@ -570,7 +570,7 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]): Array<Ch
       });
     }
 
-    // const chatUsers = currentChat.getUsers();
+    // eslint-disable-next-line camelcase
     const messageAuthor = users.filter((user: Record<string, any>) => user.id === user_id);
 
     const userAvatar = messageAuthor[0].avatar;
