@@ -25,7 +25,7 @@ const loginInput = new Input({
   type: 'text',
   textName: 'Пользователь',
   errorText: '',
-  value: 'snowflaxxxx',
+  value: '',
   events: {
     keyup() {
       const input = this.querySelector('.input');
@@ -47,7 +47,7 @@ const passwordInput = new Input({
   type: 'password',
   textName: 'Пароль',
   errorText: '',
-  value: 'adrf43gdA',
+  value: '',
   events: {
     keyup() {
       const input = this.querySelector('.input');
