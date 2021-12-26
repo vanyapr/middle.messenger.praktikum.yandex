@@ -1,5 +1,5 @@
 import { getUser, logOut, signIn, signUp } from '../settings/api';
-import BaseAPI from './BaseApi';
+import BaseAPI from './BaseAPI';
 
 // Регистрация пользователя
 class Auth extends BaseAPI {

@@ -1,4 +1,4 @@
-import BaseAPI from './BaseApi';
+import BaseAPI from './BaseAPI';
 import { findUser, saveAvatar, savePassword, saveProFile } from '../settings/api';
 
 class User extends BaseAPI {

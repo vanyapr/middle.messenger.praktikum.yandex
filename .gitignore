@@ -264,10 +264,13 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/phpstorm,macos,node
 
 # Parcel
-.parcel-cache
+/.parcel-cache
 
 # Build folder
 /build
 
 # Package.lock (почти 5к строк, больше чем во всём проекте)
 package-lock.json
+
+# Остальные файлы
+/dist
