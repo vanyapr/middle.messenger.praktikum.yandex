@@ -34,18 +34,6 @@ export default class Chats extends Block {
     // При апдейте надо не перерисовывать все чаты, а лишь добавлять новые в список
     // Подпишем компонент на постоянный апдейт списка чатов
     this._refreshInterval = setInterval(() => {
-      // FIXME
-      // Если произошел логаут, убираем запросы
-      if (!state.get('chats')) {
-        console.log('ЧЕТО ЧАТОВ ТО НЕТ');
-        this._chatsList.forEach((chat: Chat) => {
-          chat.destroy();
-        });
-
-        clearInterval(this._refreshInterval);
-        return;
-      }
-
       // Получаем список чатов
       chatsAPI.getChats()
         .then((chatsList: XMLHttpRequest) => JSON.parse(chatsList.responseText))
@@ -115,6 +103,18 @@ export default class Chats extends Block {
           } else {
             console.log('Чаты не обновлены');
           }
+        }).catch((error) => {
+          // Если произошел логаут (или дисконнект), убираем чаты
+          if (!state.get('chats')) {
+            console.log('ЧЕТО ЧАТОВ ТО НЕТ');
+            this._chatsList.forEach((chat: Chat) => {
+              chat.destroy();
+            });
+
+            clearInterval(this._refreshInterval);
+            return;
+          }
+          console.log(error);
         });
     }, 10000);
   }

@@ -138,6 +138,8 @@ export default new LoginForm({
             console.log(response);
             if (response.status === 200) {
               const chats = JSON.parse(response.responseText);
+              // Включили кнопку
+              form.enableButton();
               state.set('chats', { chatsList: chats });
               router.go('/chat');
             }
