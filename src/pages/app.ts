@@ -3,7 +3,7 @@ import '../styles/components/sidebar/sidebar.scss';
 import '../styles/components/container/container.scss';
 
 // @ts-ignore
-import avatar from '../../static/avatar.jpg';
+import avatarImage from '../../static/avatar.jpg';
 import App from '../components/app';
 import Chat from '../components/chat';
 import Chats from '../components/chats/index';
@@ -60,7 +60,7 @@ function getChatsList(chatsData: [Record<string, any>]) {
   // Пересобираем объект чатов так, чтобы он был заполнен данными
   const processedChats = chatsData.map((chat: Record<string, any>) => {
     if (!chat.avatar) {
-      chat.avatar = avatar;
+      chat.avatar = avatarImage;
     }
 
     if (chat.last_message) {
@@ -567,7 +567,7 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]): Array<Ch
 
     // Если аватар еще не установлен, заменим на дефолтный аватар
     if (!userAvatarFile) {
-      userAvatar = avatar;
+      userAvatar = avatarImage;
     } else {
       userAvatar = `https://ya-praktikum.tech/api/v2/resources${userAvatarFile}`;
     }
@@ -586,7 +586,7 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]): Array<Ch
 };
 
 const messages = new Messages({
-  avatar, // Аватар по умолчанию
+  avatarImage, // Аватар по умолчанию
   messagesListConstructor, // Конструктор списка сообщений
   messagesList: [], // Список сообщений (по дефолту - пуст)
 });
