@@ -7,3 +7,9 @@
 
 [build]
   publish = "build"
+
+[[redirects]]
+  from = "/*"
+  to = "/build/index.html"
+  status = 200
+  force = true
