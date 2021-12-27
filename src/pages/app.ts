@@ -560,13 +560,24 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]): Array<Ch
     // eslint-disable-next-line camelcase
     const messageAuthor = users.filter((user: Record<string, any>) => user.id === user_id);
 
-    const userAvatar = messageAuthor[0].avatar;
+    const userAvatarFile = messageAuthor[0].avatar;
+
+    // Здесь будем хранить урл аватара
+    let userAvatar = '';
+
+    // Если аватар еще не установлен, заменим на дефолтный аватар
+    if (!userAvatarFile) {
+      userAvatar = avatar;
+    } else {
+      userAvatar = `https://ya-praktikum.tech/api/v2/resources${userAvatarFile}`;
+    }
+
     // eslint-disable-next-line max-len
     const nickName = messageAuthor[0].display_name ? messageAuthor[0].display_name : messageAuthor[0].first_name;
 
     //  1) Если не является - message
     return new ChatMessage({
-      avatar: `https://ya-praktikum.tech/api/v2/resources${userAvatar}`,
+      avatar: userAvatar,
       content,
       time: beautifyTime(time),
       nickName,
