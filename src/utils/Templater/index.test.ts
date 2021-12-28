@@ -1,10 +1,7 @@
-
 export {};
-
 const assert = require('assert');
 const { expect } = require('chai');
-// Вот так корректно импортируется
-const renderer = require('./index.ts').default;
+const { default: renderer } = require('./index.ts');
 
 describe('Тестирование рендер движка', () => {
   describe('Проверка возвращаемых значений', () => {

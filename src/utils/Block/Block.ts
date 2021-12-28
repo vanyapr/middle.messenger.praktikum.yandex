@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import EventBus from '../EventBus/EventBus';
-import { Nullable, Values } from './types';
+import { Nullable, TProps, Values } from '../../types/types';
 
 interface BlockMeta<P = any> {
   tagName: string,
@@ -11,7 +11,7 @@ interface BlockMeta<P = any> {
 type Events = Values<typeof Block.EVENTS>;
 
 // TODO: передавать в конструктор класс элемента
-export default class Block<Props = any> {
+export default class Block<Props = TProps> {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',

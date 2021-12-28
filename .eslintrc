@@ -24,5 +24,6 @@
     "no-param-reassign": "off",
     "prefer-destructuring": "off",
     "no-shadow": "off",
+    "eol-last": "error"
   }
 }

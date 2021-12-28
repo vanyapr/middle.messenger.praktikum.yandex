@@ -3,12 +3,13 @@ import template from './popUp.tpl';
 import '../../styles/components/popup/popup.scss';
 import compile from '../../utils/Compile/compile';
 import State from '../../utils/State/State';
+import { TProps } from '../../types/types';
 
 // Стейт приложения
 const state = new State();
 
 export default class PopUp extends Block {
-  constructor(props: any) {
+  constructor(props: TProps) {
     super(props, 'div', 'popup');
   }
 

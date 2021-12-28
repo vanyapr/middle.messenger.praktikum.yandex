@@ -1,83 +1,49 @@
-import { socketURL, chats, wsPingPongInterval } from '../../settings/api';
+import { wsPingPongInterval } from '../../settings/api';
 
 export default class Socket {
-  private _chatID: string
+  readonly _chatURL: string
 
-  private _token: string
+  private _pingIntervalID: number
 
-  private _userID: string
+  private readonly _socket: WebSocket
 
-  private _chatURL: string
-
-  private socket: WebSocket
-
-  constructor(userID: string, chatID: string, token: string) {
-    this._userID = userID;
-    this._chatID = chatID;
-    this._token = token;
-    this._chatURL = `${socketURL}${chats}/${this._userID}/${this._chatID}/${this._token}`;
-    this.init();
+  constructor(chatURL: string) {
+    this._chatURL = chatURL;
+    this._socket = new WebSocket(this._chatURL);
+    this._enablePingPong();
   }
 
   // Создает сокет с указанным чатом, поддерживает соединение
-  createConnection() {
-    console.log(`Подключили сокет для чата ${this._chatID}`);
+  listen = (listener: any) => {
     // Создали подключение
-    const socket = new WebSocket(this._chatURL);
-
-    // Обработка ответа от сервера
-    socket.onmessage = this.listenMessages;
-
-    // Запустили обмен пакетами для поддержания соединения
-    const ping = JSON.stringify({ type: 'ping' });
-
-    setInterval(() => {
-      socket.send(ping);
-    }, wsPingPongInterval);
+    this._socket.onmessage = listener;
   }
 
-  // Выполняет пинг-понг по таймауту
-  pingPong(): void {
-    const ping = { type: 'ping' };
-
-    this.socket.send(JSON.stringify(ping));
-  }
-
-  // Слушает сообщения
-  listenMessages(event: any): void {
-    const incomingMessage = event.data;
-    console.log(incomingMessage);
-
-    // TODO: При получении сообщения
-    //  1) Проверяем тип сообщения
-    //  2) Если тип message
-    //  3) То добавляем новое сообщение в список сообщений чата
-    //  4) Повторно рендерим чаты
-    if (incomingMessage.type === 'pong') {
-      console.log('Служебное сообщение');
-    } else if (incomingMessage.type === 'message') {
-      console.log('Получено сообщение');
-      console.log(incomingMessage.content);
-    }
+  // Событие на открыти сокета
+  onopen = (listener: any) => {
+    this._socket.onopen = listener;
   }
 
   // Отправка сообщения
-  sendMessage(data: any) {
-    this.socket.send(data);
+  send(data: any): void {
+    this._socket.send(data);
   }
 
-  // Получаем объект с новыми сообщениями
-  getNewMessages(offset: number) {
-    const requestBody = JSON.stringify({
-      content: `${offset}`,
-      type: 'get old',
-    });
-
-    this.socket.send(requestBody);
+  // Уничтожает сокет
+  disconnect(): void {
+    window.clearInterval(this._pingIntervalID);
+    this._socket.close(1000, 'Сокет отключен');
   }
 
-  // Инициализируем сокет
-  init() {
-    this.createConnection();
+  // Отправляет пинг
+  protected _sendPing = (): void => {
+    // Запустили обмен пакетами для поддержания соединения
+    const ping = JSON.stringify({ type: 'ping' });
+    this._socket.send(ping);
+  }
+
+  // Включает пинг-понг по таймауту
+  private _enablePingPong(): void {
+    this._pingIntervalID = window.setInterval(this._sendPing, wsPingPongInterval);
   }
 }

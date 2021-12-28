@@ -4,11 +4,12 @@ import template from './settings.tpl';
 import State from '../../utils/State/State';
 import compile from '../../utils/Compile/compile';
 import Renderer from '../../utils/Render/Render';
+import { TProps } from '../../types/types';
 
 const state = new State();
 
 export default class Settings extends Block {
-  constructor(props: any) {
+  constructor(props: TProps) {
     super(props, 'section', 'settings');
   }
 

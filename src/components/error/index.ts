@@ -4,9 +4,10 @@ import '../../styles/components/error/error.scss';
 import template from './error.tpl';
 import Renderer from '../../utils/Render/Render';
 import compile from '../../utils/Compile/compile';
+import { TProps } from '../../types/types';
 
 export default class Error extends Block {
-  constructor(props: any) {
+  constructor(props: TProps) {
     super(props, 'div', 'error');
   }
 

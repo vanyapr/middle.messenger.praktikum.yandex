@@ -5,11 +5,12 @@ import '../../styles/components/reply/reply.scss';
 import template from './messages.tpl';
 import compile from '../../utils/Compile/compile';
 import State from '../../utils/State/State';
+import { TProps } from '../../types/types';
 // Стейт приложения
 const state = new State();
 
 export default class Messages extends Block {
-  constructor(props:any) {
+  constructor(props: TProps) {
     super(props, 'section', 'messages');
   }
 

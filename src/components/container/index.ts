@@ -2,9 +2,10 @@ import Block from '../../utils/Block/Block';
 import template from './container.tpl';
 import compile from '../../utils/Compile/compile';
 import Renderer from '../../utils/Render/Render';
+import { TProps } from '../../types/types';
 
 export default class Index extends Block {
-  constructor(props: any) {
+  constructor(props: TProps) {
     super(props, 'section', 'settings');
   }
 

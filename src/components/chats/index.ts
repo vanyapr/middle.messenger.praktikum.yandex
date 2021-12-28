@@ -6,6 +6,7 @@ import State from '../../utils/State/State';
 import compile from '../../utils/Compile/compile';
 import ChatsAPI from '../../connectors/ChatsAPI';
 import Chat from '../chat';
+import { TProps } from '../../types/types';
 
 const chatsAPI = new ChatsAPI();
 
@@ -19,7 +20,7 @@ export default class Chats extends Block {
   // Здесь будем хранить таймаут рефреша списка чатов
   private _refreshInterval: any
 
-  constructor(props: any) {
+  constructor(props: TProps) {
     super(props, 'section', 'chats');
   }
 
@@ -39,14 +40,14 @@ export default class Chats extends Block {
         .then((chatsList: XMLHttpRequest) => JSON.parse(chatsList.responseText))
         .then((chatsArray) => {
           // Почему так: при апдейте компонента рендерится новый список чатов, и отваливается currentChat,
-          // поэтому я при апдейте списка чатов пересобираю его вручную, после чего просто пишу в стейт новый список чатов
+          // поэтому я при апдейте списка чатов пересобираю его (список чатов) вручную,
+          // после чего просто пишу в стейт новый список чатов
           // Ищем новые чаты
-          // Проверяем чтобы ID чата в полученном списке не были в текущем списке чатов
           const newChats = chatsArray.reduce((acc: any, item: Record<string, any>) => {
-            // Если ID итема есть в одном из чатов
+            // Проверяем чтобы ID чата в полученном списке не были в текущем списке чатов
             const matchFound = this._chatsList.some((someItem: Chat) => someItem.getID() === item.id);
 
-            // Не делаем ничего
+            // Если ID итема есть в одном из чатов не делаем ничего
             // Если ID нет ни в одном из текущих чатов, добавляем в acc
             if (!matchFound) {
               acc.push(item);
@@ -55,29 +56,21 @@ export default class Chats extends Block {
             return acc;
           }, []);
 
-          // Ищем удаленные чаты
-          const deletedChats = this._chatsList.reduce((acc: any, chat: Chat) => {
-            // Если в новом списке чатов нет ID текущего чата, мы считаем его удаленным
-            const match = chatsArray.some((someChat: Record<string, any>) => someChat.id === chat.getID());
-
-            if (!match) {
-              acc.push(chat);
-            }
-
-            return acc;
-          }, []);
-
-          const restOfChats = this._chatsList.reduce((acc: any, chat: Chat) => {
-            // Если в новом списке чатов есть ID текущего чата, мы считаем его не удаленным
+          const [restOfChats, deletedChats] = this._chatsList.reduce((acc: any, chat: Chat) => {
             const match = chatsArray.some((someChat: Record<string, any>) => someChat.id === chat.getID());
 
             if (match) {
-              acc.push(chat);
+              // Если в новом списке чатов есть ID текущего чата, мы считаем его не удаленным
+              acc[0].push(chat);
+            } else {
+              // Если в новом списке чатов нет ID текущего чата, мы считаем его удаленным
+              acc[1].push(chat);
             }
 
             return acc;
-          }, []);
+          }, [[], []]);
 
+          // Если есть новые чаты (даже если удалены старые)
           if (newChats.length) {
             console.log('Добавлен новый чат');
             const newChatsList = this.props.getChatsList(newChats);
@@ -87,6 +80,7 @@ export default class Chats extends Block {
             // Обновить список чатов
             state.set('chats', { chatsList: chatsArray });
           } else if (deletedChats.length) {
+            // Если чат был удален, скрипт всегда попадет сюда (рано или поздно)
             console.log('Удалён чат');
             // Размонтируем сокеты и слушатели удаляемого чата
             deletedChats.forEach((chatToDelete: Chat) => {

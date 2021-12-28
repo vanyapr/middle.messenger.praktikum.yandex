@@ -4,12 +4,13 @@ import '../../styles/components/button/button.scss';
 import template from './controls.tpl';
 import compile from '../../utils/Compile/compile';
 import State from '../../utils/State/State';
+import { TProps } from '../../types/types';
 
 // Стейт приложения
 const state = new State();
 
 export default class Controls extends Block {
-  constructor(props: any) {
+  constructor(props: TProps) {
     super(props, 'footer', 'controls');
   }
 

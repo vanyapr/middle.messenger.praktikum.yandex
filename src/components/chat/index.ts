@@ -4,26 +4,25 @@ import Block from '../../utils/Block/Block';
 import State from '../../utils/State/State';
 import compile from '../../utils/Compile/compile';
 import ChatsAPI from '../../connectors/ChatsAPI';
-import { chats, socketURL, wsPingPongInterval } from '../../settings/api';
+import { chats, socketURL } from '../../settings/api';
+import { TProps } from '../../types/types';
+import Socket from '../../utils/Socket';
 const chatsAPI = new ChatsAPI();
 
 // Стейт приложения
 const state = new State();
 
 class Chat extends Block {
-  private _chatID: number
+  private _chatID: any
 
   private _chatURL: string
 
-  private _socket: WebSocket
+  private _socket: Socket
 
-  private _pingIntervalID: any
-
-  constructor(props: any) {
+  constructor(props: TProps) {
     super(props, 'div', 'chat');
     this._chatID = props.id;
     this._configure();
-    // this._getUnreadedMessages();
 
     // Вызываем вручную, я устал и не понимаю почему кдм не вызывается тут
     this.componentDidMount();
@@ -87,22 +86,23 @@ class Chat extends Block {
   protected _sendPing = () => {
     // Запустили обмен пакетами для поддержания соединения
     const ping = JSON.stringify({ type: 'ping' });
-
     this._socket.send(ping);
   }
 
   // Подключили к сокету
   protected _connectSocket = () => {
     // Создали подключение
-    this._socket = new WebSocket(this._chatURL);
-    this._pingIntervalID = setInterval(this._sendPing, wsPingPongInterval);
+    this._socket = new Socket(this._chatURL);
 
     // Обработка ответа от сервера
-    this._socket.onmessage = this._listenSocketMessages;
+    this._socket.listen(this._listenSocketMessages);
 
     // Получение непрочитанных сообщений
-    this._socket.addEventListener('open', () => {
-      // eslint-disable-next-line camelcase
+    this._socket.onopen(this._onSocketOpen);
+  }
+
+    protected _onSocketOpen = () => {
+    // eslint-disable-next-line camelcase
       const { unread_count } = state.get(`chat-${this._chatID}`);
 
       // Если в чате есть непрочитанные сообщения, получим их
@@ -119,8 +119,7 @@ class Chat extends Block {
           offset += 20;
         }
       }
-    });
-  }
+    }
 
   // Слушает сообщения из сокета
   protected _listenSocketMessages = (event: any): void => {
@@ -132,15 +131,7 @@ class Chat extends Block {
       // Запись в начало списка сообщений
       const unsortedMessagesList = [...this.props.messagesList, ...message];
       // @ts-ignore
-      const messagesList = unsortedMessagesList.sort((item1, item2) => {
-        if (item1.time > item2.time) {
-          return 1;
-        } if (item1.time < item2.time) {
-          return -1;
-        }
-
-        return 0;
-      });
+      const messagesList = unsortedMessagesList.sort(({ time: firstTime }, { time: secondTime }) => firstTime - secondTime);
 
       const { id: currentChatId } = state.get('currentChat');
 
@@ -157,12 +148,8 @@ class Chat extends Block {
     }
 
     if (message.type === 'message') {
-      // eslint-disable-next-line no-shadow,camelcase
-      let { messagesList, unread_count } = state.get(`chat-${this._chatID}`);
-
-      if (!messagesList) {
-        messagesList = [];
-      }
+      // eslint-disable-next-line no-shadow,camelcase,prefer-const
+      let { messagesList = [], unread_count } = state.get(`chat-${this._chatID}`);
 
       const updatedMessagesList = [...messagesList, message];
       const { id: currentChatId } = state.get('currentChat');
@@ -187,8 +174,7 @@ class Chat extends Block {
   }
 
   destroy = () => {
-    clearInterval(this._pingIntervalID);
-    this._socket.close(1000, 'Чат будет удален');
+    this._socket.disconnect();
     state.delete(`chat-${this._chatID}`);
   }
 
