@@ -1,14 +1,28 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
-
 import '../../styles/components/controls/controls.scss';
 import '../../styles/components/button/button.scss';
+import template from './controls.tpl';
+import compile from '../../utils/Compile/compile';
+import State from '../../utils/State/State';
+import { TProps } from '../../types/types';
 
-// Темплейт
-import controls from './controls.tpl';
+// Стейт приложения
+const state = new State();
 
 export default class Controls extends Block {
+  constructor(props: TProps) {
+    super(props, 'footer', 'controls');
+  }
+
+  componentDidMount() {
+    const updater = () => {
+      this.setProps(state.get('controls'));
+    };
+
+    state.registerComponent('controls', updater);
+  }
+
   render() {
-    return Render(controls, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }

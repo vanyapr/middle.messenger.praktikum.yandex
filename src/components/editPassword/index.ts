@@ -1,11 +1,28 @@
 import '../../styles/components/settings/settings.scss';
-import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
+import '../../styles/components/button/button.scss';
 
-import editPassword from './editPassword.tpl';
+import Block from '../../utils/Block/Block';
+import template from './editPassword.tpl';
+import State from '../../utils/State/State';
+import compile from '../../utils/Compile/compile';
+import { TProps } from '../../types/types';
+
+const state = new State();
 
 export default class EditPassword extends Block {
+  constructor(props: TProps) {
+    super(props, 'section', 'settings');
+  }
+
+  componentDidMount() {
+    const updater = () => {
+      this.setProps(state.get('settings'));
+    };
+
+    state.registerComponent('settings', updater);
+  }
+
   render() {
-    return Render(editPassword, this.props, this.container);
+    return compile(template, { ...this.props });
   }
 }

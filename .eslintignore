@@ -2,3 +2,4 @@
 /build
 /.parcel-cache
 **/*.min.js
+*.test.*

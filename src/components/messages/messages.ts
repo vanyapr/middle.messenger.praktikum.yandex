@@ -1,15 +1,35 @@
 import Block from '../../utils/Block/Block';
-import Render from '../../utils/Render';
-
 import '../../styles/components/messages/messages.scss';
 import '../../styles/components/message/message.scss';
 import '../../styles/components/reply/reply.scss';
-
-// Темплейт
-import messages from './messages.tpl';
+import template from './messages.tpl';
+import compile from '../../utils/Compile/compile';
+import State from '../../utils/State/State';
+import { TProps } from '../../types/types';
+// Стейт приложения
+const state = new State();
 
 export default class Messages extends Block {
+  constructor(props: TProps) {
+    super(props, 'section', 'messages');
+  }
+
+  componentDidMount() {
+    const updater = () => {
+      this.setProps(state.get('messages'));
+    };
+
+    state.registerComponent('messages', updater);
+  }
+
+  // TODO: Написать метод скролла чата вниз, который будет скроллить чат вниз
+  scrollToBottom() {
+
+  }
+
   render() {
-    return Render(messages, this.props, this.container);
+    // Будем пересобирать список чатов при апдейте компонента
+    const messagesList = this.props.messagesListConstructor(this.props.messagesList);
+    return compile(template, { messages: messagesList });
   }
 }

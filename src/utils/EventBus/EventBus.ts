@@ -1,54 +1,48 @@
 // Тип листенеров
-type TListeners = {
-  [key: string]: any
-}
+type Listener<T extends unknown[] = any[]> = (...args: T) => void;
 
-// Интерфейс эвентбаса
-interface IEventBus {
-  on(eventName: string, callBack: Function): void,
-  off(eventName: string, callBack: Function): void,
-  emit(eventName: string, arg?: [any]): void,
-}
-
-export default class EventBus implements IEventBus {
+// eslint-disable-next-line max-len
+export default class EventBus <EventName extends string = string, M extends { [K in EventName]: unknown[]} = Record<EventName, any[]>> {
   // Содержит идентификаторы событий в виде строк, коллбэк может быть любым
-  private _listeners: TListeners;
+  private _listeners: {[key in EventName]?: Listener<M[EventName]>[]} = {};
 
-  constructor() {
-    this._listeners = {};
-  }
+  // constructor() {
+  //   this._listeners = {[key in E]?: Listener<M[E]>[]} = {};
+  // }
 
   // Добавляем событие в список событий
-  on(eventName: string, callBack: Function): void {
+  on(eventName: EventName, callBack: Listener<M[EventName]>): void {
     // Если такого ключа нет, создадим пустой массив на его месте
     if (!this._listeners[eventName]) {
       this._listeners[eventName] = [];
     }
 
     // Добавим в массив новый элемент
-    this._listeners[eventName].push(callBack);
+    this._listeners[eventName]!.push(callBack);
   }
 
   // Удаляем событие из списка событий
-  off(eventName: string, callBack: Function): void {
+  off(eventName: EventName, callBack: Listener<M[EventName]>): void {
     // Если такого события нет, выкинем ошибку
     if (!this._listeners[eventName]) {
       throw new Error('Ошибка удаления события: такого события не существует.');
     }
 
-    this._listeners[eventName].filter((listener: Function) => listener !== callBack);
+    // eslint-disable-next-line max-len
+    this._listeners[eventName] = this._listeners[eventName]!.filter((listener) => listener !== callBack);
   }
 
   // Вызываем срабатывание события по ключу события
-  emit(eventName: string, ...rest: any): void {
+  emit(eventName: EventName, ...restOfArgs: any): void {
     // Если такого события нет, выкинем ошибку
     if (!this._listeners[eventName]) {
-      throw new Error('Ошибка запуска события: такого события не существует.');
+      console.log(this._listeners);
+      throw new Error(`Ошибка запуска события: ${eventName} такого события не существует.`);
     }
 
-    this._listeners[eventName].forEach((event: Function) => {
-      // Вызываем событие, и передаем ему все аргументы, переданные в эмиттер после первого
-      event(...rest);
+    this._listeners[eventName]!.forEach((event: Function) => {
+      // Вызываем событие, и передаем ему все аргументы, переданные в эмиттер
+      event(...restOfArgs);
     });
   }
 }

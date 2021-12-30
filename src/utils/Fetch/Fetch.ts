@@ -1,15 +1,3 @@
-// Fetch
-// Реализуйте класс для работы с запросами, который:
-// Содержит методы GET, PUT, POST, DELETE;
-// В методе GET data трансформируется в формат GET-запроса ?key1=value1&key2=value2;
-// По таймауту выбрасывает ошибку;
-// Умеет работать с пользовательскими заголовками;
-// После успешного ответа — необходимо возвращать в промисе сам XHR, то есть разрезолвить XHR;
-// Объект options должен содержать:
-//   timeout — время на запрос. Если запрос выполняется дольше указанного времени, должен быть reject;
-// data — возможность работы с информацией: GET-параметры и JSON;
-// headers — объект, для описания заголовков, у которого ключ и значение всегда string.
-
 // PUT, POST, DELETE
 const METHODS = {
   GET: 'GET',
@@ -18,11 +6,6 @@ const METHODS = {
   DELETE: 'DELETE',
 };
 
-/**
- * Функцию реализовывать здесь необязательно, но может помочь не плодить логику у GET-метода
- * На входе: объект. Пример: {a: 1, b: 2, c: {d: 123}, k: [1, 2, 3]}
- * На выходе: строка. Пример: ?a=1&b=2&c=[object Object]&k=1,2,3
- */
 function queryStringify(data: string): string | void {
   if (typeof data === 'object') {
     // Можно делать трансформацию GET-параметров в отдельной функции
@@ -50,6 +33,7 @@ type TOptions = {
   data?: any,
 }
 
+// Класс для взаимодействием с апи
 class HTTPTransport {
   get = (url: string, options: TOptions = {}) => {
     // Преобразовать данные к строке запроса и добавить к урл адресу
@@ -64,15 +48,15 @@ class HTTPTransport {
     return this.request(requestUrl, { ...options, method: METHODS.GET }, options.timeout);
   };
 
-  // PUT, POST, DELETE
+  // DELETE
   // eslint-disable-next-line max-len
   delete = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.DELETE }, options.timeout)
 
-  // PUT, POST, DELETE
+  // POST
   // eslint-disable-next-line max-len
   post = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.POST }, options.timeout)
 
-  // PUT, POST, DELETE
+  // PUT
   // eslint-disable-next-line max-len
   put = (url: string, options: TOptions = {}): Promise<unknown> => this.request(url, { ...options, method: METHODS.PUT }, options.timeout)
 
@@ -86,6 +70,8 @@ class HTTPTransport {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(method, url);
+      // Передаем в запросе куки
+      xhr.withCredentials = true;
 
       if (headers) {
         // Установим заголовики пройдя по ключам объекта
@@ -98,7 +84,7 @@ class HTTPTransport {
       xhr.timeout = timeout;
 
       const onReject = () => {
-        reject();
+        reject(new Error('Ошибка соединения'));
       };
 
       // Обработка ошибок
@@ -119,3 +105,5 @@ class HTTPTransport {
     });
   };
 }
+
+export default HTTPTransport;

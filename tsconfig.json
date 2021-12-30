@@ -16,6 +16,7 @@
       "es6",
       "es2015.promise",
       "es2016.array.include",
+      "es2020",
       "es2021",
       "dom"
     ]

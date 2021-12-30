@@ -12,6 +12,11 @@
   cursor: pointer;
   font-weight: 500;
 
+  //&:disabled {
+  //  background-color: #999;
+  //  cursor: not-allowed;
+  //}
+
   &:hover {
     opacity: 0.85;
   }
@@ -24,6 +29,11 @@
 
     &_error {
       background-color: #cb6363;
+    }
+
+    &_disabled {
+      background-color: #999;
+      cursor: not-allowed;
     }
   }
 }

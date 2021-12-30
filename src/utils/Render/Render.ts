@@ -10,7 +10,7 @@ export default class Renderer {
   }
 
   // Заполняет контейнер содержимым
-  render(HTML: string) {
+  render(fragment: any) {
     if (this._renderContainer === null) {
       throw new Error('Контейнер рендера с указанным селектором не найден');
     }
@@ -19,6 +19,6 @@ export default class Renderer {
     this._renderContainer.innerHTML = '';
 
     // Рендер (пока что просто добавляем хтмл на страницу)
-    this._renderContainer.insertAdjacentHTML('beforeend', HTML);
+    this._renderContainer.appendChild(fragment);
   }
 }

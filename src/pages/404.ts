@@ -1,19 +1,20 @@
-// Стили
-import '../styles/vendor/normalize.css';
-import '../styles/vendor/fonts/Inter/inter.css';
-import '../styles/components/root/root.scss';
-import '../styles/components/container/container.scss';
-
 // Компонент
 import Error from '../components/error';
+import Router from '../utils/Router/Router';
+import Link from '../components/link/link';
+const router = new Router();
 
-// @ts-ignore
-const error404 = new Error({
+const backLink = new Link({
+  text: 'Назад к чатам',
+  events: {
+    click() {
+      router.back();
+    },
+  },
+});
+
+export default new Error({
   status: 404,
   title: 'Не туда попали',
-  buttonText: 'Назад к чатам',
-  action() {
-    window.history.back();
-  },
-},
-'#container');
+  backLink,
+});

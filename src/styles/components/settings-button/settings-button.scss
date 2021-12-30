@@ -1,0 +1,21 @@
+.settings-button {
+  text-indent: -9000px;
+  display: flex;
+  align-self: center;
+  justify-self: stretch;
+  height: 32px;
+  padding: 0;
+  //border: 0;
+  background-color: #fff;
+  border: 1px solid #efefef;
+  background-image: url('../settings-button/settings.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color ease-in-out 0.3s;
+
+  &:hover {
+    background-color: #efefef;
+  }
+}

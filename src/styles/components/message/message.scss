@@ -1,5 +1,16 @@
 .message {
   padding: 20px 20px 0;
+  position: relative;
+
+  &__nickname {
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0;
+    position: absolute;
+    left: 75px;
+    top: 20px;
+    color: #737373;
+  }
 
   &__author {
     border-radius: 50%;
