@@ -7,7 +7,7 @@ module.exports = {
   entry: './src/pages/index.ts',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'chat.[hash].bundle.js',
+    filename: 'chat.[fullhash].bundle.js',
   },
   resolve: {
     // Такой список нужен для резолва всех необходимых разрешений файлов
@@ -27,7 +27,7 @@ module.exports = {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style-[hash].css',
+      filename: 'style-[fullhash].css',
     }), // подключение плагина для объединения файлов
   ],
   module: {
