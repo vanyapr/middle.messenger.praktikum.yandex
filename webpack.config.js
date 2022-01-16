@@ -3,11 +3,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin'); // Плагин для
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // Плагин для склейки цсс
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: './src/pages/index.ts',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'chat.bundle.js',
+    filename: 'chat.[hash].bundle.js',
   },
   resolve: {
     // Такой список нужен для резолва всех необходимых разрешений файлов
@@ -16,10 +16,19 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Чат', // Кастомный тайтл у хтмл файла
-      template: './static/index.html', // путь к файлу index.html
+      template: './static/index.html', // Входной файл
+      filename: 'index.html', // Файл на выходе
+      minify: {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+      },
     }),
 
-    new MiniCssExtractPlugin(), // подключение плагина для объединения файлов
+    new MiniCssExtractPlugin({
+      filename: 'style-[hash].css',
+    }), // подключение плагина для объединения файлов
   ],
   module: {
     rules: [
@@ -28,22 +37,48 @@ module.exports = {
         test: /\.tsx?$/,
         use: [
           {
+            loader: 'babel-loader', // Обработчик яваскриптов
+            options: { // Пришлось добавить эту часть в сборщик, потому что иначе сыпало ошибками о неподдерживаемом синтаксисе
+              presets: [
+                {
+                  plugins: ['@babel/plugin-proposal-class-properties'], // включает поддержку продвинутого синтаксиса яваскрипта
+                },
+              ],
+            },
+          },
+          {
             loader: 'ts-loader',
             options: {
               configFile: path.resolve(__dirname, 'tsconfig.json'),
+              // transpileOnly: true, // Только транспиляция
             },
           },
         ],
         exclude: /(node_modules)/,
       },
+      // JS
+      {
+        test: /\.js$/, // Регулярное выражение для поиска яваскриптов
+        loader: 'babel-loader', // Обработчик яваскриптов
+        options: { // Пришлось добавить эту часть в сборщик, потому что иначе сыпало ошибками о неподдерживаемом синтаксисе
+          presets: [
+            {
+              plugins: ['@babel/plugin-proposal-class-properties'], // включает поддержку продвинутого синтаксиса яваскрипта
+            },
+          ],
+        },
+        exclude: path.resolve(__dirname, 'node_modules'), // Исключенные директории
+      },
       // SCSS
       {
         test: /\.s[ac]ss$/i,
         use: [
-          // Creates `style` nodes from JS strings
-          'style-loader',
-          // Translates CSS into CommonJS
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {},
+          },
           'css-loader',
+          'postcss-loader',
           // Compiles Sass to CSS
           'sass-loader',
         ],
@@ -61,7 +96,7 @@ module.exports = {
       // ХТМЛ файлы
       {
         test: /\.html$/,
-        loader: 'html-loader', // при обработке этих файлов нужно использовать file-loader
+        loader: 'html-loader', // при обработке этих файлов нужно использовать html-loader
       },
       // CSS
       {
@@ -69,11 +104,14 @@ module.exports = {
         // при обработке этих файлов нужно использовать
         // MiniCssExtractPlugin.loader и css-loader
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {},
+          },
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true, // вот так - генерирует sourcemap для CSS
+              // sourceMap: true, // вот так - генерирует sourcemap для CSS
               importLoaders: 1,
             }, // Настройка для импорта файлов
           },
