@@ -129,7 +129,7 @@ class Chat extends Block {
     // Если получен список сообщений
     if (Array.isArray(message)) {
       // Запись в начало списка сообщений
-      const unsortedMessagesList = [...this.props.messagesList, ...message];
+      const unsortedMessagesList = [...this.props.messagesList as Array<any>, ...message];
       // @ts-ignore
       const messagesList = unsortedMessagesList.sort(({ time: firstTime }, { time: secondTime }) => firstTime - secondTime);
 

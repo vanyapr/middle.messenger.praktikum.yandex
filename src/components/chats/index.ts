@@ -73,6 +73,7 @@ export default class Chats extends Block {
           // Если есть новые чаты (даже если удалены старые)
           if (newChats.length) {
             console.log('Добавлен новый чат');
+            // @ts-ignore
             const newChatsList = this.props.getChatsList(newChats);
 
             this._chatsList = [...newChatsList, ...restOfChats];
@@ -116,8 +117,8 @@ export default class Chats extends Block {
   render() {
     if (!this._chatsList) {
       // Будем пересобирать список чатов при первом рендере и обновлять далее в компоненте
-      const chatsList = this.props.getChatsList(this.props.list);
-      this._chatsList = chatsList;
+      const getChatsList: Function = this.props.getChatsList as Function;
+      this._chatsList = getChatsList(this.props.list);
     }
 
     return compile(template, { list: this._chatsList });
