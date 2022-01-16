@@ -1,5 +1,11 @@
 [Пул реквест третьего спринта](https://github.com/vanyapr/middle.messenger.praktikum.yandex/pull/3)
 
+![Собирается](https://img.shields.io/badge/Сборка-Успешно-brightgreen?style=plastic&logo=netlify)
+![Собирается в докере автоматически](https://img.shields.io/badge/Докер-В%20образе-brightgreen?style=plastic&logo=docker)
+![Покрытие тестами](https://img.shields.io/badge/Покрытие%20тестами-10%20процетов-yellow?style=plastic&logo=mocha)
+![Прохождение тестов](https://img.shields.io/badge/Прохождение%20тестов-10/10-brightgreen?style=plastic&logo=mocha)
+![Персонаж в wow](https://img.shields.io/badge/Персонаж%20в%20WOW-Протыкатель%20(60)-yellow?style=plastic)
+
 # Мессенджер
 Проект в рамках учёбы на курсе "Миддл фронт-энд разработчик" от Яндекс-Практикума. Срок сдачи проекта - **8 октября 2021 года**.
 
@@ -19,6 +25,9 @@
 7) **Mocha** - инструмент для тестирования.
 8) **Chai** - инструмент для тестирования.
 9) **JSDOM** - виртуальный DOM для тестов.
+10) **Webpack** - сборщик проектов.
+11) **Babel, PostCSS, CSSNano** - процессоры для сборки проектов.
+12) **Docker** - контейнеризация приложения.
 
 # Структура проекта
 Пока мы не знаем, что будет представлять собою проект, будем складывать темплейты и стили отдельно. При необходимости будем 
