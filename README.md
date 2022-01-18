@@ -1,4 +1,4 @@
-[Пул реквест третьего спринта](https://github.com/vanyapr/middle.messenger.praktikum.yandex/pull/3)
+[Пул реквест четвертого спринта](https://github.com/vanyapr/middle.messenger.praktikum.yandex/pull/4)
 
 # Мессенджер
 Проект в рамках учёбы на курсе "Миддл фронт-энд разработчик" от Яндекс-Практикума. Срок сдачи проекта - **8 октября 2021 года**.
