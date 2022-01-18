@@ -1,7 +1,6 @@
 const connectHistoryApiFallback = require('connect-history-api-fallback');
-
+const { PORT = 3000 } = process.env;
 const express = require('express');
-const PORT = 3000;
 
 const app = express();
 app.use('/', connectHistoryApiFallback()); // Route is controlled by js, must be written in front of express.static! ! !

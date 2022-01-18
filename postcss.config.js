@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const autoprefixer = require('autoprefixer'); // Расстановка браузерных префиксов
+// eslint-disable-next-line import/no-extraneous-dependencies
 const cssnano = require('cssnano');
 
 module.exports = {
