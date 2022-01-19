@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin'); // Плагин для работы с хтмл в вебпаке
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // Плагин для склейки цсс
+const CopyPlugin = require('copy-webpack-plugin'); // Плагин для копирования файлов
 
 module.exports = {
   mode: 'production',
@@ -18,6 +19,7 @@ module.exports = {
       title: 'Чат', // Кастомный тайтл у хтмл файла
       template: './static/index.html', // Входной файл
       filename: 'index.html', // Файл на выходе
+      favicon: './static/favicon.ico',
       minify: {
         collapseWhitespace: true,
         removeComments: true,
@@ -29,6 +31,12 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'style-[fullhash].css',
     }), // подключение плагина для объединения файлов
+
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, 'static/favicon.ico'), to: 'build' },
+      ],
+    }),
   ],
   module: {
     rules: [
@@ -129,6 +137,7 @@ module.exports = {
     ],
   },
   devServer: {
+    historyApiFallback: true,
     static: {
       directory: path.join(__dirname, 'build'),
     },

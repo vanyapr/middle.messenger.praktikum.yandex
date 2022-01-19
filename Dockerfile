@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16.13.1-alpine
 # Указываем рабочюю директорию
 WORKDIR /messenger
 

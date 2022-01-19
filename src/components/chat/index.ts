@@ -5,7 +5,7 @@ import State from '../../utils/State/State';
 import compile from '../../utils/Compile/compile';
 import ChatsAPI from '../../connectors/ChatsAPI';
 import { chats, socketURL } from '../../settings/api';
-import { TProps } from '../../types/types';
+import { TProps, TMessage } from '../../types/types';
 import Socket from '../../utils/Socket';
 const chatsAPI = new ChatsAPI();
 
@@ -129,7 +129,7 @@ class Chat extends Block {
     // Если получен список сообщений
     if (Array.isArray(message)) {
       // Запись в начало списка сообщений
-      const unsortedMessagesList = [...this.props.messagesList as Array<any>, ...message];
+      const unsortedMessagesList = [...this.props.messagesList as Array<TMessage>, ...message];
       // @ts-ignore
       const messagesList = unsortedMessagesList.sort(({ time: firstTime }, { time: secondTime }) => firstTime - secondTime);
 
