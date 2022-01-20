@@ -45,6 +45,7 @@ const logoutButton = new LogoutButton({
   events: {
     click() {
       state.destroy();
+      // state.delete('settings');
 
       auth.logOut().then((response: XMLHttpRequest) => {
         if (response.status === 200) {
