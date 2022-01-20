@@ -78,6 +78,11 @@ class Router implements IRotuer {
     return this;
   }
 
+  // TODO: Очистка истории (при логауте)
+  // clearHistory() {
+  //   this._history.length = 0;
+  // }
+
   // Стартует роутер на прослушивание событий
   run(): void {
     // Запускает слушатель в window.onpopstate

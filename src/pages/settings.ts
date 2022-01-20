@@ -45,7 +45,6 @@ const logoutButton = new LogoutButton({
   events: {
     click() {
       state.destroy();
-      // state.delete('settings');
 
       auth.logOut().then((response: XMLHttpRequest) => {
         if (response.status === 200) {
@@ -54,8 +53,9 @@ const logoutButton = new LogoutButton({
           // state.delete('currentChat');
 
           router.go('/');
+          window.location.reload(); // Фикс проблемы с размонтированием компонентов и повторным логином
         } else {
-          router.go('/500');
+          throw new Error('Ошибка при попытке выхода из системы');
         }
       }).catch((error) => {
         console.log(error);
