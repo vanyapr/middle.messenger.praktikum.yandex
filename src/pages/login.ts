@@ -116,11 +116,9 @@ export default new LoginForm({
 
             throw new Error('Неверные имя пользователя или пароль');
           }).then((userDataRequest: XMLHttpRequest) => {
-            console.log(userDataRequest);
             // Если данные пришли, мы переходим на роут чата записав данные в стейт
             if (userDataRequest.status === 200) {
               const userSettings: Record<string, any> = JSON.parse(userDataRequest.responseText);
-              console.log(userSettings);
               if (!userSettings.avatar) {
                 userSettings.avatar = image;
               } else {
@@ -136,7 +134,6 @@ export default new LoginForm({
             form.enableButton();
             throw new Error('Ошибка получения данных пользователя');
           }).then((response: XMLHttpRequest) => {
-            console.log(response);
             if (response.status === 200) {
               const chats = JSON.parse(response.responseText);
               // Включили кнопку
