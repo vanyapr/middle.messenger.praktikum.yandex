@@ -106,9 +106,12 @@ export default new LoginForm({
           .then((response: XMLHttpRequest) => {
             console.log(response);
             if (response.status === 200) {
-              // state.set('user', { authorised: true });
               // Вернем свойства юзера
               return auth.getUserData();
+            }
+
+            if (response.status === 400) {
+              return auth.logOut().then(() => auth.signIn(formData).then(() => auth.getUserData()));
             }
 
             throw new Error('Неверные имя пользователя или пароль');
@@ -126,7 +129,6 @@ export default new LoginForm({
               }
               state.set('settings', userSettings);
 
-              // TODO: Получить данные чатов
               const chats = new ChatsAPI();
               return chats.getChats();
             }

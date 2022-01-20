@@ -16,12 +16,13 @@
     "dev": "webpack serve --mode=development --progress",
     "lint": "eslint .",
     "test": "mocha -require @babel/register",
-    "build": "rimraf ./build && webpack && docker build -t messenger ."
+    "build": "rimraf ./build && webpack && docker build -t messenger .",
+    "deploy": "npm run build && heroku container:push web && heroku container:release web"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm-run-all test lint:all",
-      "pre-push": "npm run build"
+      "pre-push": "npm run deploy"
     }
   },
   "author": "Ivan Proksuriakov",
