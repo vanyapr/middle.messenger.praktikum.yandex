@@ -110,8 +110,8 @@ export default new LoginForm({
               // Вернем свойства юзера
               return auth.getUserData();
             }
-            state.set('loginForm', { error: 'Неверные имя пользователя или пароль' });
-            return false;
+
+            throw new Error('Неверные имя пользователя или пароль');
           }).then((userDataRequest: XMLHttpRequest) => {
             console.log(userDataRequest);
             // Если данные пришли, мы переходим на роут чата записав данные в стейт
@@ -132,7 +132,6 @@ export default new LoginForm({
             }
             // Иначе данные не пришли, и мы запишем ошибку
             form.enableButton();
-            state.set('loginForm', { error: 'Ошибка получения данных пользователя' });
             throw new Error('Ошибка получения данных пользователя');
           }).then((response: XMLHttpRequest) => {
             console.log(response);
@@ -149,12 +148,8 @@ export default new LoginForm({
             }
           })
           .catch((error) => {
-            console.log(error);
             form.enableButton();
-            state.set('loginForm', {
-              error: 'При отправке данных возникла ошибка',
-            });
-            router.go('/500');
+            state.set('loginForm', { error });
           });
       } else {
         console.log('Данные формы невалидны');

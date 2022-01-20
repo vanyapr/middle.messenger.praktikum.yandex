@@ -113,6 +113,8 @@ export default class Chats extends Block {
             }
             console.log(error);
           });
+      } else {
+        console.log('Юзер не авторизован, чаты не обновляем!');
       }
     }, 2000);
   }
