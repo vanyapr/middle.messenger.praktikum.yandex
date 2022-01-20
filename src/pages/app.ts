@@ -539,8 +539,6 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]): Array<Ch
   const { id: currentUserId, avatar } = state.get('settings');
   const { users } = state.get(`chat-${currentChatId}`);
 
-  state.log();
-
   // Формируем массив сообщений чата
   return messagesArray.map((item: any) => {
     // eslint-disable-next-line camelcase,prefer-const
