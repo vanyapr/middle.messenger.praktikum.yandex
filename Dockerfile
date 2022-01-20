@@ -9,10 +9,11 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 # Копируем исходные коды
-COPY . .
+COPY ./index.js ./
+COPY ./build/*.* ./build/
 
 # Открываем 3000 порт
 #EXPOSE 3000
 
 # Запускаем приложение
-CMD node index.js
+CMD npm run start
