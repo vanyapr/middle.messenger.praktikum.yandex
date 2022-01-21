@@ -35,89 +35,95 @@ export default class Chats extends Block {
     // При апдейте надо не перерисовывать все чаты, а лишь добавлять новые в список
     // Подпишем компонент на постоянный апдейт списка чатов
     this._refreshInterval = setInterval(() => {
+      // Проверяем, что юзер вообще авторизован
+      if (state.get('settings')) {
       // Получаем список чатов
-      chatsAPI.getChats()
-        .then((chatsList: XMLHttpRequest) => JSON.parse(chatsList.responseText))
-        .then((chatsArray) => {
+        chatsAPI.getChats()
+          .then((chatsList: XMLHttpRequest) => JSON.parse(chatsList.responseText))
+          .then((chatsArray) => {
           // Почему так: при апдейте компонента рендерится новый список чатов, и отваливается currentChat,
           // поэтому я при апдейте списка чатов пересобираю его (список чатов) вручную,
           // после чего просто пишу в стейт новый список чатов
           // Ищем новые чаты
-          const newChats = chatsArray.reduce((acc: any, item: Record<string, any>) => {
+            const newChats = chatsArray.reduce((acc: any, item: Record<string, any>) => {
             // Проверяем чтобы ID чата в полученном списке не были в текущем списке чатов
-            const matchFound = this._chatsList.some((someItem: Chat) => someItem.getID() === item.id);
+              const matchFound = this._chatsList.some((someItem: Chat) => someItem.getID() === item.id);
 
-            // Если ID итема есть в одном из чатов не делаем ничего
-            // Если ID нет ни в одном из текущих чатов, добавляем в acc
-            if (!matchFound) {
-              acc.push(item);
-            }
+              // Если ID итема есть в одном из чатов не делаем ничего
+              // Если ID нет ни в одном из текущих чатов, добавляем в acc
+              if (!matchFound) {
+                acc.push(item);
+              }
 
-            return acc;
-          }, []);
+              return acc;
+            }, []);
 
-          const [restOfChats, deletedChats] = this._chatsList.reduce((acc: any, chat: Chat) => {
-            const match = chatsArray.some((someChat: Record<string, any>) => someChat.id === chat.getID());
+            const [restOfChats, deletedChats] = this._chatsList.reduce((acc: any, chat: Chat) => {
+              const match = chatsArray.some((someChat: Record<string, any>) => someChat.id === chat.getID());
 
-            if (match) {
+              if (match) {
               // Если в новом списке чатов есть ID текущего чата, мы считаем его не удаленным
-              acc[0].push(chat);
-            } else {
+                acc[0].push(chat);
+              } else {
               // Если в новом списке чатов нет ID текущего чата, мы считаем его удаленным
-              acc[1].push(chat);
-            }
+                acc[1].push(chat);
+              }
 
-            return acc;
-          }, [[], []]);
+              return acc;
+            }, [[], []]);
 
-          // Если есть новые чаты (даже если удалены старые)
-          if (newChats.length) {
-            console.log('Добавлен новый чат');
-            const newChatsList = this.props.getChatsList(newChats);
+            // Если есть новые чаты (даже если удалены старые)
+            if (newChats.length) {
+              console.log('Добавлен новый чат');
+              // @ts-ignore
+              const newChatsList = this.props.getChatsList(newChats);
 
-            this._chatsList = [...newChatsList, ...restOfChats];
+              this._chatsList = [...newChatsList, ...restOfChats];
 
-            // Обновить список чатов
-            state.set('chats', { chatsList: chatsArray });
-          } else if (deletedChats.length) {
+              // Обновить список чатов
+              state.set('chats', { chatsList: chatsArray });
+            } else if (deletedChats.length) {
             // Если чат был удален, скрипт всегда попадет сюда (рано или поздно)
-            console.log('Удалён чат');
-            // Размонтируем сокеты и слушатели удаляемого чата
-            deletedChats.forEach((chatToDelete: Chat) => {
-              chatToDelete.destroy();
-            });
+              console.log('Удалён чат');
+              // Размонтируем сокеты и слушатели удаляемого чата
+              deletedChats.forEach((chatToDelete: Chat) => {
+                chatToDelete.destroy();
+              });
 
-            this._chatsList = [...restOfChats];
+              this._chatsList = [...restOfChats];
 
-            // Обновить список чатов
-            state.set('chats', { chatsList: chatsArray });
+              // Обновить список чатов
+              state.set('chats', { chatsList: chatsArray });
 
-            // Очистить список сообщений
-            state.set('messages', { messagesList: [] });
-          } else {
-            console.log('Чаты не обновлены');
-          }
-        }).catch((error) => {
+              // Очистить список сообщений
+              state.set('messages', { messagesList: [] });
+            } else {
+              console.log('Чаты не обновлены');
+            }
+          }).catch((error) => {
           // Если произошел логаут (или дисконнект), убираем чаты
-          if (!state.get('chats')) {
-            console.log('ЧЕТО ЧАТОВ ТО НЕТ');
-            this._chatsList.forEach((chat: Chat) => {
-              chat.destroy();
-            });
+            if (!state.get('chats')) {
+              console.log('ЧЕТО ЧАТОВ ТО НЕТ');
+              this._chatsList.forEach((chat: Chat) => {
+                chat.destroy();
+              });
 
-            clearInterval(this._refreshInterval);
-            return;
-          }
-          console.log(error);
-        });
-    }, 10000);
+              clearInterval(this._refreshInterval);
+              return;
+            }
+            console.log(error);
+          });
+      } else {
+        console.log('Юзер не авторизован, чаты не обновляем!');
+      }
+    }, 2000);
   }
 
   render() {
     if (!this._chatsList) {
       // Будем пересобирать список чатов при первом рендере и обновлять далее в компоненте
-      const chatsList = this.props.getChatsList(this.props.list);
-      this._chatsList = chatsList;
+      const getChatsList: Function = this.props.getChatsList as Function;
+      this._chatsList = getChatsList(this.props.list);
     }
 
     return compile(template, { list: this._chatsList });

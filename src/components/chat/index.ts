@@ -5,7 +5,7 @@ import State from '../../utils/State/State';
 import compile from '../../utils/Compile/compile';
 import ChatsAPI from '../../connectors/ChatsAPI';
 import { chats, socketURL } from '../../settings/api';
-import { TProps } from '../../types/types';
+import { TProps, TMessage } from '../../types/types';
 import Socket from '../../utils/Socket';
 const chatsAPI = new ChatsAPI();
 
@@ -13,11 +13,13 @@ const chatsAPI = new ChatsAPI();
 const state = new State();
 
 class Chat extends Block {
-  private _chatID: any
+  private _chatID: any;
 
-  private _chatURL: string
+  private _chatURL: string;
 
-  private _socket: Socket
+  private _socket: Socket;
+
+  // private _unreacMessagesCount: number;
 
   constructor(props: TProps) {
     super(props, 'div', 'chat');
@@ -52,6 +54,7 @@ class Chat extends Block {
       chatsAPI.getChatUnreadMessagesCount(this._chatID),
     ])
       .then((result: any) => {
+        // Очень хотелось сдесь деструктуризацию в then, но тайпскрипт ругается
         const [usersList, chatToken, unreadMessages] = result;
         const users = JSON.parse(usersList.responseText);
         const token = JSON.parse(chatToken.responseText);
@@ -75,8 +78,11 @@ class Chat extends Block {
         // Запишем урл сокета
         this._chatURL = `${socketURL}${chats}/${state.get('settings').id}/${this._chatID}/${token}`;
 
-        // Подключились к сокету
-        this._connectSocket();
+        // Если сокет еще не настроен
+        if (!this._socket) {
+          // Подключились к сокету
+          this._connectSocket();
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -101,25 +107,56 @@ class Chat extends Block {
     this._socket.onopen(this._onSocketOpen);
   }
 
-    protected _onSocketOpen = () => {
+  protected _onSocketOpen = () => {
+    this._getOldMessages();
+    this._getUnreadedMessages();
+  }
+
+  protected _getUnreadedMessages = () => {
     // eslint-disable-next-line camelcase
-      const { unread_count } = state.get(`chat-${this._chatID}`);
+    const { unread_count } = state.get(`chat-${this._chatID}`);
 
-      // Если в чате есть непрочитанные сообщения, получим их
+    // Если в чате есть непрочитанные сообщения, получим их
+    // eslint-disable-next-line camelcase
+    if (unread_count) {
+      let offset = 0;
       // eslint-disable-next-line camelcase
-      if (unread_count) {
-        let offset = 0;
-        // eslint-disable-next-line camelcase
-        while (unread_count >= offset) {
-          this._socket.send(JSON.stringify({
-            content: `${offset}`,
-            type: 'get old',
-          }));
+      while (unread_count >= offset) {
+        this._socket.send(JSON.stringify({
+          content: `${offset}`,
+          type: 'get old',
+        }));
 
-          offset += 20;
-        }
+        offset += 20;
       }
     }
+  }
+
+  // Получим "старые сообщения"
+  protected _getOldMessages = () => {
+    const { oldMessagesReceived } = state.get(`chat-${this._chatID}`);
+
+    if (!oldMessagesReceived) {
+      // eslint-disable-next-line camelcase
+
+      const oldMessagesCount = 40;
+      let offset = 0;
+      // eslint-disable-next-line camelcase
+      while (oldMessagesCount >= offset) {
+        // TODO: Здесь теперь мы посылаем запрос просто так
+        this._socket.send(JSON.stringify({
+          content: `${offset}`,
+          type: 'get old',
+        }));
+
+        offset += 20;
+      }
+
+      state.set(`chat-${this._chatID}`, {
+        oldMessagesReceived: true,
+      });
+    }
+  }
 
   // Слушает сообщения из сокета
   protected _listenSocketMessages = (event: any): void => {
@@ -129,11 +166,25 @@ class Chat extends Block {
     // Если получен список сообщений
     if (Array.isArray(message)) {
       // Запись в начало списка сообщений
-      const unsortedMessagesList = [...this.props.messagesList, ...message];
+      const unsortedMessagesList = [...this.props.messagesList as Array<TMessage>, ...message];
       // @ts-ignore
-      const messagesList = unsortedMessagesList.sort(({ time: firstTime }, { time: secondTime }) => firstTime - secondTime);
+      const messagesList = unsortedMessagesList.sort(({ time: firstTime }, { time: secondTime }) => {
+        const secont = new Date(secondTime).getTime();
+        const first = new Date(firstTime).getTime();
 
-      const { id: currentChatId } = state.get('currentChat');
+        const comparisonResult = secont - first;
+
+        if (comparisonResult > 0) {
+          return -1;
+        } if (comparisonResult < 0) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      const currentChat = state.get('currentChat');
+      const currentChatId = currentChat?.id; // Фикс на случай, если текущего чата еще нет в стейте
 
       // eslint-disable-next-line camelcase
       let unread_count = messagesList.length;
@@ -205,8 +256,14 @@ class Chat extends Block {
     // Обнулили число непрочитанных сообщений
     state.set(`chat-${this._chatID}`, { unread_count: 0 });
 
+    // Если по какой-то причине нет данных чата в стейте, мы конфигурируем его заново
+    if (!state.get(`chat-${this._chatID}`).users) {
+      this._configure();
+    }
+
     // Записали ID и юзеров текущего чата в стейт
     const currentChatUsers = state.get(`chat-${this._chatID}`).users;
+
     state.addState('currentChat', { id: this._chatID, users: currentChatUsers });
   }
 

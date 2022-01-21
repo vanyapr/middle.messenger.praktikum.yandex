@@ -92,6 +92,10 @@ class State {
     this._state = {};
   }
 
+  log() {
+    console.log(this._state);
+  }
+
   // Записывает данные в localstorage
   private _backUp() {
     localStorage.setItem('state', JSON.stringify(this._state));

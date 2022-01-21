@@ -106,18 +106,19 @@ export default new LoginForm({
           .then((response: XMLHttpRequest) => {
             console.log(response);
             if (response.status === 200) {
-              // state.set('user', { authorised: true });
               // Вернем свойства юзера
               return auth.getUserData();
             }
-            state.set('loginForm', { error: 'Неверные имя пользователя или пароль' });
-            return false;
+
+            if (response.status === 400) {
+              return auth.logOut().then(() => auth.signIn(formData).then(() => auth.getUserData()));
+            }
+
+            throw new Error('Неверные имя пользователя или пароль');
           }).then((userDataRequest: XMLHttpRequest) => {
-            console.log(userDataRequest);
             // Если данные пришли, мы переходим на роут чата записав данные в стейт
             if (userDataRequest.status === 200) {
               const userSettings: Record<string, any> = JSON.parse(userDataRequest.responseText);
-              console.log(userSettings);
               if (!userSettings.avatar) {
                 userSettings.avatar = image;
               } else {
@@ -126,16 +127,13 @@ export default new LoginForm({
               }
               state.set('settings', userSettings);
 
-              // TODO: Получить данные чатов
               const chats = new ChatsAPI();
               return chats.getChats();
             }
             // Иначе данные не пришли, и мы запишем ошибку
             form.enableButton();
-            state.set('loginForm', { error: 'Ошибка получения данных пользователя' });
             throw new Error('Ошибка получения данных пользователя');
           }).then((response: XMLHttpRequest) => {
-            console.log(response);
             if (response.status === 200) {
               const chats = JSON.parse(response.responseText);
               // Включили кнопку
@@ -149,12 +147,8 @@ export default new LoginForm({
             }
           })
           .catch((error) => {
-            console.log(error);
             form.enableButton();
-            state.set('loginForm', {
-              error: 'При отправке данных возникла ошибка',
-            });
-            router.go('/500');
+            state.set('loginForm', { error });
           });
       } else {
         console.log('Данные формы невалидны');

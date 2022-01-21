@@ -535,8 +535,9 @@ const messagesListConstructor = (messagesArray: [Record<string, any>]): Array<Ch
   }
 
   // Если юзер и настройки есть, сгенерируем список чатов
-  const { users } = state.get('currentChat');
+  const { id: currentChatId } = state.get('currentChat');
   const { id: currentUserId, avatar } = state.get('settings');
+  const { users } = state.get(`chat-${currentChatId}`);
 
   // Формируем массив сообщений чата
   return messagesArray.map((item: any) => {

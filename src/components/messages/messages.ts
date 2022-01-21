@@ -29,7 +29,8 @@ export default class Messages extends Block {
 
   render() {
     // Будем пересобирать список чатов при апдейте компонента
-    const messagesList = this.props.messagesListConstructor(this.props.messagesList);
+    const messagesListConstructor: Function = this.props.messagesListConstructor as Function;
+    const messagesList = messagesListConstructor(this.props.messagesList);
     return compile(template, { messages: messagesList });
   }
 }

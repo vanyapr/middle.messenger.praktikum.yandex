@@ -53,8 +53,9 @@ const logoutButton = new LogoutButton({
           // state.delete('currentChat');
 
           router.go('/');
+          window.location.reload(); // Фикс проблемы с размонтированием компонентов и повторным логином
         } else {
-          router.go('/500');
+          throw new Error('Ошибка при попытке выхода из системы');
         }
       }).catch((error) => {
         console.log(error);

@@ -5,7 +5,7 @@
     "noUnusedParameters": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "dist",
+    "outDir": "build",
     "target": "ES6",
     "declaration": false,
     "module": "commonjs",
@@ -19,6 +19,6 @@
       "es2020",
       "es2021",
       "dom"
-    ]
+    ],
   }
 }

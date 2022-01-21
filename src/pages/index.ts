@@ -6,6 +6,7 @@ import '../styles/components/container/container.scss';
 
 import Router from '../utils/Router/Router';
 
+import State from '../utils/State/State';
 import loginForm from './login';
 import signUpForm from './signUp';
 import app from './app';
@@ -32,6 +33,13 @@ router
 // Запустили роутер
 router.run();
 
-// TODO: Если юзер авторизован, он попадает в чат
-//  Если юзер не авторизован (или нет настроек в стейте), мы выполняем логаут
-// router.go('/');
+const state = new State();
+
+// Если юзер авторизован (есть настройки юзера в стейте), он попадает в чат
+const userIsLoginned = state.get('settings');
+
+if (userIsLoginned) {
+  router.go('/chat');
+}
+
+// TODO:  Если нет настроек в стейте, мы выполняем логаут
